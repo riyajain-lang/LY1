@@ -131,15 +131,15 @@
 
         <div class="targets-column">
             <div class="target-node" onclick="checkAnswer('Sky')" ondragover="event.preventDefault()" ondrop="checkAnswer('Sky')">
-                <img src="Github Games/sky.png.jpg" alt="Sky">
+                <img src="assets/sky.png" alt="Sky">
                 <b>Sky</b>
             </div>
             <div class="target-node" onclick="checkAnswer('Sea')" ondragover="event.preventDefault()" ondrop="checkAnswer('Sea')">
-                <img src="Github Games/sea.png.jpg" alt="Sea">
+                <img src="assets/sea.png" alt="Sea">
                 <b>Sea</b>
             </div>
             <div class="target-node" onclick="checkAnswer('Road')" ondragover="event.preventDefault()" ondrop="checkAnswer('Road')">
-                <img src="Github Games/road.png.jpg" alt="Road">
+                <img src="assets/road.png" alt="Road">
                 <b>Road</b>
             </div>
         </div>
@@ -149,18 +149,18 @@
 </div>
 
 <script>
-    // Data using the Github Games folder path
+    // Asset list with corrected 'assets/' folder prefix and exact case-sensitive filenames
     const transportData = [
-        { name: "Aeroplane", type: "Sky", file: "airplane.png.jpg" },
-        { name: "Cruises", type: "Sea", file: "Cruises.png.png" },
-        { name: "Motorcycle", type: "Road", file: "Motorcycle.png.png" },
-        { name: "Truck", type: "Road", file: "truck.png.png" },
-        { name: "Helicopter", type: "Sky", file: "Helicopter.png.png" },
-        { name: "Boat", type: "Sea", file: "boat.png.png" },
-        { name: "Car", type: "Road", file: "car.png.png" },
-        { name: "Bicycle", type: "Road", file: "bicycle.png.png" },
-        { name: "Bus", type: "Road", file: "bus.png.png" },
-        { name: "Hot Air Balloon", type: "Sky", file: "Hotairballoon.png.png" }
+        { name: "Airplane", type: "Sky", file: "assets/airplane.png" },
+        { name: "Cruises", type: "Sea", file: "assets/Cruises.png" },
+        { name: "Motorcycle", type: "Road", file: "assets/Motorcycle.png" },
+        { name: "Truck", type: "Road", file: "assets/truck.png" },
+        { name: "Helicopter", type: "Sky", file: "assets/Helicopter.png" },
+        { name: "Boat", type: "Sea", file: "assets/boat.png" },
+        { name: "Car", type: "Road", file: "assets/car.png" },
+        { name: "Bicycle", type: "Road", file: "assets/bicycle.png" },
+        { name: "Bus", type: "Road", file: "assets/bus.png" },
+        { name: "Hot Air Balloon", type: "Sky", file: "assets/Hotairballoon.png" }
     ];
 
     let currentQ = 0;
@@ -171,7 +171,7 @@
 
     function speak(txt) {
         const utter = new SpeechSynthesisUtterance(txt);
-        utter.rate = 0.85; // Slightly slower for kids
+        utter.rate = 0.85; 
         window.speechSynthesis.speak(utter);
     }
 
@@ -187,25 +187,27 @@
         }
 
         const data = transportData[currentQ];
-        vImg.src = "Github Games/" + data.file;
+        vImg.src = data.file; // Uses the 'assets/' path
         vName.innerText = data.name;
         progress.style.width = ((currentQ + 1) * 10) + "%";
         
         speak("Where does the " + data.name + " go?");
     }
 
-    // Drag-and-drop support
     vImg.addEventListener('dragstart', (e) => {
         e.dataTransfer.setData('text', transportData[currentQ].type);
     });
 
-    // Main logic for Click AND Drop
     function checkAnswer(choice) {
         const correct = transportData[currentQ].type;
 
         if (choice === correct) {
+            // Updated audio path
+            new Audio('assets/correct.mp3').play().catch(() => {}); 
             triggerFeedback("👏", "Correct! Well done!", true);
         } else {
+            // Updated audio path
+            new Audio('assets/wrong.mp3').play().catch(() => {});
             triggerFeedback("❌", "Oops! Try again!", false);
         }
     }
