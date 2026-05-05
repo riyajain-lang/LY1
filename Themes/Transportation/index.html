@@ -149,7 +149,7 @@
 </div>
 
 <script>
-    // Asset list with corrected 'assets/' folder prefix and exact case-sensitive filenames
+    // These filenames match your assets folder screenshot exactly (including Capitals)
     const transportData = [
         { name: "Airplane", type: "Sky", file: "assets/airplane.png" },
         { name: "Cruises", type: "Sea", file: "assets/Cruises.png" },
@@ -187,7 +187,7 @@
         }
 
         const data = transportData[currentQ];
-        vImg.src = data.file; // Uses the 'assets/' path
+        vImg.src = data.file; 
         vName.innerText = data.name;
         progress.style.width = ((currentQ + 1) * 10) + "%";
         
@@ -202,11 +202,9 @@
         const correct = transportData[currentQ].type;
 
         if (choice === correct) {
-            // Updated audio path
             new Audio('assets/correct.mp3').play().catch(() => {}); 
             triggerFeedback("👏", "Correct! Well done!", true);
         } else {
-            // Updated audio path
             new Audio('assets/wrong.mp3').play().catch(() => {});
             triggerFeedback("❌", "Oops! Try again!", false);
         }
