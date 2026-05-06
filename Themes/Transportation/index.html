@@ -14,6 +14,7 @@ body {
   overflow: hidden;
 }
 
+/* SCREENS */
 #logoScreen, #endScreen {
   position: absolute;
   width: 100%;
@@ -22,17 +23,21 @@ body {
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  background: white;
 }
 
-#game { display: none; height: 100%; }
+#logoScreen { z-index: 10; }
+#game { display: none; height: 100%; z-index: 5; }
+#endScreen { display: none; z-index: 20; }
 
+/* TEXT */
 h1 {
   text-align: center;
   font-size: 5vw;
   color: #4a6fa5;
 }
 
-/* Layout */
+/* LAYOUT */
 .container {
   display: flex;
   height: 75%;
@@ -46,7 +51,7 @@ h1 {
   flex-direction: column;
 }
 
-/* Images */
+/* LEFT IMAGE */
 .vehicle {
   width: 70%;
   border: 3px solid #ddd;
@@ -54,6 +59,7 @@ h1 {
   padding: 10px;
 }
 
+/* OPTIONS */
 .dropzone {
   width: 70%;
   height: 22vh;
@@ -65,14 +71,13 @@ h1 {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: transform 0.2s;
 }
 
 .dropzone img {
   max-height: 70%;
 }
 
-/* Effects */
+/* EFFECTS */
 .bounce {
   animation: bounce 0.5s;
 }
@@ -83,12 +88,16 @@ h1 {
   100% { transform: scale(1); }
 }
 
-.correctHighlight {
+.correct {
   border-color: green;
 }
 
-.wrongHighlight {
+.wrong {
   border-color: red;
+}
+
+.hint {
+  box-shadow: 0 0 20px gold;
 }
 </style>
 </head>
@@ -139,16 +148,17 @@ const data = [
   { vehicle: "assets/Motorcycle.png", name: "Motorcycle", correct: "Road" }
 ];
 
+/* IMPORTANT FIX HERE */
 const optionsBase = [
   { img: "assets/road.png", label: "Road" },
-  { img: "assets/Sky.png", label: "Sky" },
+  { img: "assets/SKy (1).png", label: "Sky" },  // ✅ matches your file EXACTLY
   { img: "assets/sea.png", label: "Sea" }
 ];
 
 let current = 0;
 let wrongAttempts = 0;
 
-/* Voice */
+/* VOICE */
 function speak(text) {
   if ('speechSynthesis' in window) {
     speechSynthesis.cancel();
@@ -160,10 +170,11 @@ function speakQuestion() {
   speak(`Where does the ${data[current].name} go?`);
 }
 
-/* Load Game */
+/* LOAD GAME */
 function loadGame() {
   if (current >= data.length) {
     document.getElementById("game").style.display = "none";
+    document.getElementById("logoScreen").style.display = "none";
     document.getElementById("endScreen").style.display = "flex";
     return;
   }
@@ -195,7 +206,7 @@ function loadGame() {
   });
 }
 
-/* Tap logic */
+/* TAP */
 function handleTap(element) {
   const selected = element.dataset.label;
   const correct = data[current].correct;
@@ -204,7 +215,7 @@ function handleTap(element) {
     document.getElementById("rightSound").play();
     speak("Correct! Great job!");
 
-    element.classList.add("bounce", "correctHighlight");
+    element.classList.add("bounce", "correct");
 
     current++;
     setTimeout(loadGame, 700);
@@ -213,29 +224,30 @@ function handleTap(element) {
     document.getElementById("wrongSound").play();
     speak("Try again");
 
-    element.classList.add("wrongHighlight");
-
+    element.classList.add("wrong");
     wrongAttempts++;
 
-    setTimeout(() => element.classList.remove("wrongHighlight"), 500);
+    setTimeout(() => element.classList.remove("wrong"), 500);
 
     if (wrongAttempts >= 2) {
       document.querySelectorAll(".dropzone").forEach(z => {
         if (z.dataset.label === correct) {
-          z.style.boxShadow = "0 0 20px gold";
+          z.classList.add("hint");
         }
       });
     }
   }
 }
 
-/* Reset */
+/* RESET */
 function resetGame() {
   current = 0;
+  document.getElementById("endScreen").style.display = "none";
+  document.getElementById("game").style.display = "block";
   loadGame();
 }
 
-/* Start */
+/* START */
 window.onload = () => {
   setTimeout(() => {
     document.getElementById("logoScreen").style.display = "none";
