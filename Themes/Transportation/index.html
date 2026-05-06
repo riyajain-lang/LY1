@@ -8,7 +8,7 @@
 body {
   font-family: Arial, sans-serif;
   margin: 0;
-  background: #fdf6f9;
+  background: #ffffff;
   height: 100vh;
   overflow: hidden;
 }
@@ -69,6 +69,10 @@ button {
   width: 70%;
   max-height: 60vh;
   object-fit: contain;
+  border: 3px solid #ddd;
+  border-radius: 10px;
+  background: #fff;
+  padding: 10px;
 }
 
 .right {
@@ -81,19 +85,40 @@ button {
 
 .dropzone {
   width: 70%;
-  border: 2px dashed #bbb;
+  height: 22vh; /* equal height for all options */
+  border: 3px dashed #bbb;
   border-radius: 10px;
   text-align: center;
-  padding: 5px;
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
 }
 
 .dropzone img {
-  width: 100%;
-  height: auto;
+  max-height: 70%;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 2px solid #eee;
 }
 
 .hint {
   box-shadow: 0 0 20px gold;
+}
+
+.bounce {
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0% { transform: scale(1); }
+  30% { transform: scale(1.1); }
+  60% { transform: scale(0.95); }
+  100% { transform: scale(1); }
 }
 
 #endScreen {
@@ -138,6 +163,8 @@ button {
 
 <div id="endScreen">
   🎉 You did a great job! 🎉
+  <br><br>
+  <button onclick="resetGame()">Play Again</button>
 </div>
 
 <audio id="rightSound" src="assets/correct.mp3"></audio>
@@ -169,8 +196,21 @@ let wrongAttempts = 0;
 
 function speak(text) {
   if ('speechSynthesis' in window) {
-    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+    const u = new SpeechSynthesisUtterance(text);
+    u.rate = 0.9;
+    u.pitch = 1.1;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
   }
+}
+
+function speakCorrect() {
+  speak('Correct! Great job!');
+}
+
+function speakWrong() {
+  speak('Try again');
+}
 }
 
 function speakQuestion() {
@@ -224,11 +264,38 @@ function handleDrop(e) {
 
   if (selected === correct) {
     rightSound.play();
+    speakCorrect();
+
+    // bounce animation
+    e.currentTarget.classList.add("bounce");
+    setTimeout(() => e.currentTarget.classList.remove("bounce"), 600);
+
     score++;
     updateStars();
     current++;
-    setTimeout(loadGame, 600);
+    setTimeout(loadGame, 700);
   } else {
+    wrongSound.play();
+    speakWrong();
+    wrongAttempts++;
+
+    if (wrongAttempts >= 2) {
+      document.querySelectorAll(".dropzone").forEach(z => {
+        if (z.dataset.label === correct) z.classList.add("hint");
+      });
+    }
+  }
+} else {
+    wrongSound.play();
+    wrongAttempts++;
+
+    if (wrongAttempts >= 2) {
+      document.querySelectorAll(".dropzone").forEach(z => {
+        if (z.dataset.label === correct) z.classList.add("hint");
+      });
+    }
+  }
+} else {
     wrongSound.play();
     wrongAttempts++;
 
@@ -252,6 +319,16 @@ function showConfetti() {
 }
 
 vehicle.ondragstart = e => e.dataTransfer.setData("text", "drag");
+
+function resetGame() {
+  current = 0;
+  score = 0;
+  wrongAttempts = 0;
+  document.getElementById("endScreen").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  updateStars();
+  loadGame();
+}
 
 window.onload = () => {
   setTimeout(() => {
