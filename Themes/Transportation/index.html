@@ -4,11 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transportation Game</title>
+
 <style>
 body {
-  font-family: Arial, sans-serif;
   margin: 0;
-  background: #ffffff;
+  font-family: Arial;
+  background: white;
   height: 100vh;
   overflow: hidden;
 }
@@ -23,137 +24,90 @@ body {
   flex-direction: column;
 }
 
-#game {
-  display: none;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 10px;
-}
+#game { display: none; height: 100%; }
 
 h1 {
   text-align: center;
-  color: #4a6fa5;
   font-size: 5vw;
-  margin: 5px 0;
+  color: #4a6fa5;
 }
 
-button {
-  display: block;
-  margin: auto;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  background: #6c8cd5;
-  color: white;
-}
-
-#stars {
-  text-align: center;
-  font-size: 20px;
-}
-
+/* Layout */
 .container {
   display: flex;
   height: 75%;
 }
 
-.left {
+.left, .right {
   width: 50%;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
+/* Images */
 .vehicle {
   width: 70%;
-  max-height: 60vh;
-  object-fit: contain;
   border: 3px solid #ddd;
   border-radius: 10px;
-  background: #fff;
   padding: 10px;
-}
-
-.right {
-  width: 50%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
 }
 
 .dropzone {
   width: 70%;
-  height: 22vh; /* equal height for all options */
-  border: 3px dashed #bbb;
+  height: 22vh;
+  border: 2px dashed #bbb;
   border-radius: 10px;
-  text-align: center;
-  padding: 10px;
-  background: #fff;
+  margin: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
+  cursor: pointer;
+  transition: transform 0.2s;
 }
 
 .dropzone img {
   max-height: 70%;
-  max-width: 100%;
-  object-fit: contain;
-  border-radius: 8px;
-  border: 2px solid #eee;
 }
 
-.hint {
-  box-shadow: 0 0 20px gold;
-}
-
+/* Effects */
 .bounce {
-  animation: bounce 0.6s ease;
+  animation: bounce 0.5s;
 }
 
 @keyframes bounce {
   0% { transform: scale(1); }
-  30% { transform: scale(1.1); }
-  60% { transform: scale(0.95); }
+  50% { transform: scale(1.1); }
   100% { transform: scale(1); }
 }
 
-#endScreen {
-  display: none;
-  font-size: 30px;
+.correctHighlight {
+  border-color: green;
 }
 
-.confetti {
-  position: fixed;
-  width: 10px;
-  height: 10px;
-  background: red;
-  top: 0;
-  animation: fall 3s linear infinite;
-}
-
-@keyframes fall {
-  to { transform: translateY(100vh); }
+.wrongHighlight {
+  border-color: red;
 }
 </style>
 </head>
+
 <body>
 
+<!-- LOGO -->
 <div id="logoScreen">
   <img src="assets/innovine-logo.png" width="200">
 </div>
 
+<!-- GAME -->
 <div id="game">
   <h1 id="questionText"></h1>
   <button onclick="speakQuestion()">🔊 Hear Again</button>
-  <div id="stars"></div>
 
   <div class="container">
     <div class="left">
-      <img id="vehicle" class="vehicle" draggable="true">
+      <img id="vehicle" class="vehicle">
       <div id="vehicleName"></div>
     </div>
 
@@ -161,6 +115,7 @@ button {
   </div>
 </div>
 
+<!-- END -->
 <div id="endScreen">
   🎉 You did a great job! 🎉
   <br><br>
@@ -191,44 +146,24 @@ const optionsBase = [
 ];
 
 let current = 0;
-let score = 0;
 let wrongAttempts = 0;
 
+/* Voice */
 function speak(text) {
   if ('speechSynthesis' in window) {
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.9;
-    u.pitch = 1.1;
     speechSynthesis.cancel();
-    speechSynthesis.speak(u);
+    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
   }
-}
-
-function speakCorrect() {
-  speak('Correct! Great job!');
-}
-
-function speakWrong() {
-  speak('Try again');
-}
 }
 
 function speakQuestion() {
   speak(`Where does the ${data[current].name} go?`);
 }
 
-function updateStars() {
-  document.getElementById("stars").innerText = "⭐".repeat(score);
-}
-
-function shuffle(arr) {
-  return arr.sort(() => Math.random() - 0.5);
-}
-
+/* Load Game */
 function loadGame() {
   if (current >= data.length) {
     document.getElementById("game").style.display = "none";
-    showConfetti();
     document.getElementById("endScreen").style.display = "flex";
     return;
   }
@@ -236,106 +171,77 @@ function loadGame() {
   wrongAttempts = 0;
 
   const item = data[current];
-  vehicle.src = item.vehicle;
-  vehicleName.innerText = item.name;
-  questionText.innerText = `Where does the ${item.name} go?`;
+
+  document.getElementById("vehicle").src = item.vehicle;
+  document.getElementById("vehicleName").innerText = item.name;
+  document.getElementById("questionText").innerText =
+    `Where does the ${item.name} go?`;
 
   speakQuestion();
 
-  options.innerHTML = "";
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
 
-  shuffle([...optionsBase]).forEach(opt => {
+  optionsBase.sort(() => Math.random() - 0.5).forEach(opt => {
     const div = document.createElement("div");
     div.className = "dropzone";
     div.dataset.label = opt.label;
 
     div.innerHTML = `<img src="${opt.img}"><div>${opt.label}</div>`;
 
-    div.ondragover = e => e.preventDefault();
-    div.ondrop = handleDrop;
+    div.onclick = () => handleTap(div);
 
-    options.appendChild(div);
+    optionsDiv.appendChild(div);
   });
 }
 
-function handleDrop(e) {
-  const selected = e.currentTarget.dataset.label;
+/* Tap logic */
+function handleTap(element) {
+  const selected = element.dataset.label;
   const correct = data[current].correct;
 
   if (selected === correct) {
-    rightSound.play();
-    speakCorrect();
+    document.getElementById("rightSound").play();
+    speak("Correct! Great job!");
 
-    // bounce animation
-    e.currentTarget.classList.add("bounce");
-    setTimeout(() => e.currentTarget.classList.remove("bounce"), 600);
+    element.classList.add("bounce", "correctHighlight");
 
-    score++;
-    updateStars();
     current++;
     setTimeout(loadGame, 700);
+
   } else {
-    wrongSound.play();
-    speakWrong();
+    document.getElementById("wrongSound").play();
+    speak("Try again");
+
+    element.classList.add("wrongHighlight");
+
     wrongAttempts++;
+
+    setTimeout(() => element.classList.remove("wrongHighlight"), 500);
 
     if (wrongAttempts >= 2) {
       document.querySelectorAll(".dropzone").forEach(z => {
-        if (z.dataset.label === correct) z.classList.add("hint");
-      });
-    }
-  }
-} else {
-    wrongSound.play();
-    wrongAttempts++;
-
-    if (wrongAttempts >= 2) {
-      document.querySelectorAll(".dropzone").forEach(z => {
-        if (z.dataset.label === correct) z.classList.add("hint");
-      });
-    }
-  }
-} else {
-    wrongSound.play();
-    wrongAttempts++;
-
-    if (wrongAttempts >= 2) {
-      document.querySelectorAll(".dropzone").forEach(z => {
-        if (z.dataset.label === correct) z.classList.add("hint");
+        if (z.dataset.label === correct) {
+          z.style.boxShadow = "0 0 20px gold";
+        }
       });
     }
   }
 }
 
-function showConfetti() {
-  for (let i = 0; i < 40; i++) {
-    const c = document.createElement("div");
-    c.className = "confetti";
-    c.style.left = Math.random() * 100 + "vw";
-    c.style.background = `hsl(${Math.random()*360},70%,60%)`;
-    c.style.animationDuration = (2 + Math.random()*2) + "s";
-    document.body.appendChild(c);
-  }
-}
-
-vehicle.ondragstart = e => e.dataTransfer.setData("text", "drag");
-
+/* Reset */
 function resetGame() {
   current = 0;
-  score = 0;
-  wrongAttempts = 0;
-  document.getElementById("endScreen").style.display = "none";
-  document.getElementById("game").style.display = "block";
-  updateStars();
   loadGame();
 }
 
+/* Start */
 window.onload = () => {
   setTimeout(() => {
-    logoScreen.style.display = "none";
-    game.style.display = "block";
+    document.getElementById("logoScreen").style.display = "none";
+    document.getElementById("game").style.display = "block";
     loadGame();
-  }, 5000);
+  }, 3000);
 };
 </script>
 
