@@ -1,116 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Transportation Game</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f7fb;
-      text-align: center;
-      margin: 0;
-    }
+<meta charset="UTF-8">
+<title>Transportation Game</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #fdf6f9;
+  text-align: center;
+  margin: 0;
+}
 
-    #logoScreen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #ffffff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
+#logoScreen {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
-    #logoScreen img { width: 260px; }
+#game { display: none; padding: 20px; }
 
-    #game { display: none; padding: 20px; }
+h1 {
+  color: #4a6fa5;
+  font-size: 34px;
+}
 
-    h1 { color: #4a6fa5; }
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+}
 
-    .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 30px;
-    }
+/* LEFT SIDE */
+.left {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
-    .left, .right {
-      width: 45%;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
+.vehicle {
+  width: 40%;
+  max-width: 350px;
+}
 
-    .vehicle { width: 220px; cursor: grab; }
+#vehicleName {
+  font-size: 20px;
+  margin-top: 10px;
+}
 
-    .dropzone {
-      border: 3px dashed #bbb;
-      border-radius: 10px;
-      padding: 10px;
-      background: #ffffff;
-      width: 160px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+/* RIGHT SIDE */
+.right {
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+}
 
-    .dropzone img { width: 150px; }
+.dropzone {
+  width: 30%;
+  min-width: 200px;
+  border: 3px dashed #bbb;
+  border-radius: 12px;
+  padding: 10px;
+  background: white;
+}
 
-    .label { margin-top: 8px; font-size: 16px; }
+.dropzone img {
+  width: 100%;
+}
 
-    #controls { margin-top: 10px; }
+.label {
+  margin-top: 6px;
+  font-size: 18px;
+}
 
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 8px;
-      background: #6c8cd5;
-      color: white;
-      cursor: pointer;
-    }
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #6c8cd5;
+  color: white;
+  font-size: 14px;
+}
 
-    #stars { margin-top: 10px; font-size: 24px; color: #f5b301; }
+#stars {
+  font-size: 24px;
+  color: gold;
+  margin: 10px;
+}
 
-    .celebrate {
-      animation: fade 0.8s ease-in-out;
-    }
+.hint {
+  box-shadow: 0 0 25px 12px rgba(255, 223, 100, 0.8);
+}
 
-    @keyframes fade {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-  </style>
+#endScreen {
+  display: none;
+  font-size: 36px;
+  margin-top: 100px;
+  color: #4a6fa5;
+}
+</style>
 </head>
 <body>
 
 <div id="logoScreen">
-  <img src="assets/innovine-logo.png">
+  <img src="assets/innovine-logo.png" width="260">
 </div>
 
 <div id="game">
-  <h1 id="questionText">Match the Transport!</h1>
-
-  <div id="controls">
-    <button onclick="speakQuestion()">🔊 Hear Question Again</button>
-  </div>
-
+  <h1 id="questionText"></h1>
+  <button onclick="speakQuestion()">🔊 Hear Question Again</button>
   <div id="stars"></div>
 
   <div class="container">
     <div class="left">
       <img id="vehicle" class="vehicle" draggable="true">
-      <div class="label" id="vehicleName"></div>
+      <div id="vehicleName"></div>
     </div>
 
     <div class="right" id="options"></div>
   </div>
 </div>
+
+<div id="endScreen">🎉 You did a great job! 🎉</div>
 
 <audio id="rightSound" src="assets/correct.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
@@ -125,7 +143,8 @@ const data = [
   { vehicle: "assets/Helicopter.png", name: "Helicopter", correct: "Sky" },
   { vehicle: "assets/Hotairballoon.png", name: "Hot Air Balloon", correct: "Sky" },
   { vehicle: "assets/boat.png", name: "Boat", correct: "Sea" },
-  { vehicle: "assets/Cruises.png", name: "Cruise Ship", correct: "Sea" }
+  { vehicle: "assets/Cruises.png", name: "Cruise Ship", correct: "Sea" },
+  { vehicle: "assets/Motorcycle.png", name: "Motorcycle", correct: "Road" }
 ];
 
 const optionsBase = [
@@ -136,29 +155,36 @@ const optionsBase = [
 
 let current = 0;
 let score = 0;
-
-function shuffle(arr) { return arr.sort(() => Math.random() - 0.5); }
+let wrongAttempts = 0;
 
 function speak(text) {
-  const utterance = new SpeechSynthesisUtterance(text);
-  speechSynthesis.speak(utterance);
+  speechSynthesis.speak(new SpeechSynthesisUtterance(text));
 }
 
 function speakQuestion() {
-  const item = data[current];
-  speak(`Where does the ${item.name} go?`);
+  speak(`Where does the ${data[current].name} go?`);
 }
 
 function updateStars() {
   document.getElementById("stars").innerText = "⭐".repeat(score);
 }
 
-function loadGame() {
-  const item = data[current];
+function shuffle(arr) {
+  return arr.sort(() => Math.random() - 0.5);
+}
 
+function loadGame() {
+  if (current >= data.length) {
+    document.getElementById("game").style.display = "none";
+    document.getElementById("endScreen").style.display = "block";
+    return;
+  }
+
+  wrongAttempts = 0;
+
+  const item = data[current];
   document.getElementById("vehicle").src = item.vehicle;
   document.getElementById("vehicleName").innerText = item.name;
-
   document.getElementById("questionText").innerText = `Where does the ${item.name} go?`;
 
   speakQuestion();
@@ -171,10 +197,7 @@ function loadGame() {
     div.className = "dropzone";
     div.dataset.label = opt.label;
 
-    div.innerHTML = `
-      <img src="${opt.img}">
-      <div class="label">${opt.label}</div>
-    `;
+    div.innerHTML = `<img src="${opt.img}"><div class='label'>${opt.label}</div>`;
 
     div.addEventListener("dragover", e => e.preventDefault());
     div.addEventListener("drop", handleDrop);
@@ -189,17 +212,21 @@ function handleDrop(e) {
 
   if (selected === correct) {
     document.getElementById("rightSound").play();
-
     score++;
     updateStars();
-
-    document.body.classList.add("celebrate");
-    setTimeout(() => document.body.classList.remove("celebrate"), 800);
-
-    current = (current + 1) % data.length;
-    setTimeout(loadGame, 1000);
+    current++;
+    setTimeout(loadGame, 800);
   } else {
     document.getElementById("wrongSound").play();
+    wrongAttempts++;
+
+    if (wrongAttempts >= 2) {
+      document.querySelectorAll(".dropzone").forEach(zone => {
+        if (zone.dataset.label === correct) {
+          zone.classList.add("hint");
+        }
+      });
+    }
   }
 }
 
