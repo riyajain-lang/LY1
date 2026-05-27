@@ -3,145 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>In and Out</title>
+<title>In and Out Game</title>
 <style>
-  * {box-sizing: border-box; margin:0; padding:0; font-family: 'Comic Sans MS', cursive, sans-serif;}
-  body, html {height: 100%; display:flex; justify-content:center; align-items:center; background:#a2e3f7;}
-  .game-container {
-    position: relative; width: 95%; max-width: 500px; background: linear-gradient(180deg, #fffbf0, #ffe6b3);
-    border-radius: 20px; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.2); text-align: center;
+  body {
+    margin: 0;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    background: url('assets/game-background.png') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
   }
-  h1 {color: #ff3399; margin-bottom: 15px; font-size:1.8em;}
-  .score {position:absolute; top:15px; right:15px; background:#fff6c2; padding:5px 10px; border-radius:10px; font-weight:bold;}
-  .question {background:#fff6c2; padding:10px 15px; margin: 15px 0; border-radius:10px; font-size:1.1em;}
-  .choices {display:flex; justify-content:space-around; margin-top:10px;}
-  .choice {
-    flex:1; margin:0 5px; padding:15px 0; border-radius:10px; background:#e8f1f4; border:2px solid #0a2e3d;
-    cursor:pointer; font-weight:bold; transition: transform 0.2s;
+  #gameContainer {
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    background: rgba(255,255,200,0.95);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    position: relative;
   }
-  .choice:hover {transform: scale(1.05);}
-  .choice.correct {border-color: #4caf50; background: #c8f7c5;}
-  .choice.wrong {border-color: #f44336; background: #f7c5c5;}
-  .image-box {margin:20px 0; padding:20px; border-radius:15px; background:#fff; display:flex; justify-content:center; align-items:center; height:150px; position:relative;}
-  .image-box img {max-height:100%; max-width:100%; border-radius:15px;}
-  .hidden {display:none;}
+  #scoreBoard {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: #fff7cc;
+    border-radius: 10px;
+    padding: 5px 10px;
+    font-weight: bold;
+  }
+  #questionBox {
+    background: #fff7cc;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 1.1em;
+  }
+  .buttonContainer {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+  }
+  button {
+    padding: 10px 25px;
+    font-size: 1em;
+    border-radius: 15px;
+    border: 2px solid #333;
+    cursor: pointer;
+    background: #e0f0f8;
+  }
+  button:hover {
+    background: #c0e0f8;
+  }
+  #itemImage {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    margin-top: 10px;
+    border-radius: 15px;
+  }
+  #logoSlide {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  #logoSlide img {
+    width: 200px;
+  }
+  #finalSlide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  #finalSlide h2 {
+    color: #ff3399;
+  }
+  #playAgainBtn {
+    padding: 10px 20px;
+    font-size: 1em;
+    margin-top: 15px;
+    border-radius: 15px;
+    border: 2px solid #333;
+    cursor: pointer;
+    background: #e0f0f8;
+  }
   .confetti {
-    position:fixed; width:10px; height:10px; background:red; top:0; animation:fall 3s linear forwards; opacity:0.8;
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    top: 0;
+    background-color: red;
+    z-index: 1000;
   }
-  @keyframes fall {0%{transform: translateY(0);} 100%{transform: translateY(100vh); opacity:0;}}
-  button {margin-top: 15px; padding:10px 20px; font-size:1em; border:none; border-radius:10px; background:#ff3399; color:white; cursor:pointer;}
 </style>
 </head>
 <body>
-
-<div class="game-container">
-  <h1>In and Out</h1>
-  <div class="score">★ 0/5 ✓ 0</div>
-  <div class="question">Where is the Fruit?</div>
-  <div class="choices">
-    <div class="choice" data-value="in">In</div>
-    <div class="choice" data-value="out">Out</div>
-  </div>
-  <div class="image-box">
-    <img src="assets/fruit-in.png" alt="Fruit" id="game-image">
-  </div>
-  <button id="play-again" class="hidden">Play Again</button>
+<div id="logoSlide">
+  <img src="assets/innovine-logo.png" alt="Logo">
 </div>
 
-<audio id="correct-sound" src="assets/correct.mp3"></audio>
-<audio id="wrong-sound" src="assets/wrong.mp3"></audio>
-<audio id="clap-sound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<div id="gameContainer">
+  <div id="scoreBoard">★ 0/5 ✓ 0</div>
+  <div id="questionBox"></div>
+  <div class="buttonContainer">
+    <button id="inBtn">In</button>
+    <button id="outBtn">Out</button>
+  </div>
+  <img id="itemImage" src="" alt="Item">
+</div>
+
+<div id="finalSlide">
+  <h2>Good Job!</h2>
+  <p>🎉 You completed all questions 🎉</p>
+  <button id="playAgainBtn">Play Again</button>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
 const questions = [
-  {img:"assets/fruit-in.png", answer:"in", question:"Where is the Fruit?"},
-  {img:"assets/lion-in.png", answer:"in", question:"Where is the Lion?"},
-  {img:"assets/parrot-out.png", answer:"out", question:"Where is the Parrot?"},
-  {img:"assets/cat-out.png", answer:"out", question:"Where is the Cat?"},
-  {img:"assets/dog-in.png", answer:"in", question:"Where is the Dog?"}
+  {img:'assets/fruit-in.png', ans:'in', text:'Where is the Fruit?'},
+  {img:'assets/lion-in.png', ans:'in', text:'Where is the Lion?'},
+  {img:'assets/parrot-out.png', ans:'out', text:'Where is the Parrot?'},
+  {img:'assets/cat-out.png', ans:'out', text:'Where is the Cat?'},
+  {img:'assets/dog-in.png', ans:'in', text:'Where is the Dog?'}
 ];
 
 let current = 0, score = 0, attempts = 0;
 
-const questionEl = document.querySelector(".question");
-const imageEl = document.getElementById("game-image");
-const choices = document.querySelectorAll(".choice");
-const scoreEl = document.querySelector(".score");
-const playAgainBtn = document.getElementById("play-again");
-const correctSound = document.getElementById("correct-sound");
-const wrongSound = document.getElementById("wrong-sound");
-const clapSound = document.getElementById("clap-sound");
+const logoSlide = document.getElementById('logoSlide');
+const gameContainer = document.getElementById('gameContainer');
+const finalSlide = document.getElementById('finalSlide');
+const questionBox = document.getElementById('questionBox');
+const itemImage = document.getElementById('itemImage');
+const inBtn = document.getElementById('inBtn');
+const outBtn = document.getElementById('outBtn');
+const scoreBoard = document.getElementById('scoreBoard');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const clapSound = document.getElementById('clapSound');
+const playAgainBtn = document.getElementById('playAgainBtn');
 
-function loadQuestion() {
+function showQuestion() {
+  if(current >= questions.length){
+    gameContainer.style.display = 'none';
+    finalSlide.style.display = 'flex';
+    launchConfetti();
+    clapSound.play();
+    return;
+  }
+  const q = questions[current];
+  questionBox.textContent = q.text;
+  itemImage.src = q.img;
   attempts = 0;
-  questionEl.textContent = questions[current].question;
-  imageEl.src = questions[current].img;
-  choices.forEach(c => { c.classList.remove("correct","wrong"); c.style.pointerEvents="auto"; });
+  scoreBoard.textContent = `★ ${current}/${questions.length} ✓ ${score}`;
 }
 
-choices.forEach(c => {
-  c.addEventListener("click", ()=>{
-    const selected = c.dataset.value;
-    if(selected === questions[current].answer){
-      c.classList.add("correct");
-      correctSound.play();
-      score++;
-      scoreEl.textContent = `★ ${current+1}/5 ✓ ${score}`;
-      setTimeout(nextQuestion,500);
-    } else {
-      c.classList.add("wrong");
-      wrongSound.play();
-      attempts++;
-      if(attempts>=2){
-        choices.forEach(ch => {
-          if(ch.dataset.value === questions[current].answer) ch.classList.add("correct");
-        });
-        setTimeout(nextQuestion,1000);
-      }
-    }
-  });
-});
-
-function nextQuestion(){
-  current++;
-  if(current < questions.length){
-    loadQuestion();
+function checkAnswer(ans) {
+  const q = questions[current];
+  if(ans === q.ans){
+    score++;
+    correctSound.play();
+    current++;
+    showQuestion();
   } else {
-    showEndScreen();
+    attempts++;
+    wrongSound.play();
+    if(attempts>=2){
+      // auto show correct
+      current++;
+      showQuestion();
+    }
   }
 }
 
-function showEndScreen(){
-  questionEl.textContent = "Good Job!";
-  document.querySelector(".choices").classList.add("hidden");
-  imageEl.classList.add("hidden");
-  playAgainBtn.classList.remove("hidden");
-  launchConfetti();
-  clapSound.play();
-}
-
-playAgainBtn.addEventListener("click", ()=>{
-  current = 0; score=0;
-  scoreEl.textContent = `★ 0/5 ✓ 0`;
-  document.querySelector(".choices").classList.remove("hidden");
-  imageEl.classList.remove("hidden");
-  playAgainBtn.classList.add("hidden");
-  loadQuestion();
+inBtn.addEventListener('click', ()=>checkAnswer('in'));
+outBtn.addEventListener('click', ()=>checkAnswer('out'));
+playAgainBtn.addEventListener('click', ()=>{
+  current=0; score=0; attempts=0;
+  finalSlide.style.display='none';
+  gameContainer.style.display='block';
+  showQuestion();
 });
 
 function launchConfetti(){
+  const colors = ["#ff4fb2","#ffe600","#36a7f0","#4dff4d","#ff8a00"];
   for(let i=0;i<100;i++){
-    const confetti = document.createElement("div");
-    confetti.classList.add("confetti");
-    confetti.style.left = Math.random()*100+"vw";
-    confetti.style.background = `hsl(${Math.random()*360}, 70%, 50%)`;
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random()*100+'vw';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+    confetti.style.animation = `fall ${Math.random()*2+1}s linear`;
     document.body.appendChild(confetti);
-    setTimeout(()=>{ confetti.remove(); },3000);
+    setTimeout(()=>confetti.remove(),4000);
   }
 }
 
-loadQuestion();
+setTimeout(()=>{
+  logoSlide.style.display='none';
+  showQuestion();
+},2000);
 </script>
 
+<style>
+@keyframes fall {
+  0% {top:0;}
+  100% {top:100vh;}
+}
+</style>
 </body>
 </html>
