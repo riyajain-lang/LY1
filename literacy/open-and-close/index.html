@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Open & Close Game</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Comic Sans MS', sans-serif;
+    background: linear-gradient(to bottom, #a0e0ff, #d4f8c4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    background: url('assets/game-background.png') no-repeat center/cover;
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+  .logo-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  .logo-banner img {
+    width: 180px;
+  }
+  .banner-text {
+    font-size: 36px;
+    font-weight: bold;
+    color: #34a853;
+    background: #fff3b0;
+    padding: 10px 20px;
+    border-radius: 15px;
+    text-shadow: 1px 1px 2px #0003;
+  }
+  .score-panel {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.9);
+    padding: 10px 20px;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .question-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #034ea2;
+    background: linear-gradient(135deg, #fff59d, #ffe082);
+    padding: 20px;
+    border-radius: 20px;
+    border: 4px solid #034ea2;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .game-area {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .character {
+    width: 150px;
+    height: auto;
+  }
+  .question-image {
+    width: 300px;
+    height: auto;
+    border-radius: 15px;
+    border: 3px solid #034ea2;
+  }
+  .options {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 20px;
+  }
+  .option-btn {
+    font-size: 28px;
+    padding: 20px 40px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #fff;
+    transition: all 0.3s ease;
+  }
+  .option-btn.open {
+    background: linear-gradient(to bottom, #4caf50, #81c784);
+  }
+  .option-btn.close {
+    background: linear-gradient(to bottom, #9c27b0, #ba68c8);
+  }
+  .option-btn:hover {
+    transform: scale(1.1);
+  }
+  #end-slide {
+    display: none;
+    text-align: center;
+    font-size: 40px;
+    color: #e91e63;
+  }
+  #play-again {
+    margin-top: 15px;
+    font-size: 28px;
+    padding: 15px 30px;
+    border-radius: 20px;
+    background: #034ea2;
+    color: #fff;
+    cursor: pointer;
+  }
+  .confetti {
+    width: 12px;
+    height: 12px;
+    position: absolute;
+    z-index: 1000;
+    animation: fall 3s linear forwards;
+    border-radius: 3px;
+  }
+  @keyframes fall {
+    0% {transform: translateY(0) rotate(0deg);}
+    100% {transform: translateY(400px) rotate(360deg); opacity: 0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Logo and Banner -->
+  <div class="logo-banner">
+    <img src="assets/innovine-logo.png" alt="Logo">
+    <div class="banner-text">Open & Close - Let's Learn!</div>
+  </div>
+
+  <!-- Score Panel -->
+  <div class="score-panel" id="score">★ 0/5 ✓ 0</div>
+
+  <!-- Question Box -->
+  <div class="question-box" id="question">Is it open or closed?</div>
+
+  <!-- Game Area -->
+  <div class="game-area">
+    <img src="assets/character-left.png" alt="left character" class="character">
+    <img id="question-img" src="assets/open-box.png" alt="question" class="question-image">
+    <img src="assets/character-right.png" alt="right character" class="character">
+  </div>
+
+  <!-- Options -->
+  <div class="options">
+    <button class="option-btn open" id="open-btn">Open</button>
+    <button class="option-btn close" id="close-btn">Close</button>
+  </div>
+
+  <!-- End Slide -->
+  <div id="end-slide">
+    🎉 You Completed All Questions! 🎉
+    <br>
+    <button id="play-again">Play Again</button>
+  </div>
+</div>
+
+<audio id="correct-sound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="wrong-sound" src="assets/wrong.mp3"></audio>
+
+<script>
+const questions = [
+  {img: "assets/open-box.png", answer: "Open", text: "Is the box open or closed?"},
+  {img: "assets/closed-door.png", answer: "Close", text: "Is the door open or closed?"},
+  {img: "assets/open-jar.png", answer: "Open", text: "Is the jar open or closed?"},
+  {img: "assets/closed-chest.png", answer: "Close", text: "Is the chest open or closed?"},
+  {img: "assets/open-window.png", answer: "Open", text: "Is the window open or closed?"}
+];
+
+let current = 0;
+let score = 0;
+
+const questionBox = document.getElementById("question");
+const questionImg = document.getElementById("question-img");
+const scoreBox = document.getElementById("score");
+const openBtn = document.getElementById("open-btn");
+const closeBtn = document.getElementById("close-btn");
+const endSlide = document.getElementById("end-slide");
+const playAgainBtn = document.getElementById("play-again");
+const correctSound = document.getElementById("correct-sound");
+const wrongSound = document.getElementById("wrong-sound");
+
+function loadQuestion() {
+  if(current >= questions.length){
+    showEndSlide();
+    return;
+  }
+  const q = questions[current];
+  questionBox.textContent = q.text;
+  questionImg.src = q.img;
+  scoreBox.textContent = `★ ${current}/${questions.length} ✓ ${score}`;
+}
+
+function playConfetti(){
+  const imgRect = questionImg.getBoundingClientRect();
+  for(let i=0;i<50;i++){
+    const confetti = document.createElement('div');
+    confetti.classList.add('confetti');
+    confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+    confetti.style.left = (imgRect.left + imgRect.width/2 + (Math.random()*150 - 75)) + "px";
+    confetti.style.top = imgRect.top + "px";
+    document.body.appendChild(confetti);
+    setTimeout(()=>{ confetti.remove() },3000);
+  }
+}
+
+function handleAnswer(ans){
+  const correct = questions[current].answer;
+  if(ans === correct){
+    correctSound.currentTime = 0;
+    correctSound.play();
+    score++;
+    playConfetti();
+    current++;
+    setTimeout(loadQuestion, 500);
+  } else {
+    wrongSound.currentTime = 0;
+    wrongSound.play();
+    const btn = ans === "Open" ? openBtn : closeBtn;
+    btn.style.transform = "translateX(-10px)";
+    setTimeout(()=>{btn.style.transform="translateX(0)";}, 150);
+  }
+}
+
+function showEndSlide(){
+  endSlide.style.display = "block";
+}
+
+openBtn.onclick = () => handleAnswer("Open");
+closeBtn.onclick = () => handleAnswer("Close");
+playAgainBtn.onclick = () => {current=0; score=0; endSlide.style.display="none"; loadQuestion();}
+window.onload = loadQuestion;
+</script>
+
+</body>
+</html>
