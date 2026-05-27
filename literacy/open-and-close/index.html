@@ -17,13 +17,13 @@
   .container {
     width: 90%;
     max-width: 1200px;
-    background: url('assets/game-background.png') no-repeat center/cover;
     border-radius: 20px;
     padding: 20px;
     position: relative;
     display: flex;
     flex-direction: column;
     box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    background: url('assets/game-background.png') no-repeat center/cover; /* user background */
   }
   .logo-banner {
     display: flex;
@@ -201,7 +201,7 @@ const wrongSound = document.getElementById("wrong-sound");
 
 function loadQuestion() {
   if(current >= questions.length){
-    showEndSlide();
+    endSlide.style.display = "block";
     return;
   }
   const q = questions[current];
@@ -239,10 +239,6 @@ function handleAnswer(ans){
     btn.style.transform = "translateX(-10px)";
     setTimeout(()=>{btn.style.transform="translateX(0)";}, 150);
   }
-}
-
-function showEndSlide(){
-  endSlide.style.display = "block";
 }
 
 openBtn.onclick = () => handleAnswer("Open");
