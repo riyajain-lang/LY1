@@ -5,121 +5,114 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>In and Out Game</title>
 <style>
-  body {
-    margin: 0;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background: url('assets/game-background.png') no-repeat center center;
-    background-size: cover;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  #gameContainer {
-    width: 90%;
-    max-width: 420px;
-    text-align: center;
-    background: rgba(255,255,200,0.95);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    position: relative;
-  }
-  #scoreBoard {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: #fff7cc;
-    border-radius: 10px;
-    padding: 5px 10px;
-    font-weight: bold;
-  }
-  #questionBox {
-    background: #fff7cc;
-    border-radius: 15px;
-    padding: 15px;
-    margin: 10px 0;
-    font-size: 1.1em;
-  }
-  .buttonContainer {
-    display: flex;
-    justify-content: space-around;
-    margin: 10px 0;
-  }
-  button {
-    padding: 10px 25px;
-    font-size: 1em;
-    border-radius: 15px;
-    border: 2px solid #333;
-    cursor: pointer;
-    background: #e0f0f8;
-  }
-  button:hover {
-    background: #c0e0f8;
-  }
-  #itemImage {
-    width: 150px;
-    height: 150px;
-    object-fit: contain;
-    margin-top: 10px;
-    border-radius: 15px;
-  }
-  #logoSlide {
-    display: none;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
-  #logoSlide img {
-    width: 200px;
-  }
-  #finalSlide {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  #finalSlide h2 {
-    color: #ff3399;
-  }
-  #playAgainBtn {
-    padding: 10px 20px;
-    font-size: 1em;
-    margin-top: 15px;
-    border-radius: 15px;
-    border: 2px solid #333;
-    cursor: pointer;
-    background: #e0f0f8;
-  }
-  .confetti {
-    width: 10px;
-    height: 10px;
-    position: fixed;
-    top: 0;
-    background-color: red;
-    z-index: 1000;
-  }
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        background-color: #C2EBF5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    #gameContainer {
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        position: relative;
+    }
+    #logoSlide, #gameSlide, #endSlide {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #logoSlide.active, #gameSlide.active, #endSlide.active {
+        display: flex;
+    }
+    img.logo {
+        width: 120px;
+        margin-bottom: 20px;
+    }
+    .questionBox {
+        background-color: #FFFF99; /* Canary */
+        color: #0F52BA; /* Sapphire */
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+    }
+    .options {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 15px;
+    }
+    .optionBtn {
+        padding: 10px 25px;
+        border-radius: 10px;
+        border: 2px solid #0F52BA;
+        background-color: #FFFF99;
+        cursor: pointer;
+        font-size: 1.1rem;
+        transition: transform 0.1s;
+    }
+    .optionBtn:hover {
+        transform: scale(1.05);
+    }
+    #questionImg {
+        max-width: 100%;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+    .scoreBox {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #FFFF99;
+        padding: 5px 10px;
+        border-radius: 10px;
+    }
+    #endSlide h1 {
+        color: #0F52BA;
+        font-size: 1.5rem;
+    }
+    .confetti {
+        width: 10px;
+        height: 10px;
+        position: absolute;
+        border-radius: 50%;
+        animation: confettiFall 4s linear forwards;
+    }
+    @keyframes confettiFall {
+        0% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(600px); opacity: 0; }
+    }
 </style>
 </head>
 <body>
-<div id="logoSlide">
-  <img src="assets/innovine-logo.png" alt="Logo">
-</div>
 
 <div id="gameContainer">
-  <div id="scoreBoard">★ 0/5 ✓ 0</div>
-  <div id="questionBox"></div>
-  <div class="buttonContainer">
-    <button id="inBtn">In</button>
-    <button id="outBtn">Out</button>
-  </div>
-  <img id="itemImage" src="" alt="Item">
-</div>
+    <!-- Logo Slide -->
+    <div id="logoSlide" class="active">
+        <img src="assets/innovine-logo.png" alt="Logo" class="logo">
+    </div>
 
-<div id="finalSlide">
-  <h2>Good Job!</h2>
-  <p>🎉 You completed all questions 🎉</p>
-  <button id="playAgainBtn">Play Again</button>
+    <!-- Game Slide -->
+    <div id="gameSlide">
+        <div class="scoreBox" id="scoreBox">★ 0/5 ✓ 0</div>
+        <div class="questionBox" id="questionText">Question</div>
+        <div class="options">
+            <button class="optionBtn" id="inBtn">In</button>
+            <button class="optionBtn" id="outBtn">Out</button>
+        </div>
+        <img src="" id="questionImg" alt="Question Image">
+    </div>
+
+    <!-- End Slide -->
+    <div id="endSlide">
+        <h1>Good Job! 🎉</h1>
+        <button class="optionBtn" onclick="restartGame()">Play Again</button>
+    </div>
 </div>
 
 <audio id="correctSound" src="assets/correct.mp3"></audio>
@@ -128,94 +121,107 @@
 
 <script>
 const questions = [
-  {img:'assets/fruit-in.png', ans:'in', text:'Where is the Fruit?'},
-  {img:'assets/lion-in.png', ans:'in', text:'Where is the Lion?'},
-  {img:'assets/parrot-out.png', ans:'out', text:'Where is the Parrot?'},
-  {img:'assets/cat-out.png', ans:'out', text:'Where is the Cat?'},
-  {img:'assets/dog-in.png', ans:'in', text:'Where is the Dog?'}
+    {img: "assets/fruit-in.png", answer: "in", text: "Where is the Fruit?"},
+    {img: "assets/lion-in.png", answer: "in", text: "Where is the Lion?"},
+    {img: "assets/parrot-out.png", answer: "out", text: "Where is the Parrot?"},
+    {img: "assets/cat-out.png", answer: "out", text: "Where is the Cat?"},
+    {img: "assets/dog-in.png", answer: "in", text: "Where is the Dog?"}
 ];
 
-let current = 0, score = 0, attempts = 0;
+let currentIndex = 0;
+let correctCount = 0;
+let attempts = 0;
 
-const logoSlide = document.getElementById('logoSlide');
-const gameContainer = document.getElementById('gameContainer');
-const finalSlide = document.getElementById('finalSlide');
-const questionBox = document.getElementById('questionBox');
-const itemImage = document.getElementById('itemImage');
-const inBtn = document.getElementById('inBtn');
-const outBtn = document.getElementById('outBtn');
-const scoreBoard = document.getElementById('scoreBoard');
-const correctSound = document.getElementById('correctSound');
-const wrongSound = document.getElementById('wrongSound');
-const clapSound = document.getElementById('clapSound');
-const playAgainBtn = document.getElementById('playAgainBtn');
+const logoSlide = document.getElementById("logoSlide");
+const gameSlide = document.getElementById("gameSlide");
+const endSlide = document.getElementById("endSlide");
+const questionText = document.getElementById("questionText");
+const questionImg = document.getElementById("questionImg");
+const inBtn = document.getElementById("inBtn");
+const outBtn = document.getElementById("outBtn");
+const scoreBox = document.getElementById("scoreBox");
 
-function showQuestion() {
-  if(current >= questions.length){
-    gameContainer.style.display = 'none';
-    finalSlide.style.display = 'flex';
-    launchConfetti();
-    clapSound.play();
-    return;
-  }
-  const q = questions[current];
-  questionBox.textContent = q.text;
-  itemImage.src = q.img;
-  attempts = 0;
-  scoreBoard.textContent = `★ ${current}/${questions.length} ✓ ${score}`;
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+const clapSound = document.getElementById("clapSound");
+
+// Start game after 2 sec logo
+setTimeout(() => {
+    logoSlide.classList.remove("active");
+    gameSlide.classList.add("active");
+    loadQuestion();
+}, 2000);
+
+function loadQuestion() {
+    const q = questions[currentIndex];
+    questionText.textContent = q.text;
+    questionImg.src = q.img;
+    attempts = 0;
+    scoreBox.textContent = `★ ${currentIndex}/${questions.length} ✓ ${correctCount}`;
 }
 
-function checkAnswer(ans) {
-  const q = questions[current];
-  if(ans === q.ans){
-    score++;
-    correctSound.play();
-    current++;
-    showQuestion();
-  } else {
-    attempts++;
-    wrongSound.play();
-    if(attempts>=2){
-      // auto show correct
-      current++;
-      showQuestion();
+function playSound(sound) {
+    sound.currentTime = 0;
+    sound.play().catch(e=>{});
+}
+
+function launchConfetti() {
+    const colors = ["#FF52BA","#0F52BA","#FFFF99","#E23260","#F2678E"];
+    for(let i=0;i<100;i++){
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random()*100 + "vw";
+        confetti.style.background = colors[Math.floor(Math.random()*colors.length)];
+        confetti.style.animationDelay = Math.random()*1.5 + "s";
+        document.body.appendChild(confetti);
+        setTimeout(()=>{confetti.remove()}, 4000);
     }
-  }
 }
 
-inBtn.addEventListener('click', ()=>checkAnswer('in'));
-outBtn.addEventListener('click', ()=>checkAnswer('out'));
-playAgainBtn.addEventListener('click', ()=>{
-  current=0; score=0; attempts=0;
-  finalSlide.style.display='none';
-  gameContainer.style.display='block';
-  showQuestion();
-});
-
-function launchConfetti(){
-  const colors = ["#ff4fb2","#ffe600","#36a7f0","#4dff4d","#ff8a00"];
-  for(let i=0;i<100;i++){
-    const confetti = document.createElement('div');
-    confetti.className = 'confetti';
-    confetti.style.left = Math.random()*100+'vw';
-    confetti.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-    confetti.style.animation = `fall ${Math.random()*2+1}s linear`;
-    document.body.appendChild(confetti);
-    setTimeout(()=>confetti.remove(),4000);
-  }
+function checkAnswer(answer) {
+    const q = questions[currentIndex];
+    if(answer === q.answer){
+        correctCount++;
+        playSound(correctSound);
+        launchConfetti();
+        currentIndex++;
+        if(currentIndex < questions.length){
+            loadQuestion();
+        } else {
+            endGame();
+        }
+    } else {
+        attempts++;
+        playSound(wrongSound);
+        if(attempts >= 2){
+            alert(`Correct answer is "${q.answer.toUpperCase()}"`);
+            currentIndex++;
+            if(currentIndex < questions.length){
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+    }
 }
 
-setTimeout(()=>{
-  logoSlide.style.display='none';
-  showQuestion();
-},2000);
+inBtn.addEventListener("click", ()=> checkAnswer("in"));
+outBtn.addEventListener("click", ()=> checkAnswer("out"));
+
+function endGame() {
+    gameSlide.classList.remove("active");
+    endSlide.classList.add("active");
+    playSound(clapSound);
+}
+
+function restartGame() {
+    currentIndex = 0;
+    correctCount = 0;
+    endSlide.classList.remove("active");
+    gameSlide.classList.add("active");
+    loadQuestion();
+}
 </script>
 
-<style>
-@keyframes fall {
-  0% {top:0;}
-  100% {top:100vh;}
-}
-</style>
 </body>
 </html>
