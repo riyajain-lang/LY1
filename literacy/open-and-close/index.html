@@ -3,249 +3,175 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Open & Close Game</title>
+<title>Open & Close - Let's Learn!</title>
 <style>
-  body {
-    margin: 0;
-    font-family: 'Comic Sans MS', sans-serif;
-    background: linear-gradient(to bottom, #a0e0ff, #d4f8c4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-  }
-  .container {
-    width: 90%;
-    max-width: 1200px;
-    border-radius: 20px;
-    padding: 20px;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-    background: url('assets/game-background.png') no-repeat center/cover; /* user background */
-  }
-  .logo-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-  }
-  .logo-banner img {
-    width: 180px;
-  }
-  .banner-text {
-    font-size: 36px;
-    font-weight: bold;
-    color: #34a853;
-    background: #fff3b0;
-    padding: 10px 20px;
-    border-radius: 15px;
-    text-shadow: 1px 1px 2px #0003;
-  }
-  .score-panel {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255,255,255,0.9);
-    padding: 10px 20px;
-    border-radius: 15px;
-    font-weight: bold;
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  .question-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    color: #034ea2;
-    background: linear-gradient(135deg, #fff59d, #ffe082);
-    padding: 20px;
-    border-radius: 20px;
-    border: 4px solid #034ea2;
-    margin: 20px 0;
-    text-align: center;
-  }
-  .game-area {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .character {
-    width: 150px;
-    height: auto;
-  }
-  .question-image {
-    width: 300px;
-    height: auto;
-    border-radius: 15px;
-    border: 3px solid #034ea2;
-  }
-  .options {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-top: 20px;
-  }
-  .option-btn {
-    font-size: 28px;
-    padding: 20px 40px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-    font-weight: bold;
-    color: #fff;
-    transition: all 0.3s ease;
-  }
-  .option-btn.open {
-    background: linear-gradient(to bottom, #4caf50, #81c784);
-  }
-  .option-btn.close {
-    background: linear-gradient(to bottom, #9c27b0, #ba68c8);
-  }
-  .option-btn:hover {
-    transform: scale(1.1);
-  }
-  #end-slide {
-    display: none;
-    text-align: center;
-    font-size: 40px;
-    color: #e91e63;
-  }
-  #play-again {
-    margin-top: 15px;
-    font-size: 28px;
-    padding: 15px 30px;
-    border-radius: 20px;
-    background: #034ea2;
-    color: #fff;
-    cursor: pointer;
-  }
-  .confetti {
-    width: 12px;
-    height: 12px;
-    position: absolute;
-    z-index: 1000;
-    animation: fall 3s linear forwards;
-    border-radius: 3px;
-  }
-  @keyframes fall {
-    0% {transform: translateY(0) rotate(0deg);}
-    100% {transform: translateY(400px) rotate(360deg); opacity: 0;}
-  }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body, html { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; background: #fff; }
+    #game-container { width: 100%; max-width: 480px; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; }
+    #logo-screen, #question-screen, #end-screen { width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; }
+    #logo-screen img { width: 50%; max-width: 200px; }
+    #header { font-size: 2rem; font-weight: bold; text-align: center; margin-bottom: 10px; }
+    #sub-header { font-size: 1.2rem; margin-bottom: 20px; text-align: center; }
+    #question-img { width: 60%; max-width: 250px; margin-bottom: 20px; }
+    .btn-container { display: flex; justify-content: space-around; width: 100%; max-width: 400px; margin-top: 10px; }
+    .option-btn { padding: 15px 25px; border: none; border-radius: 10px; font-size: 1.2rem; color: white; cursor: pointer; transition: transform 0.2s; }
+    .open-btn { background: linear-gradient(90deg, #4caf50, #81c784); }
+    .close-btn { background: linear-gradient(90deg, #9c27b0, #ba68c8); }
+    .option-btn.wrong { animation: shake 0.3s; }
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-8px); }
+        50% { transform: translateX(8px); }
+        75% { transform: translateX(-8px); }
+        100% { transform: translateX(0); }
+    }
+    #tick { font-size: 3rem; color: green; margin-top: 10px; display: none; }
+    #confetti-canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+    #play-again { margin-top: 20px; padding: 15px 25px; font-size: 1.2rem; border: none; border-radius: 10px; background-color: #2196f3; color: white; cursor: pointer; }
 </style>
 </head>
 <body>
+<div id="game-container">
+    <!-- Logo Screen -->
+    <div id="logo-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
 
-<div class="container">
-  <!-- Logo and Banner -->
-  <div class="logo-banner">
-    <img src="assets/innovine-logo.png" alt="Logo">
-    <div class="banner-text">Open & Close - Let's Learn!</div>
-  </div>
+    <!-- Question Screen -->
+    <div id="question-screen">
+        <div id="header">Open & Close</div>
+        <div id="sub-header">Let's Learn!</div>
+        <div id="question-sub">Is it <span style="color: green;">Open</span> or <span style="color: purple;">Close</span>?</div>
+        <img id="question-img" src="" alt="Question">
+        <div class="btn-container">
+            <button class="option-btn open-btn" id="open-btn">Open</button>
+            <button class="option-btn close-btn" id="close-btn">Close</button>
+        </div>
+        <div id="tick">✔️ Good Job!</div>
+    </div>
 
-  <!-- Score Panel -->
-  <div class="score-panel" id="score">★ 0/5 ✓ 0</div>
-
-  <!-- Question Box -->
-  <div class="question-box" id="question">Is it open or closed?</div>
-
-  <!-- Game Area -->
-  <div class="game-area">
-    <img src="assets/character-left.png" alt="left character" class="character">
-    <img id="question-img" src="assets/open-box.png" alt="question" class="question-image">
-    <img src="assets/character-right.png" alt="right character" class="character">
-  </div>
-
-  <!-- Options -->
-  <div class="options">
-    <button class="option-btn open" id="open-btn">Open</button>
-    <button class="option-btn close" id="close-btn">Close</button>
-  </div>
-
-  <!-- End Slide -->
-  <div id="end-slide">
-    🎉 You Completed All Questions! 🎉
-    <br>
-    <button id="play-again">Play Again</button>
-  </div>
+    <!-- End Screen -->
+    <div id="end-screen">
+        <div id="header">🎉 Congratulations! 🎉</div>
+        <button id="play-again">Play Again</button>
+    </div>
 </div>
 
-<audio id="correct-sound" src="assets/freesound_community-claps-44774.mp3"></audio>
-<audio id="wrong-sound" src="assets/wrong.mp3"></audio>
+<canvas id="confetti-canvas"></canvas>
 
 <script>
 const questions = [
-  {img: "assets/open-box.png", answer: "Open", text: "Is the box open or closed?"},
-  {img: "assets/closed-door.png", answer: "Close", text: "Is the door open or closed?"},
-  {img: "assets/open-jar.png", answer: "Open", text: "Is the jar open or closed?"},
-  {img: "assets/closed-chest.png", answer: "Close", text: "Is the chest open or closed?"},
-  {img: "assets/open-window.png", answer: "Open", text: "Is the window open or closed?"}
+    { img: 'assets/box.png', answer: 'Open' },
+    { img: 'assets/door.png', answer: 'Open' },
+    { img: 'assets/jar.png', answer: 'Close' },
+    { img: 'assets/book.png', answer: 'Open' },
+    { img: 'assets/window.png', answer: 'Close' }
 ];
 
-let current = 0;
-let score = 0;
+let currentQ = 0;
+let wrongAttempts = 0;
 
-const questionBox = document.getElementById("question");
-const questionImg = document.getElementById("question-img");
-const scoreBox = document.getElementById("score");
-const openBtn = document.getElementById("open-btn");
-const closeBtn = document.getElementById("close-btn");
-const endSlide = document.getElementById("end-slide");
-const playAgainBtn = document.getElementById("play-again");
-const correctSound = document.getElementById("correct-sound");
-const wrongSound = document.getElementById("wrong-sound");
+const logoScreen = document.getElementById('logo-screen');
+const questionScreen = document.getElementById('question-screen');
+const endScreen = document.getElementById('end-screen');
+const questionImg = document.getElementById('question-img');
+const tick = document.getElementById('tick');
+const openBtn = document.getElementById('open-btn');
+const closeBtn = document.getElementById('close-btn');
+const playAgain = document.getElementById('play-again');
 
-function loadQuestion() {
-  if(current >= questions.length){
-    endSlide.style.display = "block";
-    return;
-  }
-  const q = questions[current];
-  questionBox.textContent = q.text;
-  questionImg.src = q.img;
-  scoreBox.textContent = `★ ${current}/${questions.length} ✓ ${score}`;
+const correctSound = new Audio('assets/correct.mp3');
+const wrongSound = new Audio('assets/wrong.mp3');
+const clapSound = new Audio('assets/freesound_community-claps-44774.mp3');
+
+function showLogo() {
+    logoScreen.style.display = 'flex';
+    setTimeout(() => { 
+        logoScreen.style.display = 'none'; 
+        showQuestion();
+    }, 2000);
 }
 
-function playConfetti(){
-  const imgRect = questionImg.getBoundingClientRect();
-  for(let i=0;i<50;i++){
-    const confetti = document.createElement('div');
-    confetti.classList.add('confetti');
-    confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
-    confetti.style.left = (imgRect.left + imgRect.width/2 + (Math.random()*150 - 75)) + "px";
-    confetti.style.top = imgRect.top + "px";
-    document.body.appendChild(confetti);
-    setTimeout(()=>{ confetti.remove() },3000);
-  }
+function showQuestion() {
+    if(currentQ >= questions.length) {
+        showEndScreen();
+        return;
+    }
+    wrongAttempts = 0;
+    tick.style.display = 'none';
+    questionImg.src = questions[currentQ].img;
+    questionScreen.style.display = 'flex';
 }
 
-function handleAnswer(ans){
-  const correct = questions[current].answer;
-  if(ans === correct){
-    correctSound.currentTime = 0;
-    correctSound.play();
-    score++;
-    playConfetti();
-    current++;
-    setTimeout(loadQuestion, 500);
-  } else {
-    wrongSound.currentTime = 0;
-    wrongSound.play();
-    const btn = ans === "Open" ? openBtn : closeBtn;
-    btn.style.transform = "translateX(-10px)";
-    setTimeout(()=>{btn.style.transform="translateX(0)";}, 150);
-  }
+function handleAnswer(ans) {
+    if(ans === questions[currentQ].answer) {
+        correctSound.play();
+        tick.style.display = 'block';
+        setTimeout(() => {
+            currentQ++;
+            showQuestion();
+        }, 1000);
+    } else {
+        wrongSound.play();
+        wrongAttempts++;
+        const btn = ans === 'Open' ? openBtn : closeBtn;
+        btn.classList.add('wrong');
+        setTimeout(() => btn.classList.remove('wrong'), 300);
+
+        if(wrongAttempts >= 2) {
+            const correctBtn = questions[currentQ].answer === 'Open' ? openBtn : closeBtn;
+            correctBtn.style.boxShadow = '0 0 20px gold';
+            setTimeout(() => correctBtn.style.boxShadow = '', 1000);
+        }
+    }
 }
 
-openBtn.onclick = () => handleAnswer("Open");
-closeBtn.onclick = () => handleAnswer("Close");
-playAgainBtn.onclick = () => {current=0; score=0; endSlide.style.display="none"; loadQuestion();}
-window.onload = loadQuestion;
+function showEndScreen() {
+    questionScreen.style.display = 'none';
+    endScreen.style.display = 'flex';
+    launchConfetti();
+    clapSound.play();
+}
+
+playAgain.addEventListener('click', () => {
+    currentQ = 0;
+    endScreen.style.display = 'none';
+    showQuestion();
+});
+
+openBtn.addEventListener('click', () => handleAnswer('Open'));
+closeBtn.addEventListener('click', () => handleAnswer('Close'));
+
+// Simple confetti
+function launchConfetti() {
+    const confettiCanvas = document.getElementById('confetti-canvas');
+    const ctx = confettiCanvas.getContext('2d');
+    confettiCanvas.width = window.innerWidth;
+    confettiCanvas.height = window.innerHeight;
+
+    let pieces = [];
+    for(let i=0; i<150; i++){
+        pieces.push({x: Math.random()*confettiCanvas.width, y: Math.random()*confettiCanvas.height, r: Math.random()*6+4, d: Math.random()*Math.PI*2, color: `hsl(${Math.random()*360}, 100%, 50%)`});
+    }
+
+    function draw() {
+        ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+        pieces.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+            p.y += 3;
+            p.x += Math.sin(p.d);
+            if(p.y > confettiCanvas.height) p.y = -10;
+        });
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+
+// Start game
+showLogo();
 </script>
-
 </body>
 </html>
