@@ -7,7 +7,7 @@
 <style>
   body {
     margin: 0;
-    font-family: 'Comic Sans MS', sans-serif;
+    font-family: 'Comic Sans MS', cursive;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,13 +17,24 @@
   }
 
   .game-container {
-    width: 360px;
+    width: 90%;
+    max-width: 400px;
     background-color: #FFF9CC;
     border-radius: 20px;
     padding: 20px;
     text-align: center;
     box-shadow: 0 8px 16px rgba(0,0,0,0.25);
     position: relative;
+  }
+
+  #score {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background-color: #FFFF99;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
   }
 
   h1 {
@@ -41,14 +52,14 @@
     color: #0F52BA;
   }
 
-  .options {
+  .btn-container {
     display: flex;
     justify-content: space-around;
     margin-bottom: 20px;
   }
 
   .option-btn {
-    width: 80px;
+    width: 90px;
     height: 50px;
     font-size: 20px;
     border-radius: 12px;
@@ -69,7 +80,6 @@
     object-fit: cover;
   }
 
-  /* End Slide */
   .end-slide {
     display: none;
     flex-direction: column;
@@ -90,7 +100,6 @@
     cursor: pointer;
   }
 
-  /* Confetti */
   .confetti {
     position: fixed;
     width: 10px;
@@ -104,14 +113,35 @@
     0% {transform: translateY(0);}
     100% {transform: translateY(100vh);}
   }
+
+  /* Logo Slide */
+  #logo-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    background: white;
+    border-radius: 20px;
+  }
+
+  #logo-slide img {
+    width: 200px;
+  }
 </style>
 </head>
 <body>
 
-<div class="game-container" id="game-container">
+<!-- Logo Slide -->
+<div id="logo-slide">
+  <img src="assets/innovine-logo.png" alt="Logo">
+</div>
+
+<!-- Game Slide -->
+<div class="game-container" id="game-container" style="display:none;">
+  <div id="score">★ 0/5 ✓ 0</div>
   <h1>In and Out</h1>
   <div class="question-box" id="question-box">Where is the Fruit?</div>
-  <div class="options">
+  <div class="btn-container">
     <button class="option-btn" id="btn-in">In</button>
     <button class="option-btn" id="btn-out">Out</button>
   </div>
@@ -120,6 +150,7 @@
   </div>
 </div>
 
+<!-- End Slide -->
 <div class="game-container end-slide" id="end-slide">
   <div>Good Job! 🎉</div>
   <button class="play-again-btn" id="play-again">Play Again</button>
@@ -129,89 +160,103 @@
 <audio id="wrong-sound" src="assets/wrong.mp3"></audio>
 <audio id="clap-sound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
+<div id="confetti-container"></div>
+
 <script>
-  const questions = [
-    { img: 'assets/fruit-in.png', answer: 'In', text: 'Where is the Fruit?' },
-    { img: 'assets/lion-in.png', answer: 'In', text: 'Where is the Lion?' },
-    { img: 'assets/parrot-out.png', answer: 'Out', text: 'Where is the Parrot?' },
-    { img: 'assets/cat-out.png', answer: 'Out', text: 'Where is the Cat?' },
-    { img: 'assets/dog-in.png', answer: 'In', text: 'Where is the Dog?' }
-  ];
+const questions = [
+  { img: 'assets/fruit-in.png', answer: 'In', text: 'Where is the Fruit?' },
+  { img: 'assets/lion-in.png', answer: 'In', text: 'Where is the Lion?' },
+  { img: 'assets/parrot-out.png', answer: 'Out', text: 'Where is the Parrot?' },
+  { img: 'assets/cat-out.png', answer: 'Out', text: 'Where is the Cat?' },
+  { img: 'assets/dog-in.png', answer: 'In', text: 'Where is the Dog?' }
+];
 
-  const questionBox = document.getElementById('question-box');
-  const questionImage = document.getElementById('question-image');
-  const btnIn = document.getElementById('btn-in');
-  const btnOut = document.getElementById('btn-out');
-  const correctSound = document.getElementById('correct-sound');
-  const wrongSound = document.getElementById('wrong-sound');
-  const clapSound = document.getElementById('clap-sound');
-  const gameContainer = document.getElementById('game-container');
-  const endSlide = document.getElementById('end-slide');
-  const playAgainBtn = document.getElementById('play-again');
+const logoSlide = document.getElementById('logo-slide');
+const gameContainer = document.getElementById('game-container');
+const endSlide = document.getElementById('end-slide');
+const questionBox = document.getElementById('question-box');
+const questionImage = document.getElementById('question-image');
+const btnIn = document.getElementById('btn-in');
+const btnOut = document.getElementById('btn-out');
+const scoreBox = document.getElementById('score');
+const playAgainBtn = document.getElementById('play-again');
+const correctSound = document.getElementById('correct-sound');
+const wrongSound = document.getElementById('wrong-sound');
+const clapSound = document.getElementById('clap-sound');
 
-  let current = 0;
-  let score = 0;
-  let attempts = 0;
+let current = 0;
+let correct = 0;
+let attempts = 0;
 
-  function loadQuestion() {
-    questionBox.textContent = questions[current].text;
-    questionImage.src = questions[current].img;
-    attempts = 0;
-  }
-
-  function handleAnswer(choice) {
-    if(choice === questions[current].answer) {
-      correctSound.currentTime = 0;
-      correctSound.play();
-      score++;
-      nextQuestion();
-    } else {
-      wrongSound.currentTime = 0;
-      wrongSound.play();
-      attempts++;
-      if(attempts >= 2) {
-        nextQuestion();
-      }
-    }
-  }
-
-  function nextQuestion() {
-    current++;
-    if(current >= questions.length) {
-      showEndSlide();
-    } else {
-      loadQuestion();
-    }
-  }
-
-  function showEndSlide() {
-    gameContainer.style.display = 'none';
-    endSlide.style.display = 'flex';
-    launchConfetti();
-    clapSound.play();
-  }
-
-  function launchConfetti() {
-    for(let i=0;i<100;i++){
-      const confetti = document.createElement('div');
-      confetti.className = 'confetti';
-      confetti.style.left = Math.random() * window.innerWidth + 'px';
-      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
-      document.body.appendChild(confetti);
-      setTimeout(()=> confetti.remove(), 4000);
-    }
-  }
-
-  btnIn.addEventListener('click', ()=> handleAnswer('In'));
-  btnOut.addEventListener('click', ()=> handleAnswer('Out'));
-  playAgainBtn.addEventListener('click', ()=>{
-    current = 0; score = 0;
-    endSlide.style.display = 'none';
-    gameContainer.style.display = 'block';
-    loadQuestion();
-  });
-
+// Show logo for 2s, then start game
+setTimeout(() => {
+  logoSlide.style.display = 'none';
+  gameContainer.style.display = 'block';
   loadQuestion();
+}, 2000);
+
+function loadQuestion() {
+  const q = questions[current];
+  questionBox.textContent = q.text;
+  questionImage.src = q.img;
+  attempts = 0;
+  scoreBox.textContent = `★ ${current+1}/5 ✓ ${correct}`;
+}
+
+function handleAnswer(choice) {
+  const q = questions[current];
+  if(choice === q.answer){
+    correct++;
+    correctSound.play();
+    nextQuestion();
+  } else {
+    attempts++;
+    wrongSound.play();
+    if(attempts >= 2){
+      nextQuestion();
+    }
+  }
+  scoreBox.textContent = `★ ${current+1}/5 ✓ ${correct}`;
+}
+
+function nextQuestion() {
+  current++;
+  if(current >= questions.length){
+    showEndSlide();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showEndSlide() {
+  gameContainer.style.display = 'none';
+  endSlide.style.display = 'flex';
+  clapSound.play();
+  launchConfetti();
+}
+
+function launchConfetti() {
+  for(let i=0;i<100;i++){
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random()*window.innerWidth + 'px';
+    confetti.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 50%)`;
+    document.body.appendChild(confetti);
+    setTimeout(()=> confetti.remove(), 4000);
+  }
+}
+
+btnIn.addEventListener('click', () => handleAnswer('In'));
+btnOut.addEventListener('click', () => handleAnswer('Out'));
+playAgainBtn.addEventListener('click', () => {
+  current = 0;
+  correct = 0;
+  attempts = 0;
+  endSlide.style.display = 'none';
+  gameContainer.style.display = 'block';
+  loadQuestion();
+});
 </script>
+
 </body>
 </html>
