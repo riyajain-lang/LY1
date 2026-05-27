@@ -3,178 +3,215 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>In and Out</title>
+<title>In and Out Game</title>
 <style>
   body {
     margin: 0;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
-    background-color: #b0e0f6; /* Light blue */
+    font-family: 'Comic Sans MS', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    background: url('assets/game-background.png') no-repeat center center fixed;
+    background-size: cover;
   }
+
   .game-container {
-    background-color: #fffacd; /* Canary yellow */
-    padding: 20px;
+    width: 360px;
+    background-color: #FFF9CC;
     border-radius: 20px;
-    width: 90%;
-    max-width: 400px;
+    padding: 20px;
     text-align: center;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    position: relative;
   }
-  .score {
-    float: right;
-    background: #ffff99;
-    padding: 5px 10px;
-    border-radius: 10px;
-    margin-top: -10px;
-    margin-bottom: 10px;
-    font-weight: bold;
-  }
+
   h1 {
-    margin: 0 0 10px;
-    color: #d63384;
+    font-size: 28px;
+    color: #FF1E96;
+    margin-bottom: 10px;
   }
-  .question {
-    font-size: 1.2em;
+
+  .question-box {
+    background-color: #FFFF99;
+    padding: 15px;
+    border-radius: 12px;
     margin-bottom: 20px;
-    background: #ffff99;
-    padding: 10px;
-    border-radius: 10px;
+    font-size: 18px;
+    color: #0F52BA;
   }
-  .btn-container {
+
+  .options {
     display: flex;
-    justify-content: center;
-    gap: 20px;
+    justify-content: space-around;
     margin-bottom: 20px;
   }
-  button {
-    font-size: 1.2em;
-    padding: 15px 25px;
-    border: 3px solid #0f52ba; /* Sapphire blue */
-    border-radius: 15px;
+
+  .option-btn {
+    width: 80px;
+    height: 50px;
+    font-size: 20px;
+    border-radius: 12px;
+    border: 2px solid #0F52BA;
+    background-color: #FFFF99;
     cursor: pointer;
-    background: #ffff99; /* Canary */
-    color: #0f52ba;
     transition: 0.2s;
   }
-  button:hover {
-    background: #f0e68c;
+
+  .option-btn:hover {
+    background-color: #FFFAAA;
   }
-  img {
-    width: 80%;
-    max-width: 250px;
-    border-radius: 15px;
+
+  .image-box img {
+    width: 180px;
+    height: 180px;
+    border-radius: 12px;
+    object-fit: cover;
   }
+
+  /* End Slide */
   .end-slide {
     display: none;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    color: #0F52BA;
     padding: 30px;
   }
-  .end-slide h2 {
-    font-size: 2em;
-    color: #0f52ba;
-    margin-bottom: 20px;
-  }
-  .play-again {
-    font-size: 1.2em;
-    padding: 10px 20px;
-    border-radius: 15px;
-    border: none;
-    background-color: #d63384;
-    color: white;
+
+  .play-again-btn {
+    margin-top: 20px;
+    font-size: 20px;
+    padding: 10px 25px;
+    border-radius: 12px;
+    background-color: #FFFF99;
+    border: 2px solid #0F52BA;
     cursor: pointer;
+  }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    z-index: 9999;
+    animation: fall 4s linear forwards;
+  }
+
+  @keyframes fall {
+    0% {transform: translateY(0);}
+    100% {transform: translateY(100vh);}
   }
 </style>
 </head>
 <body>
 
-<div class="game-container" id="gameContainer">
-  <div class="score" id="score">★ 0/5 ✓ 0</div>
+<div class="game-container" id="game-container">
   <h1>In and Out</h1>
-  <div class="question" id="question">Where is the Fruit?</div>
-  <div class="btn-container">
-    <button id="inBtn">In</button>
-    <button id="outBtn">Out</button>
+  <div class="question-box" id="question-box">Where is the Fruit?</div>
+  <div class="options">
+    <button class="option-btn" id="btn-in">In</button>
+    <button class="option-btn" id="btn-out">Out</button>
   </div>
-  <img id="qImg" src="assets/fruit-in.png" alt="question image">
+  <div class="image-box">
+    <img id="question-image" src="assets/fruit-in.png" alt="Question Image">
+  </div>
 </div>
 
-<div class="game-container end-slide" id="endSlide">
-  <h2>Good Job!</h2>
-  <button class="play-again" id="playAgain">Play Again</button>
+<div class="game-container end-slide" id="end-slide">
+  <div>Good Job! 🎉</div>
+  <button class="play-again-btn" id="play-again">Play Again</button>
 </div>
+
+<audio id="correct-sound" src="assets/correct.mp3"></audio>
+<audio id="wrong-sound" src="assets/wrong.mp3"></audio>
+<audio id="clap-sound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
   const questions = [
-    {img:"assets/fruit-in.png", ans:"In", text:"Where is the Fruit?"},
-    {img:"assets/lion-in.png", ans:"In", text:"Where is the Lion?"},
-    {img:"assets/parrot-out.png", ans:"Out", text:"Where is the Parrot?"},
-    {img:"assets/cat-out.png", ans:"Out", text:"Where is the Cat?"},
-    {img:"assets/dog-in.png", ans:"In", text:"Where is the Dog?"}
+    { img: 'assets/fruit-in.png', answer: 'In', text: 'Where is the Fruit?' },
+    { img: 'assets/lion-in.png', answer: 'In', text: 'Where is the Lion?' },
+    { img: 'assets/parrot-out.png', answer: 'Out', text: 'Where is the Parrot?' },
+    { img: 'assets/cat-out.png', answer: 'Out', text: 'Where is the Cat?' },
+    { img: 'assets/dog-in.png', answer: 'In', text: 'Where is the Dog?' }
   ];
 
+  const questionBox = document.getElementById('question-box');
+  const questionImage = document.getElementById('question-image');
+  const btnIn = document.getElementById('btn-in');
+  const btnOut = document.getElementById('btn-out');
+  const correctSound = document.getElementById('correct-sound');
+  const wrongSound = document.getElementById('wrong-sound');
+  const clapSound = document.getElementById('clap-sound');
+  const gameContainer = document.getElementById('game-container');
+  const endSlide = document.getElementById('end-slide');
+  const playAgainBtn = document.getElementById('play-again');
+
   let current = 0;
-  let correct = 0;
+  let score = 0;
   let attempts = 0;
 
-  const inBtn = document.getElementById("inBtn");
-  const outBtn = document.getElementById("outBtn");
-  const question = document.getElementById("question");
-  const qImg = document.getElementById("qImg");
-  const score = document.getElementById("score");
-  const gameContainer = document.getElementById("gameContainer");
-  const endSlide = document.getElementById("endSlide");
-  const playAgain = document.getElementById("playAgain");
-
   function loadQuestion() {
+    questionBox.textContent = questions[current].text;
+    questionImage.src = questions[current].img;
     attempts = 0;
-    question.textContent = questions[current].text;
-    qImg.src = questions[current].img;
-    score.textContent = `★ ${current}/5 ✓ ${correct}`;
   }
 
   function handleAnswer(choice) {
-    if(choice === questions[current].ans){
-      correct++;
+    if(choice === questions[current].answer) {
+      correctSound.currentTime = 0;
+      correctSound.play();
+      score++;
       nextQuestion();
     } else {
+      wrongSound.currentTime = 0;
+      wrongSound.play();
       attempts++;
-      if(attempts >= 2){
+      if(attempts >= 2) {
         nextQuestion();
-      } else {
-        alert("Try Again!");
       }
     }
-    score.textContent = `★ ${current}/5 ✓ ${correct}`;
   }
 
   function nextQuestion() {
     current++;
-    if(current < questions.length){
-      loadQuestion();
+    if(current >= questions.length) {
+      showEndSlide();
     } else {
-      gameContainer.style.display = "none";
-      endSlide.style.display = "flex";
+      loadQuestion();
     }
   }
 
-  inBtn.addEventListener("click", ()=> handleAnswer("In"));
-  outBtn.addEventListener("click", ()=> handleAnswer("Out"));
-  playAgain.addEventListener("click", ()=>{
-    current = 0;
-    correct = 0;
-    attempts = 0;
-    endSlide.style.display = "none";
-    gameContainer.style.display = "block";
+  function showEndSlide() {
+    gameContainer.style.display = 'none';
+    endSlide.style.display = 'flex';
+    launchConfetti();
+    clapSound.play();
+  }
+
+  function launchConfetti() {
+    for(let i=0;i<100;i++){
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * window.innerWidth + 'px';
+      confetti.style.backgroundColor = `hsl(${Math.random()*360}, 100%, 50%)`;
+      document.body.appendChild(confetti);
+      setTimeout(()=> confetti.remove(), 4000);
+    }
+  }
+
+  btnIn.addEventListener('click', ()=> handleAnswer('In'));
+  btnOut.addEventListener('click', ()=> handleAnswer('Out'));
+  playAgainBtn.addEventListener('click', ()=>{
+    current = 0; score = 0;
+    endSlide.style.display = 'none';
+    gameContainer.style.display = 'block';
     loadQuestion();
   });
 
   loadQuestion();
 </script>
-
 </body>
 </html>
