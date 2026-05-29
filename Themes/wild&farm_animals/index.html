@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm & Wild Animals Game</title>
+<style>
+  body, html { margin:0; padding:0; font-family:Arial, sans-serif; height:100vh; background:linear-gradient(to bottom, #d4f7d4, #a8e6a8); overflow:hidden;}
+  #splash, #game, #endScreen { width:100%; height:100%; position:absolute; top:0; left:0; display:flex; justify-content:center; align-items:center; flex-direction:column; }
+  #splash { background:white; z-index:10;}
+  #game { display:none; flex-direction:column; z-index:5; }
+  #instructions { font-size:20px; text-align:center; margin:10px; }
+  #zones { display:flex; flex:2; justify-content:space-around; margin:10px; }
+  .zone { width:48%; border:2px dashed #aaa; border-radius:15px; background-size:cover; background-position:center; min-height:100%; display:flex; flex-direction:column; align-items:center; }
+  .zone h3 { background:rgba(255,255,255,0.7); width:100%; text-align:center; margin:0; padding:5px; border-radius:8px; }
+  #tray { display:flex; flex-wrap:wrap; justify-content:center; flex:1; padding:10px; background:rgba(255,255,255,0.3); border-radius:15px; }
+  #tray img { width:80px; height:80px; margin:5px; cursor:grab; border-radius:10px; border:2px solid #fff; box-shadow:0 2px 4px rgba(0,0,0,0.3);}
+  #feedback { position:absolute; top:10px; left:50%; transform:translateX(-50%); font-size:28px; font-weight:bold; color:green; text-shadow:1px 1px 2px #000; display:none;}
+  #scoreboard { position:absolute; top:10px; right:10px; font-size:20px; font-weight:bold; color:#000;}
+  #endScreen { display:none; background:rgba(0,0,0,0.7); flex-direction:column; color:white; font-size:30px; justify-content:center; align-items:center; }
+  #endScreen button { margin-top:20px; padding:10px 20px; font-size:20px; border:none; border-radius:8px; cursor:pointer; background:#f9a825; color:#000; font-weight:bold; }
+</style>
+</head>
+<body>
+
+<!-- Slide 1: Splash -->
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Logo" style="width:200px;">
+</div>
+
+<!-- Slide 2: Game -->
+<div id="game">
+  <div id="instructions">Drag each animal to its correct place: Jungle for Wild Animals, Farm for Farm Animals.</div>
+  <div id="zones">
+    <div id="forest" class="zone" style="background-image:url('assets/jungle.png');">
+      <h3>Wild Animals</h3>
+    </div>
+    <div id="farm" class="zone" style="background-image:url('assets/farm.png');">
+      <h3>Farm Animals</h3>
+    </div>
+  </div>
+  <div id="tray"></div>
+  <div id="feedback"></div>
+  <div id="scoreboard">Question: 1 / 15</div>
+</div>
+
+<!-- Slide 3: End -->
+<div id="endScreen">
+  <div>🎉 Good Job! 🎉</div>
+  <button onclick="restartGame()">Play Again</button>
+</div>
+
+<audio id="correct-sound" src="assets/correct.mp3"></audio>
+<audio id="wrong-sound" src="assets/wrong.mp3"></audio>
+<audio id="clap-sound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+const splash = document.getElementById('splash');
+const game = document.getElementById('game');
+const forest = document.getElementById('forest');
+const farm = document.getElementById('farm');
+const tray = document.getElementById('tray');
+const feedback = document.getElementById('feedback');
+const scoreboard = document.getElementById('scoreboard');
+const endScreen = document.getElementById('endScreen');
+
+const correctSound = document.getElementById('correct-sound');
+const wrongSound = document.getElementById('wrong-sound');
+const clapSound = document.getElementById('clap-sound');
+
+const wildAnimals = ['lion.png','tiger.png','zebra.png','giraffe.png','monkey.png'];
+const farmAnimals = ['cow.png','pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
+
+let questions = [], currentQ=0, attempts=0;
+
+// Generate 15 rounds
+function generateQuestions(){
+  for(let i=0;i<15;i++){
+    questions.push({wild:[...wildAnimals].sort(()=>Math.random()-0.5),
+                    farm:[...farmAnimals].sort(()=>Math.random()-0.5)});
+  }
+}
+
+// Load question
+function loadQuestion(index){
+  tray.innerHTML='';
+  const q = questions[index];
+  const allAnimals = [...q.wild,...q.farm].sort(()=>Math.random()-0.5);
+  allAnimals.forEach(animal=>{
+    let img=document.createElement('img');
+    img.src='assets/'+animal;
+    img.draggable=true;
+    img.dataset.correct=q.wild.includes(animal)?'wild':'farm';
+    img.addEventListener('dragstart', dragStart);
+    tray.appendChild(img);
+  });
+  scoreboard.textContent=`Question: ${currentQ+1} / 15`;
+  attempts=0;
+}
+
+let dragged;
+function dragStart(e){ dragged=e.target; }
+forest.addEventListener('dragover', e=>e.preventDefault());
+farm.addEventListener('dragover', e=>e.preventDefault());
+forest.addEventListener('drop', dropHandler);
+farm.addEventListener('drop', dropHandler);
+
+function dropHandler(e){
+  e.preventDefault();
+  if(!dragged) return;
+  const target = e.currentTarget.id==='forest'?'wild':'farm';
+  if(dragged.dataset.correct===target){
+    correctSound.play();
+    feedback.textContent='Good Job!';
+    feedback.style.display='block';
+    setTimeout(()=>feedback.style.display='none',800);
+    e.currentTarget.appendChild(dragged);
+    dragged.style.margin='5px';
+    dragged=null;
+    checkNextQuestion();
+  } else {
+    wrongSound.play();
+    attempts++;
+    dragged.style.transform='translateX(10px)';
+    setTimeout(()=>dragged.style.transform='translateX(0px)',200);
+  }
+}
+
+function checkNextQuestion(){
+  if(tray.querySelectorAll('img').length===0){
+    currentQ++;
+    if(currentQ>=questions.length){
+      showEndScreen();
+    } else { loadQuestion(currentQ); }
+  }
+}
+
+// End screen with confetti
+function showEndScreen(){
+  clapSound.play();
+  confetti({particleCount:150, spread:70, origin:{y:0.6}});
+  game.style.display='none';
+  endScreen.style.display='flex';
+}
+
+function restartGame(){
+  endScreen.style.display='none';
+  game.style.display='flex';
+  currentQ=0;
+  generateQuestions();
+  loadQuestion(0);
+}
+
+// Start game after 2s splash
+setTimeout(()=>{
+  splash.style.display='none';
+  game.style.display='flex';
+  generateQuestions();
+  loadQuestion(0);
+},2000);
+</script>
+
+</body>
+</html>
