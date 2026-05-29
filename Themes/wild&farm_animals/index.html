@@ -113,7 +113,7 @@ const wrongSound=document.getElementById('wrong-sound');
 const clapSound=document.getElementById('clap-sound');
 
 const wildAnimals=['lion.png','tiger.png','zebra.png','giraffe.png','monkey.png'];
-const farmAnimals=['pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
+const farmAnimals=['cow.png','pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
 
 let questions=[], currentQ=0;
 let selectedAnimal=null;
@@ -153,7 +153,7 @@ function placeAnimal(zone){
     feedback.style.display='block';
     setTimeout(()=>feedback.style.display='none',800);
 
-    // Place horizontally
+    // Place horizontally in zone
     const imgClone = selectedAnimal.cloneNode(true);
     imgClone.style.width='60px';
     imgClone.style.height='60px';
@@ -164,7 +164,7 @@ function placeAnimal(zone){
     selectedAnimal=null;
 
     if(tray.querySelectorAll('img').length===0){
-      showEndScreen(); // do not restart automatically
+      showEndScreen(); // show last slide instead of restarting
     }
   } else {
     wrongSound.play();
@@ -183,11 +183,22 @@ function showEndScreen(){
 
 function restartGame(){
   endScreen.style.display='none';
-  game.style.display='flex';
-  currentQ=0;
-  questions=[];
+
+  // Clear zones
+  forest.querySelectorAll('img').forEach(img => img.remove());
+  farm.querySelectorAll('img').forEach(img => img.remove());
+
+  // Reset variables
+  currentQ = 0;
+  selectedAnimal = null;
+  questions = [];
+
+  // Generate questions and load first
   generateQuestions();
   loadQuestion(0);
+
+  // Show game screen
+  game.style.display = 'flex';
 }
 
 // Splash screen 2s
