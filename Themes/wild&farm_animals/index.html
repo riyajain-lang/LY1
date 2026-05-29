@@ -28,11 +28,12 @@ body, html {
 .zone {
   width:55%; height:100%; border:3px solid #5c4033; border-radius:20px;
   background-size:cover; background-position:center; display:flex;
-  flex-direction:column; align-items:center; box-shadow:0 6px 15px rgba(0,0,0,0.3); overflow:hidden;
+  flex-direction:row; flex-wrap:wrap; justify-content:flex-start; align-items:flex-start;
+  box-shadow:0 6px 15px rgba(0,0,0,0.3); overflow:auto;
 }
 .zone h3 {
-  background:rgba(255,255,255,0.8); width:100%; text-align:center;
-  margin:0; padding:8px; border-radius:10px; font-weight:bold; font-size:18px;
+  width:100%; text-align:center; margin:0; padding:8px; 
+  background:rgba(255,255,255,0.8); border-radius:10px; font-weight:bold; font-size:18px;
 }
 #tray {
   display:flex; flex-wrap:wrap; justify-content:center; flex:1;
@@ -64,7 +65,7 @@ body, html {
   border-radius:12px; cursor:pointer; background:#f9a825; color:#000; font-weight:bold;
   box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
-.zone img { max-width:100%; max-height:100%; object-fit:contain; margin:5px; }
+.zone img { max-width:60px; max-height:60px; object-fit:contain; margin:5px; }
 .shake { animation: shake 0.3s; }
 @keyframes shake { 0% { transform: translateX(0);} 25% { transform: translateX(-5px);}
   50% { transform: translateX(5px);} 75% { transform: translateX(-5px);} 100% { transform: translateX(0);} }
@@ -72,7 +73,9 @@ body, html {
 </head>
 <body>
 
-<div id="splash"><img src="assets/innovine-logo.png" alt="Logo" style="width:220px;"></div>
+<div id="splash">
+  <img src="assets/innovine-logo.png" alt="Logo" style="width:220px;">
+</div>
 
 <div id="game">
   <div id="instructions">Tap an animal, then tap the correct zone: Jungle for Wild, Farm for Farm.</div>
@@ -110,7 +113,7 @@ const wrongSound=document.getElementById('wrong-sound');
 const clapSound=document.getElementById('clap-sound');
 
 const wildAnimals=['lion.png','tiger.png','zebra.png','giraffe.png','monkey.png'];
-const farmAnimals=['cow.png','pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
+const farmAnimals=['pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
 
 let questions=[], currentQ=0;
 let selectedAnimal=null;
@@ -136,36 +139,32 @@ function loadQuestion(index){
   scoreboard.textContent=`Question: ${currentQ+1} / 15`;
 }
 
+// Tap events
 forest.addEventListener('click',()=> placeAnimal('wild'));
 farm.addEventListener('click',()=> placeAnimal('farm'));
 
 function placeAnimal(zone){
   if(!selectedAnimal) return;
   const targetContainer = zone==='wild'?forest:farm;
+
   if(selectedAnimal.dataset.correct===zone){
     correctSound.play();
     feedback.textContent='Good Job!';
     feedback.style.display='block';
     setTimeout(()=>feedback.style.display='none',800);
 
-    // Clone image to place in zone like drag-and-drop
+    // Place horizontally
     const imgClone = selectedAnimal.cloneNode(true);
     imgClone.style.width='60px';
     imgClone.style.height='60px';
     imgClone.style.objectFit='contain';
     targetContainer.appendChild(imgClone);
 
-    // Remove from tray
     selectedAnimal.remove();
     selectedAnimal=null;
 
     if(tray.querySelectorAll('img').length===0){
-      currentQ++;
-      if(currentQ>=questions.length){
-        showEndScreen();
-      } else {
-        loadQuestion(currentQ);
-      }
+      showEndScreen(); // do not restart automatically
     }
   } else {
     wrongSound.play();
@@ -191,6 +190,7 @@ function restartGame(){
   loadQuestion(0);
 }
 
+// Splash screen 2s
 setTimeout(()=>{
   splash.style.display='none';
   game.style.display='flex';
