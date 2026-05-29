@@ -5,47 +5,102 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Farm & Wild Animals Game</title>
 <style>
-body, html { margin:0; padding:0; font-family:Arial; height:100vh; background:linear-gradient(to bottom,#d4f7d4,#a8e6a8); overflow:hidden;}
-#splash,#game,#endScreen { width:100%; height:100%; position:absolute; top:0; left:0; display:flex; justify-content:center; align-items:center; flex-direction:column;}
-#splash { background:white; z-index:10;}
-#game { display:none; flex-direction:column; z-index:5; padding:10px; box-sizing:border-box;}
-#instructions { font-size:22px; text-align:center; padding:10px; border:3px solid #5c4033; border-radius:12px; background:rgba(255,255,255,0.8); margin-bottom:10px; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3);}
-#zones { display:flex; flex:2; justify-content:space-between; margin-bottom:10px; height:40%; width:100%; }
-.zone { width:55%; height:100%; border:3px solid #5c4033; border-radius:20px; background-size:cover; background-position:center; display:flex; flex-direction:column; align-items:center; box-shadow:0 6px 15px rgba(0,0,0,0.3); overflow:hidden;}
-.zone h3 { background:rgba(255,255,255,0.8); width:100%; text-align:center; margin:0; padding:8px; border-radius:10px; font-weight:bold; font-size:18px;}
-#tray { display:flex; flex-wrap:wrap; justify-content:center; flex:1; padding:10px; background:rgba(255,255,255,0.3); border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.2); overflow:hidden; height:40%;}
-#tray img { width:80px; height:80px; margin:5px; cursor:grab; border-radius:15px; border:2px solid #fff; box-shadow:0 4px 8px rgba(0,0,0,0.3); transition:transform 0.2s; }
+body, html {
+    margin:0; padding:0;
+    font-family:Arial;
+    height:100vh;
+    background:linear-gradient(to bottom,#d4f7d4,#a8e6a8);
+    overflow:hidden;
+}
+#splash,#game,#endScreen {
+    width:100%; height:100%;
+    position:absolute; top:0; left:0;
+    display:flex; justify-content:center; align-items:center; flex-direction:column;
+}
+#splash { background:white; z-index:10; }
+#game { display:none; flex-direction:column; z-index:5; padding:10px; box-sizing:border-box; }
+#instructions {
+    font-size:22px; text-align:center; padding:10px;
+    border:3px solid #5c4033; border-radius:12px;
+    background:rgba(255,255,255,0.8); margin-bottom:10px; font-weight:bold;
+    box-shadow:0 4px 10px rgba(0,0,0,0.3);
+}
+#zones {
+    display:flex; flex:2; justify-content:space-between;
+    margin-bottom:10px; height:40%; width:100%;
+}
+.zone {
+    width:55%; height:100%;
+    border:3px solid #5c4033; border-radius:20px;
+    background-size:cover; background-position:center;
+    display:flex; flex-direction:column; align-items:center;
+    box-shadow:0 6px 15px rgba(0,0,0,0.3); overflow:hidden;
+}
+.zone h3 {
+    background:rgba(255,255,255,0.8); width:100%; text-align:center;
+    margin:0; padding:8px; border-radius:10px; font-weight:bold; font-size:18px;
+}
+#tray {
+    display:flex; flex-wrap:wrap; justify-content:center; flex:1;
+    padding:10px; background:rgba(255,255,255,0.3);
+    border-radius:20px; box-shadow:0 4px 15px rgba(0,0,0,0.2); overflow:hidden; height:40%;
+}
+#tray img {
+    width:60px; height:60px; /* smaller boxes */
+    margin:5px; cursor:grab;
+    border-radius:12px; border:2px solid #fff;
+    box-shadow:0 4px 8px rgba(0,0,0,0.3);
+    transition:transform 0.2s;
+}
 #tray img:hover { transform:scale(1.1) rotate(-3deg); }
-#feedback { position:absolute; top:15px; left:50%; transform:translateX(-50%); font-size:32px; font-weight:bold; color:green; text-shadow:2px 2px 4px #000; display:none;}
-#scoreboard { position:absolute; top:15px; right:15px; font-size:20px; font-weight:bold; color:#000; background:rgba(255,255,255,0.7); padding:5px 10px; border-radius:8px; box-shadow:0 3px 8px rgba(0,0,0,0.2);}
-#endScreen { display:none; position:absolute; top:0; left:0; width:100%; height:100%; z-index:20; background:rgba(0,0,0,0.7); flex-direction:column; justify-content:center; align-items:center; text-align:center; color:white; font-size:34px; }
-#endScreen button { margin-top:25px; padding:15px 30px; font-size:22px; border:none; border-radius:12px; cursor:pointer; background:#f9a825; color:#000; font-weight:bold; box-shadow:0 5px 15px rgba(0,0,0,0.3);}
-.zone img { max-width:100%; max-height:100%; object-fit:contain; position:static;}
+#feedback {
+    position:absolute; top:15px; left:50%; transform:translateX(-50%);
+    font-size:32px; font-weight:bold; color:green; text-shadow:2px 2px 4px #000; display:none;
+}
+#scoreboard {
+    position:absolute; top:15px; right:15px;
+    font-size:20px; font-weight:bold; color:#000;
+    background:rgba(255,255,255,0.7); padding:5px 10px; border-radius:8px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.2);
+}
+#endScreen {
+    display:none; position:absolute; top:0; left:0; width:100%; height:100%;
+    z-index:20; background:rgba(0,0,0,0.7);
+    flex-direction:column; justify-content:center; align-items:center;
+    text-align:center; color:white; font-size:34px;
+}
+#endScreen button {
+    margin-top:25px; padding:15px 30px; font-size:22px;
+    border:none; border-radius:12px; cursor:pointer;
+    background:#f9a825; color:#000; font-weight:bold;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+.zone img { max-width:100%; max-height:100%; object-fit:contain; position:static; }
 </style>
 </head>
 <body>
 
 <!-- Slide 1: Logo -->
 <div id="splash">
-  <img src="assets/innovine-logo.png" alt="Logo" style="width:220px;">
+    <img src="assets/innovine-logo.png" alt="Logo" style="width:220px;">
 </div>
 
 <!-- Slide 2: Game -->
 <div id="game">
-  <div id="instructions">Drag each animal to its correct place: Jungle for Wild Animals, Farm for Farm Animals.</div>
-  <div id="zones">
-    <div id="forest" class="zone" style="background-image:url('assets/jungle.png');"><h3>Wild Animals</h3></div>
-    <div id="farm" class="zone" style="background-image:url('assets/farm.png');"><h3>Farm Animals</h3></div>
-  </div>
-  <div id="tray"></div>
-  <div id="feedback"></div>
-  <div id="scoreboard">Question: 1 / 15</div>
+    <div id="instructions">Drag each animal to its correct place: Jungle for Wild Animals, Farm for Farm Animals.</div>
+    <div id="zones">
+        <div id="forest" class="zone" style="background-image:url('assets/jungle.png');"><h3>Wild Animals</h3></div>
+        <div id="farm" class="zone" style="background-image:url('assets/farm.png');"><h3>Farm Animals</h3></div>
+    </div>
+    <div id="tray"></div>
+    <div id="feedback"></div>
+    <div id="scoreboard">Question: 1 / 15</div>
 </div>
 
 <!-- Slide 3: End Screen -->
 <div id="endScreen">
-  <div>🎉 Good Job! 🎉</div>
-  <button onclick="restartGame()">Play Again</button>
+    <div>🎉 Good Job! 🎉</div>
+    <button onclick="restartGame()">Play Again</button>
 </div>
 
 <!-- Audio -->
@@ -69,31 +124,31 @@ const wrongSound=document.getElementById('wrong-sound');
 const clapSound=document.getElementById('clap-sound');
 
 const wildAnimals=['lion.png','tiger.png','zebra.png','giraffe.png','monkey.png'];
-const farmAnimals=['cow.png','pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
+const farmAnimals=['pig.png','horse.png','hen.png','chick.jpeg','cock.png'];
 
 let questions=[],currentQ=0,attempts=0;
 
 // Generate 15 random questions
 function generateQuestions(){
-  for(let i=0;i<15;i++){
-    questions.push({wild:[...wildAnimals].sort(()=>Math.random()-0.5), farm:[...farmAnimals].sort(()=>Math.random()-0.5)});
-  }
+    for(let i=0;i<15;i++){
+        questions.push({wild:[...wildAnimals].sort(()=>Math.random()-0.5), farm:[...farmAnimals].sort(()=>Math.random()-0.5)});
+    }
 }
 
 function loadQuestion(index){
-  tray.innerHTML='';
-  const q=questions[index];
-  const allAnimals=[...q.wild,...q.farm].sort(()=>Math.random()-0.5);
-  allAnimals.forEach(animal=>{
-    let img=document.createElement('img');
-    img.src='assets/'+animal;
-    img.draggable=true;
-    img.dataset.correct=q.wild.includes(animal)?'wild':'farm';
-    img.addEventListener('dragstart',dragStart);
-    tray.appendChild(img);
-  });
-  scoreboard.textContent=`Question: ${currentQ+1} / 15`;
-  attempts=0;
+    tray.innerHTML='';
+    const q=questions[index];
+    const allAnimals=[...q.wild,...q.farm].sort(()=>Math.random()-0.5);
+    allAnimals.forEach(animal=>{
+        let img=document.createElement('img');
+        img.src='assets/'+animal;
+        img.draggable=true;
+        img.dataset.correct=q.wild.includes(animal)?'wild':'farm';
+        img.addEventListener('dragstart',dragStart);
+        tray.appendChild(img);
+    });
+    scoreboard.textContent=`Question: ${currentQ+1} / 15`;
+    attempts=0;
 }
 
 let dragged;
@@ -104,58 +159,58 @@ forest.addEventListener('drop',dropHandler);
 farm.addEventListener('drop',dropHandler);
 
 function dropHandler(e){
-  e.preventDefault();
-  if(!dragged) return;
-  const target=e.currentTarget.id==='forest'?'wild':'farm';
-  if(dragged.dataset.correct===target){
-    correctSound.play();
-    feedback.textContent='Good Job!';
-    feedback.style.display='block';
-    setTimeout(()=>feedback.style.display='none',800);
-    e.currentTarget.appendChild(dragged);
-    dragged.style.margin='5px';
-    dragged=null;
-    checkNextQuestion();
-  } else {
-    wrongSound.play();
-    attempts++;
-    dragged.style.transform='translateX(10px)';
-    setTimeout(()=>dragged.style.transform='translateX(0px)',200);
-  }
+    e.preventDefault();
+    if(!dragged) return;
+    const target=e.currentTarget.id==='forest'?'wild':'farm';
+    if(dragged.dataset.correct===target){
+        correctSound.play();
+        feedback.textContent='Good Job!';
+        feedback.style.display='block';
+        setTimeout(()=>feedback.style.display='none',800);
+        e.currentTarget.appendChild(dragged);
+        dragged.style.margin='5px';
+        dragged=null;
+        checkNextQuestion();
+    } else {
+        wrongSound.play();
+        attempts++;
+        dragged.style.transform='translateX(10px)';
+        setTimeout(()=>dragged.style.transform='translateX(0px)',200);
+    }
 }
 
 function checkNextQuestion(){
-  if(tray.querySelectorAll('img').length===0){
-    currentQ++;
-    if(currentQ>=questions.length){
-      showEndScreen();
-    } else { loadQuestion(currentQ); }
-  }
+    if(tray.querySelectorAll('img').length===0){
+        currentQ++;
+        if(currentQ>=questions.length){
+            showEndScreen();
+        } else { loadQuestion(currentQ); }
+    }
 }
 
 function showEndScreen(){
-  clapSound.play();
-  confetti({particleCount:200, spread:80, origin:{y:0.6}});
-  game.style.display='none';
-  endScreen.style.display='flex';
+    clapSound.play();
+    confetti({particleCount:200, spread:80, origin:{y:0.6}});
+    game.style.display='none';
+    endScreen.style.display='flex';
 }
 
 function restartGame(){
-  endScreen.style.display='none';
-  game.style.display='flex';
-  currentQ=0;
-  questions=[];
-  generateQuestions();
-  loadQuestion(0);
+    endScreen.style.display='none';
+    game.style.display='flex';
+    currentQ=0;
+    questions=[];
+    generateQuestions();
+    loadQuestion(0);
 }
 
-// Start splash screen and move to game
 setTimeout(()=>{
-  splash.style.display='none';
-  game.style.display='flex';
-  generateQuestions();
-  loadQuestion(0);
+    splash.style.display='none';
+    game.style.display='flex';
+    generateQuestions();
+    loadQuestion(0);
 },2000);
+
 </script>
 </body>
 </html>
