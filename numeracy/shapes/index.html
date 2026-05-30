@@ -3,120 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Playgroup Shapes Game</title>
+<title>Preschool Shapes Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Arbutus&display=swap" rel="stylesheet">
 <style>
-body {
-  margin: 0;
-  font-family: Comic Sans MS, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: #fdf6e3;
-  overflow: hidden;
-}
+body { margin:0; font-family:'Arbutus', cursive; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden; }
 
-/* General slide styling */
-.slide {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  box-sizing: border-box;
-}
+/* Slides */
+.slide { display:none; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%; padding:20px; box-sizing:border-box; }
 
-/* Logo slide */
-#logoSlide {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  background: white;
-}
-#logoSlide img {
-  width: 200px;
-  height: auto;
-}
+/* Slide 1: Logo */
+#logoSlide { display:flex; justify-content:center; align-items:center; flex-direction:column; background:white; }
+#logoSlide img { width:200px; height:auto; }
 
 /* Game slides */
-#gameSlides {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  height: 100%;
-  background: url('assets/game-bg.png') no-repeat center center;
-  background-size: cover;
-}
-
-#instructionsBox {
-  width: 90%;
-  max-width: 400px;
-  border: 3px solid brown;
-  background-color: #fff3e0;
-  padding: 15px;
-  text-align: center;
-  font-size: 18px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-}
-
-.patternRow, .optionsRow {
-  display: flex;
-  gap: 20px;
-  margin: 10px 0;
-}
-
-.shapeOption {
-  width: 80px;
-  height: 80px;
-  border: 2px solid #333;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: transform 0.1s;
-}
-
-.circle { border-radius: 50%; }
-.square { border-radius: 0; }
-.triangle {
-  width: 0;
-  height: 0;
-  border-left: 40px solid transparent;
-  border-right: 40px solid transparent;
-  border-bottom: 80px solid gray;
-}
-
-#feedback { font-size: 24px; height: 30px; margin-top: 10px; }
+#gameSlide { display:flex; flex-direction:column; align-items:center; justify-content:flex-start; width:100%; height:100%; background:url('assets/5b5a03e3-132c-4969-a7d1-7ceb2ac3bb45.png') no-repeat center center; background-size:cover; }
+#instructionsBox { width:90%; max-width:400px; border:3px solid brown; background-color:#fff3e0; padding:15px; text-align:center; font-size:18px; margin-bottom:20px; color:#4b2e2e; border-radius:5px; }
+.shapeContainer { position:relative; width:90%; max-width:500px; height:400px; display:flex; flex-wrap:wrap; justify-content:space-around; align-items:center; }
+.shapeOption { width:80px; height:80px; cursor:pointer; transition:transform 0.2s; }
 
 /* End slide */
-#endSlide {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  background: url('assets/game-bg.png') no-repeat center center;
-  background-size: cover;
-}
-
-#endSlide h1 {
-  font-size: 36px;
-  margin-bottom: 20px;
-}
-
-button {
-  padding: 10px 25px;
-  font-size: 22px;
-  margin-top: 20px;
-  cursor: pointer;
-}
+#endSlide { display:flex; flex-direction:column; justify-content:center; align-items:center; width:100%; height:100%; background:url('assets/5b5a03e3-132c-4969-a7d1-7ceb2ac3bb45.png') no-repeat center center; background-size:cover; }
+#endSlide h1 { font-size:36px; margin-bottom:20px; }
+button { padding:10px 25px; font-size:22px; margin-top:20px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -127,12 +35,10 @@ button {
   <p>Loading...</p>
 </div>
 
-<!-- Slides 2–4: Game questions -->
-<div id="gameSlides" class="slide">
-  <div id="instructionsBox">Tap the correct shape to complete the pattern!</div>
-  <div id="patternRow" class="patternRow"></div>
-  <div id="optionsRow" class="optionsRow"></div>
-  <div id="feedback"></div>
+<!-- Slides 2–4: Game -->
+<div id="gameSlide" class="slide">
+  <div id="instructionsBox"></div>
+  <div class="shapeContainer" id="shapeContainer"></div>
 </div>
 
 <!-- Slide 5: End -->
@@ -148,112 +54,114 @@ button {
 
 <script>
 // Slides
-const slides = {
-  logo: document.getElementById('logoSlide'),
-  game: document.getElementById('gameSlides'),
-  end: document.getElementById('endSlide')
-};
-
-// Game elements
-const patternRow = document.getElementById('patternRow');
-const optionsRow = document.getElementById('optionsRow');
-const feedback = document.getElementById('feedback');
-const playAgainBtn = document.getElementById('playAgain');
+const slides = { logo: document.getElementById('logoSlide'), game: document.getElementById('gameSlide'), end: document.getElementById('endSlide') };
+const shapeContainer = document.getElementById('shapeContainer');
+const instructionsBox = document.getElementById('instructionsBox');
 const correctSound = document.getElementById('correctSound');
 const wrongSound = document.getElementById('wrongSound');
 const clapSound = document.getElementById('clapSound');
+const playAgainBtn = document.getElementById('playAgain');
 
-// Patterns
-const patterns = [
-  { sequence: ['red','yellow','red'], shape:'circle', correct:'yellow', options:['red','yellow','green'] },
-  { sequence: ['blue','orange','blue'], shape:'square', correct:'orange', options:['blue','orange','green'] },
-  { sequence: ['yellow','green','yellow'], shape:'triangle', correct:'green', options:['yellow','green','red'] }
-];
-
-let currentIndex = 0;
+let currentQuestion = 0;
 let attempts = 0;
 
-// Functions
-function createShapeDiv(shape, color){
-  const div = document.createElement('div');
-  div.classList.add('shapeOption');
-  if(shape==='circle') div.classList.add('circle');
-  if(shape==='square') div.classList.add('square');
-  if(shape==='triangle'){ div.classList.add('triangle'); div.style.borderBottomColor=color||'#fff'; }
-  else div.style.backgroundColor=color;
-  return div;
+// Questions (3 slides)
+const questions = [
+  { type:'triangle', images:['triangle.png','triangle-1.png','triangle-2.png'] },
+  { type:'circle', images:['circle.png','circle-1.png','circle-2.png'] },
+  { type:'square', images:['square.png','square-1.png','square-2.png'] }
+];
+
+// Shuffle helper
+function shuffle(array){ return array.sort(()=>Math.random()-0.5); }
+
+// Create shape element
+function createShape(src){ 
+  const img=document.createElement('img'); 
+  img.src='assets/'+src; 
+  img.classList.add('shapeOption'); 
+  img.addEventListener('click',()=>checkTap(src)); 
+  return img; 
 }
 
-function showPattern(){
-  patternRow.innerHTML='';
-  const p = patterns[currentIndex];
-  p.sequence.forEach(c => patternRow.appendChild(createShapeDiv(p.shape,c)));
-  patternRow.appendChild(createShapeDiv(p.shape,'')); // empty spot
-  showOptions();
+// Show question
+function showQuestion(){
+  attempts=0;
+  shapeContainer.innerHTML='';
+  const q = questions[currentQuestion];
+  instructionsBox.textContent = 'Tap on the '+q.type;
+  
+  // Scatter 3 correct + 6 other random shapes
+  let shapes = [...q.images];
+  const otherTypes = ['triangle','circle','square'].filter(t=>t!==q.type);
+  for(let i=0;i<6;i++){ shapes.push(otherTypes[i%2]+'.png'); }
+  shapes = shuffle(shapes);
+  shapes.forEach(s=>shapeContainer.appendChild(createShape(s)));
 }
 
-function showOptions(){
-  optionsRow.innerHTML='';
-  const p = patterns[currentIndex];
-  p.options.forEach(c=>{
-    const div = createShapeDiv(p.shape,c);
-    div.addEventListener('click',()=>checkAnswer(c,div));
-    optionsRow.appendChild(div);
-  });
-}
-
-function checkAnswer(color,div){
-  const p = patterns[currentIndex];
-  if(color===p.correct){
-    feedback.textContent='Good Job!';
+// Check tap
+function checkTap(src){
+  const q = questions[currentQuestion];
+  if(q.images.includes(src)){
     correctSound.play();
-    div.style.border='3px solid green';
-    setTimeout(nextQuestion,1000);
+    Array.from(shapeContainer.children).forEach(img=>{
+      if(q.images.includes(img.src.split('/').pop())) img.style.border='3px solid green';
+    });
+    setTimeout(nextSlide,800);
   } else {
     attempts++;
     wrongSound.play();
-    div.style.transform='translateX(5px)';
-    setTimeout(()=>div.style.transform='translateX(0px)',150);
-    if(attempts>=2) highlightCorrect();
+    const img = Array.from(shapeContainer.children).find(i=>i.src.endsWith(src));
+    img.style.transform='translateX(5px)';
+    setTimeout(()=>img.style.transform='translateX(0)',150);
+    if(attempts>=2){
+      Array.from(shapeContainer.children).forEach(img=>{
+        if(q.images.includes(img.src.split('/').pop())) img.style.border='3px solid green';
+      });
+    }
   }
 }
 
-function highlightCorrect(){
-  const p = patterns[currentIndex];
-  Array.from(optionsRow.children).forEach(opt=>{
-    if(opt.style.backgroundColor===p.correct || (p.shape==='triangle' && opt.style.borderBottomColor===p.correct))
-      opt.style.border='3px solid green';
-  });
+// Move to next slide
+function nextSlide(){
+  currentQuestion++;
+  if(currentQuestion>=questions.length){
+    slides.game.style.display='none';
+    slides.end.style.display='flex';
+    clapSound.play();
+    triggerConfetti();
+  } else showQuestion();
 }
 
-function nextQuestion(){
-  currentIndex++; attempts=0; feedback.textContent='';
-  if(currentIndex>=patterns.length){ slides.game.style.display='none'; slides.end.style.display='flex'; clapSound.play(); triggerConfetti(); }
-  else showPattern();
-}
-
+// Play again
 playAgainBtn.addEventListener('click',()=>{
-  currentIndex=0; attempts=0; slides.end.style.display='none';
-  slides.game.style.display='flex'; showPattern();
+  currentQuestion=0;
+  attempts=0;
+  slides.end.style.display='none';
+  slides.game.style.display='flex';
+  showQuestion();
 });
 
 // Confetti
 function triggerConfetti(){
   const canvas=document.createElement('canvas');
   canvas.style.position='fixed'; canvas.style.top=0; canvas.style.left=0;
-  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
   document.body.appendChild(canvas);
   const ctx=canvas.getContext('2d');
   const confetti=[];
-  for(let i=0;i<200;i++) confetti.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*6+4, d:Math.random()*10+5, color:`hsl(${Math.random()*360},100%,50%)`});
+  for(let i=0;i<200;i++) confetti.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*6+4,d:Math.random()*10+5,color:`hsl(${Math.random()*360},100%,50%)`});
   let t=0;
-  function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); confetti.forEach(c=>{ctx.beginPath();ctx.arc(c.x,c.y,c.r,0,Math.PI*2);ctx.fillStyle=c.color;ctx.fill();c.y+=1+Math.sin(t)*2;c.x+=Math.sin(t)*0.5;if(c.y>canvas.height)c.y=0;}); t+=0.1; requestAnimationFrame(draw);}
-  draw(); setTimeout(()=>canvas.remove(),5000);
+  function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); confetti.forEach(c=>{ctx.beginPath();ctx.arc(c.x,c.y,c.r,0,Math.PI*2);ctx.fillStyle=c.color;ctx.fill();c.y+=1+Math.sin(t)*2;c.x+=Math.sin(t)*0.5;if(c.y>canvas.height)c.y=0;}); t+=0.1; requestAnimationFrame(draw); }
+  draw();
+  setTimeout(()=>canvas.remove(),5000);
 }
 
-// Start game: show logo for 2 seconds
+// Start logo slide
 slides.logo.style.display='flex';
-setTimeout(()=>{ slides.logo.style.display='none'; slides.game.style.display='flex'; showPattern(); },2000);
+setTimeout(()=>{ slides.logo.style.display='none'; slides.game.style.display='flex'; showQuestion(); },2000);
 </script>
+
 </body>
 </html>
