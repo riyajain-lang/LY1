@@ -3,124 +3,140 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Shape Pattern Tap Game</title>
+<title>Playgroup Shapes Game</title>
 <style>
-  body {
-    margin: 0;
-    font-family: Comic Sans MS, sans-serif;
-    background: #fdf6e3;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
+body {
+  margin: 0;
+  font-family: Comic Sans MS, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #fdf6e3;
+  overflow: hidden;
+}
 
-  #logoScreen, #gameContainer, #endScreen {
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
+/* General slide styling */
+.slide {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
 
-  /* Logo screen */
-  #logoScreen {
-    display: flex;
-    background: white;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  #logoScreen img { width: 200px; height: auto; }
+/* Logo slide */
+#logoSlide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background: white;
+}
+#logoSlide img {
+  width: 200px;
+  height: auto;
+}
 
-  /* Game screen */
-  #gameContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background: url('assets/bg.png') no-repeat center center;
-    background-size: cover;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-  }
+/* Game slides */
+#gameSlides {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100%;
+  background: url('assets/game-bg.png') no-repeat center center;
+  background-size: cover;
+}
 
-  #instructionsBox {
-    width: 90%;
-    max-width: 400px;
-    border: 3px solid brown;
-    background-color: #fff3e0;
-    padding: 15px;
-    text-align: center;
-    font-size: 18px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-  }
+#instructionsBox {
+  width: 90%;
+  max-width: 400px;
+  border: 3px solid brown;
+  background-color: #fff3e0;
+  padding: 15px;
+  text-align: center;
+  font-size: 18px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+}
 
-  .patternRow, .optionsRow {
-    display: flex;
-    gap: 15px;
-    margin: 10px 0;
-  }
+.patternRow, .optionsRow {
+  display: flex;
+  gap: 20px;
+  margin: 10px 0;
+}
 
-  .shapeOption {
-    width: 70px;
-    height: 70px;
-    border: 2px solid #333;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.1s;
-  }
+.shapeOption {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.1s;
+}
 
-  .circle { border-radius: 50%; }
-  .square { border-radius: 0; }
-  .triangle {
-    width: 0;
-    height: 0;
-    border-left: 35px solid transparent;
-    border-right: 35px solid transparent;
-    border-bottom: 70px solid gray;
-  }
+.circle { border-radius: 50%; }
+.square { border-radius: 0; }
+.triangle {
+  width: 0;
+  height: 0;
+  border-left: 40px solid transparent;
+  border-right: 40px solid transparent;
+  border-bottom: 80px solid gray;
+}
 
-  #feedback { font-size: 24px; height: 30px; margin-top: 10px; }
+#feedback { font-size: 24px; height: 30px; margin-top: 10px; }
 
-  #endScreen {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
+/* End slide */
+#endSlide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: url('assets/game-bg.png') no-repeat center center;
+  background-size: cover;
+}
 
-  button {
-    padding: 10px 20px;
-    font-size: 20px;
-    margin-top: 20px;
-    cursor: pointer;
-  }
+#endSlide h1 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 25px;
+  font-size: 22px;
+  margin-top: 20px;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
 
-<!-- Logo Slide -->
-<div id="logoScreen">
+<!-- Slide 1: Logo -->
+<div id="logoSlide" class="slide">
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
   <p>Loading...</p>
 </div>
 
-<!-- Game Slide -->
-<div id="gameContainer">
+<!-- Slides 2–4: Game questions -->
+<div id="gameSlides" class="slide">
   <div id="instructionsBox">Tap the correct shape to complete the pattern!</div>
   <div id="patternRow" class="patternRow"></div>
   <div id="optionsRow" class="optionsRow"></div>
   <div id="feedback"></div>
 </div>
 
-<!-- End Slide -->
-<div id="endScreen">
+<!-- Slide 5: End -->
+<div id="endSlide" class="slide">
   <h1>🎉 Well Done! 🎉</h1>
   <button id="playAgain">Play Again</button>
 </div>
@@ -131,10 +147,14 @@
 <audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-// Elements
-const logoScreen = document.getElementById('logoScreen');
-const gameContainer = document.getElementById('gameContainer');
-const endScreen = document.getElementById('endScreen');
+// Slides
+const slides = {
+  logo: document.getElementById('logoSlide'),
+  game: document.getElementById('gameSlides'),
+  end: document.getElementById('endSlide')
+};
+
+// Game elements
 const patternRow = document.getElementById('patternRow');
 const optionsRow = document.getElementById('optionsRow');
 const feedback = document.getElementById('feedback');
@@ -143,145 +163,97 @@ const correctSound = document.getElementById('correctSound');
 const wrongSound = document.getElementById('wrongSound');
 const clapSound = document.getElementById('clapSound');
 
-// Patterns from worksheet
+// Patterns
 const patterns = [
-  { sequence: ['red', 'yellow', 'red'], shape: 'circle', correct: 'yellow', options: ['red','yellow','green'] },
-  { sequence: ['blue', 'orange', 'blue'], shape: 'square', correct: 'orange', options: ['orange','green','blue'] },
-  { sequence: ['yellow', 'green', 'yellow'], shape: 'triangle', correct: 'green', options: ['yellow','green','red'] }
+  { sequence: ['red','yellow','red'], shape:'circle', correct:'yellow', options:['red','yellow','green'] },
+  { sequence: ['blue','orange','blue'], shape:'square', correct:'orange', options:['blue','orange','green'] },
+  { sequence: ['yellow','green','yellow'], shape:'triangle', correct:'green', options:['yellow','green','red'] }
 ];
 
 let currentIndex = 0;
 let attempts = 0;
 
-// Show pattern
-function showPattern() {
-  patternRow.innerHTML = '';
-  const pattern = patterns[currentIndex];
-
-  pattern.sequence.forEach(color => {
-    const div = createShapeDiv(pattern.shape, color);
-    patternRow.appendChild(div);
-  });
-
-  // Empty spot
-  const emptyDiv = createShapeDiv(pattern.shape, '');
-  patternRow.appendChild(emptyDiv);
-
-  showOptions();
-}
-
-// Create shape div
-function createShapeDiv(shape, color) {
+// Functions
+function createShapeDiv(shape, color){
   const div = document.createElement('div');
   div.classList.add('shapeOption');
-  if(shape === 'circle') div.classList.add('circle');
-  if(shape === 'square') div.classList.add('square');
-  if(shape === 'triangle') {
-    div.classList.add('triangle');
-    div.style.borderBottomColor = color || '#fff';
-  } else { div.style.backgroundColor = color; }
+  if(shape==='circle') div.classList.add('circle');
+  if(shape==='square') div.classList.add('square');
+  if(shape==='triangle'){ div.classList.add('triangle'); div.style.borderBottomColor=color||'#fff'; }
+  else div.style.backgroundColor=color;
   return div;
 }
 
-// Show options
-function showOptions() {
-  optionsRow.innerHTML = '';
-  const pattern = patterns[currentIndex];
+function showPattern(){
+  patternRow.innerHTML='';
+  const p = patterns[currentIndex];
+  p.sequence.forEach(c => patternRow.appendChild(createShapeDiv(p.shape,c)));
+  patternRow.appendChild(createShapeDiv(p.shape,'')); // empty spot
+  showOptions();
+}
 
-  pattern.options.forEach(color => {
-    const div = createShapeDiv(pattern.shape, color);
-    div.addEventListener('click', () => checkAnswer(color, div));
+function showOptions(){
+  optionsRow.innerHTML='';
+  const p = patterns[currentIndex];
+  p.options.forEach(c=>{
+    const div = createShapeDiv(p.shape,c);
+    div.addEventListener('click',()=>checkAnswer(c,div));
     optionsRow.appendChild(div);
   });
 }
 
-// Check answer
-function checkAnswer(color, div) {
-  const pattern = patterns[currentIndex];
-
-  if(color === pattern.correct) {
-    feedback.textContent = 'Good Job!';
+function checkAnswer(color,div){
+  const p = patterns[currentIndex];
+  if(color===p.correct){
+    feedback.textContent='Good Job!';
     correctSound.play();
-    div.style.border = '3px solid green';
-    setTimeout(() => nextQuestion(), 1000);
+    div.style.border='3px solid green';
+    setTimeout(nextQuestion,1000);
   } else {
     attempts++;
     wrongSound.play();
-    div.style.transform = 'translateX(5px)';
-    setTimeout(()=> div.style.transform='translateX(0px)',150);
-    if(attempts >=2) highlightCorrect();
+    div.style.transform='translateX(5px)';
+    setTimeout(()=>div.style.transform='translateX(0px)',150);
+    if(attempts>=2) highlightCorrect();
   }
 }
 
-// Highlight correct option after 2 wrong attempts
-function highlightCorrect() {
-  const pattern = patterns[currentIndex];
-  Array.from(optionsRow.children).forEach(opt => {
-    if(opt.style.backgroundColor === pattern.correct || (pattern.shape==='triangle' && opt.style.borderBottomColor === pattern.correct)) {
-      opt.style.border = '3px solid green';
-    }
+function highlightCorrect(){
+  const p = patterns[currentIndex];
+  Array.from(optionsRow.children).forEach(opt=>{
+    if(opt.style.backgroundColor===p.correct || (p.shape==='triangle' && opt.style.borderBottomColor===p.correct))
+      opt.style.border='3px solid green';
   });
 }
 
-// Next question
-function nextQuestion() {
-  currentIndex++;
-  attempts = 0;
-  feedback.textContent = '';
-  if(currentIndex >= patterns.length) {
-    gameContainer.style.display = 'none';
-    endScreen.style.display = 'flex';
-    clapSound.play();
-    triggerConfetti();
-  } else showPattern();
+function nextQuestion(){
+  currentIndex++; attempts=0; feedback.textContent='';
+  if(currentIndex>=patterns.length){ slides.game.style.display='none'; slides.end.style.display='flex'; clapSound.play(); triggerConfetti(); }
+  else showPattern();
 }
 
-// Play Again
-playAgainBtn.addEventListener('click', () => {
-  currentIndex = 0;
-  attempts = 0;
-  endScreen.style.display = 'none';
-  showPattern();
-  gameContainer.style.display = 'flex';
+playAgainBtn.addEventListener('click',()=>{
+  currentIndex=0; attempts=0; slides.end.style.display='none';
+  slides.game.style.display='flex'; showPattern();
 });
 
-// Confetti animation
-function triggerConfetti() {
-  const canvas = document.createElement('canvas');
-  canvas.style.position = 'fixed';
-  canvas.style.top=0; canvas.style.left=0;
-  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+// Confetti
+function triggerConfetti(){
+  const canvas=document.createElement('canvas');
+  canvas.style.position='fixed'; canvas.style.top=0; canvas.style.left=0;
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
   document.body.appendChild(canvas);
-  const ctx = canvas.getContext('2d');
-  const confetti = [];
-  for(let i=0;i<200;i++){
-    confetti.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*6+4, d:Math.random()*10+5, color:`hsl(${Math.random()*360}, 100%, 50%)`});
-  }
+  const ctx=canvas.getContext('2d');
+  const confetti=[];
+  for(let i=0;i<200;i++) confetti.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*6+4, d:Math.random()*10+5, color:`hsl(${Math.random()*360},100%,50%)`});
   let t=0;
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    confetti.forEach(c=>{
-      ctx.beginPath();
-      ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
-      ctx.fillStyle = c.color;
-      ctx.fill();
-      c.y += 1+Math.sin(t)*2;
-      c.x += Math.sin(t)*0.5;
-      if(c.y>canvas.height) c.y=0;
-    });
-    t+=0.1;
-    requestAnimationFrame(draw);
-  }
-  draw();
-  setTimeout(()=> canvas.remove(),5000);
+  function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); confetti.forEach(c=>{ctx.beginPath();ctx.arc(c.x,c.y,c.r,0,Math.PI*2);ctx.fillStyle=c.color;ctx.fill();c.y+=1+Math.sin(t)*2;c.x+=Math.sin(t)*0.5;if(c.y>canvas.height)c.y=0;}); t+=0.1; requestAnimationFrame(draw);}
+  draw(); setTimeout(()=>canvas.remove(),5000);
 }
 
-// Start logo screen for 2 seconds
-setTimeout(() => {
-  logoScreen.style.display = 'none';
-  gameContainer.style.display = 'flex';
-  showPattern();
-}, 2000);
+// Start game: show logo for 2 seconds
+slides.logo.style.display='flex';
+setTimeout(()=>{ slides.logo.style.display='none'; slides.game.style.display='flex'; showPattern(); },2000);
 </script>
 </body>
 </html>
