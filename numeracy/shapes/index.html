@@ -35,7 +35,7 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background: url('/LY1/numeracy/shapes/assets/background.png') no-repeat center center;
+    background: url('/LY1/numeracy/shapes/assets/a_colorful_cartoon_children_s_learning_game_ui_scr.png') no-repeat center center;
     background-size: cover;
     padding-top: 50px;
   }
@@ -44,6 +44,9 @@
     color: #333;
     margin-bottom: 30px;
     text-shadow: 1px 1px 2px #fff;
+    background-color: rgba(255, 235, 205, 0.7);
+    padding: 10px 20px;
+    border-radius: 10px;
   }
   .options {
     display: flex;
@@ -82,7 +85,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: url('/LY1/numeracy/shapes/assets/background.png') no-repeat center center;
+    background: url('/LY1/numeracy/shapes/assets/a_colorful_cartoon_children_s_learning_game_ui_scr.png') no-repeat center center;
     background-size: cover;
   }
   #playAgainBtn {
@@ -216,7 +219,7 @@ resizeCanvas();
 function createConfetti() {
   confettiParticles = [];
   for(let i=0;i<150;i++){
-    confettiParticles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*6+4, d: Math.random()*15+5, color: `hsl(${Math.random()*360},100%,50%)`, tilt: Math.random()*10-10 });
+    confettiParticles.push({ x: Math.random()*canvas.width, y: Math.random()*canvas.height, r: Math.random()*6+4, d: Math.random()*15+5, color: `hsl(${Math.random()*360}, 100%, 50%)`, tilt: Math.random()*10-10 });
   }
 }
 
