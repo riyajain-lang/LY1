@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shape Pattern Tap Game</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Comic Sans MS, sans-serif;
+    background: #fdf6e3;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  #logoScreen, #gameContainer, #endScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Logo screen */
+  #logoScreen {
+    display: flex;
+    background: white;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  #logoScreen img { width: 200px; height: auto; }
+
+  /* Game screen */
+  #gameContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: url('assets/bg.png') no-repeat center center;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  #instructionsBox {
+    width: 90%;
+    max-width: 400px;
+    border: 3px solid brown;
+    background-color: #fff3e0;
+    padding: 15px;
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+  }
+
+  .patternRow, .optionsRow {
+    display: flex;
+    gap: 15px;
+    margin: 10px 0;
+  }
+
+  .shapeOption {
+    width: 70px;
+    height: 70px;
+    border: 2px solid #333;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.1s;
+  }
+
+  .circle { border-radius: 50%; }
+  .square { border-radius: 0; }
+  .triangle {
+    width: 0;
+    height: 0;
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-bottom: 70px solid gray;
+  }
+
+  #feedback { font-size: 24px; height: 30px; margin-top: 10px; }
+
+  #endScreen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  button {
+    padding: 10px 20px;
+    font-size: 20px;
+    margin-top: 20px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<!-- Logo Slide -->
+<div id="logoScreen">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <p>Loading...</p>
+</div>
+
+<!-- Game Slide -->
+<div id="gameContainer">
+  <div id="instructionsBox">Tap the correct shape to complete the pattern!</div>
+  <div id="patternRow" class="patternRow"></div>
+  <div id="optionsRow" class="optionsRow"></div>
+  <div id="feedback"></div>
+</div>
+
+<!-- End Slide -->
+<div id="endScreen">
+  <h1>🎉 Well Done! 🎉</h1>
+  <button id="playAgain">Play Again</button>
+</div>
+
+<!-- Audio -->
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+// Elements
+const logoScreen = document.getElementById('logoScreen');
+const gameContainer = document.getElementById('gameContainer');
+const endScreen = document.getElementById('endScreen');
+const patternRow = document.getElementById('patternRow');
+const optionsRow = document.getElementById('optionsRow');
+const feedback = document.getElementById('feedback');
+const playAgainBtn = document.getElementById('playAgain');
+const correctSound = document.getElementById('correctSound');
+const wrongSound = document.getElementById('wrongSound');
+const clapSound = document.getElementById('clapSound');
+
+// Patterns from worksheet
+const patterns = [
+  { sequence: ['red', 'yellow', 'red'], shape: 'circle', correct: 'yellow', options: ['red','yellow','green'] },
+  { sequence: ['blue', 'orange', 'blue'], shape: 'square', correct: 'orange', options: ['orange','green','blue'] },
+  { sequence: ['yellow', 'green', 'yellow'], shape: 'triangle', correct: 'green', options: ['yellow','green','red'] }
+];
+
+let currentIndex = 0;
+let attempts = 0;
+
+// Show pattern
+function showPattern() {
+  patternRow.innerHTML = '';
+  const pattern = patterns[currentIndex];
+
+  pattern.sequence.forEach(color => {
+    const div = createShapeDiv(pattern.shape, color);
+    patternRow.appendChild(div);
+  });
+
+  // Empty spot
+  const emptyDiv = createShapeDiv(pattern.shape, '');
+  patternRow.appendChild(emptyDiv);
+
+  showOptions();
+}
+
+// Create shape div
+function createShapeDiv(shape, color) {
+  const div = document.createElement('div');
+  div.classList.add('shapeOption');
+  if(shape === 'circle') div.classList.add('circle');
+  if(shape === 'square') div.classList.add('square');
+  if(shape === 'triangle') {
+    div.classList.add('triangle');
+    div.style.borderBottomColor = color || '#fff';
+  } else { div.style.backgroundColor = color; }
+  return div;
+}
+
+// Show options
+function showOptions() {
+  optionsRow.innerHTML = '';
+  const pattern = patterns[currentIndex];
+
+  pattern.options.forEach(color => {
+    const div = createShapeDiv(pattern.shape, color);
+    div.addEventListener('click', () => checkAnswer(color, div));
+    optionsRow.appendChild(div);
+  });
+}
+
+// Check answer
+function checkAnswer(color, div) {
+  const pattern = patterns[currentIndex];
+
+  if(color === pattern.correct) {
+    feedback.textContent = 'Good Job!';
+    correctSound.play();
+    div.style.border = '3px solid green';
+    setTimeout(() => nextQuestion(), 1000);
+  } else {
+    attempts++;
+    wrongSound.play();
+    div.style.transform = 'translateX(5px)';
+    setTimeout(()=> div.style.transform='translateX(0px)',150);
+    if(attempts >=2) highlightCorrect();
+  }
+}
+
+// Highlight correct option after 2 wrong attempts
+function highlightCorrect() {
+  const pattern = patterns[currentIndex];
+  Array.from(optionsRow.children).forEach(opt => {
+    if(opt.style.backgroundColor === pattern.correct || (pattern.shape==='triangle' && opt.style.borderBottomColor === pattern.correct)) {
+      opt.style.border = '3px solid green';
+    }
+  });
+}
+
+// Next question
+function nextQuestion() {
+  currentIndex++;
+  attempts = 0;
+  feedback.textContent = '';
+  if(currentIndex >= patterns.length) {
+    gameContainer.style.display = 'none';
+    endScreen.style.display = 'flex';
+    clapSound.play();
+    triggerConfetti();
+  } else showPattern();
+}
+
+// Play Again
+playAgainBtn.addEventListener('click', () => {
+  currentIndex = 0;
+  attempts = 0;
+  endScreen.style.display = 'none';
+  showPattern();
+  gameContainer.style.display = 'flex';
+});
+
+// Confetti animation
+function triggerConfetti() {
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.top=0; canvas.style.left=0;
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const confetti = [];
+  for(let i=0;i<200;i++){
+    confetti.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*6+4, d:Math.random()*10+5, color:`hsl(${Math.random()*360}, 100%, 50%)`});
+  }
+  let t=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confetti.forEach(c=>{
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, c.r, 0, Math.PI*2);
+      ctx.fillStyle = c.color;
+      ctx.fill();
+      c.y += 1+Math.sin(t)*2;
+      c.x += Math.sin(t)*0.5;
+      if(c.y>canvas.height) c.y=0;
+    });
+    t+=0.1;
+    requestAnimationFrame(draw);
+  }
+  draw();
+  setTimeout(()=> canvas.remove(),5000);
+}
+
+// Start logo screen for 2 seconds
+setTimeout(() => {
+  logoScreen.style.display = 'none';
+  gameContainer.style.display = 'flex';
+  showPattern();
+}, 2000);
+</script>
+</body>
+</html>
