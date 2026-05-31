@@ -29,40 +29,40 @@
 <body>
 
 <div id="slide1" class="slide">
-  <img src="innovine-logo.png" alt="Innovine Logo">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <div id="slide2" class="slide game-slide">
   <div class="instruction">Tap on the circle:</div>
   <div class="options">
-    <img src="/LY1/numeracy/shapes/assets/circle.png" data-correct="true">
-    <img src="/LY1/numeracy/shapes/assets/square-1.png">
-    <img src="/LY1/numeracy/shapes/assets/triangle-1.png">
+    <img src="assets/circle.png" data-correct="true">
+    <img src="assets/square-1.png">
+    <img src="assets/triangle-1.png">
   </div>
   <div class="correct-feedback">Good Job!</div>
-  <audio class="voice" src="/LY1/numeracy/shapes/assets/voice_circle.mp3"></audio>
+  <audio class="voice" src="assets/voice_circle.mp3"></audio>
 </div>
 
 <div id="slide3" class="slide game-slide">
   <div class="instruction">Tap on the square:</div>
   <div class="options">
-    <img src="/LY1/numeracy/shapes/assets/square.png" data-correct="true">
-    <img src="/LY1/numeracy/shapes/assets/circle-1.png">
-    <img src="/LY1/numeracy/shapes/assets/triangle-2.png">
+    <img src="assets/square.png" data-correct="true">
+    <img src="assets/circle-1.png">
+    <img src="assets/triangle-2.png">
   </div>
   <div class="correct-feedback">Good Job!</div>
-  <audio class="voice" src="/LY1/numeracy/shapes/assets/voice_square.mp3"></audio>
+  <audio class="voice" src="assets/voice_square.mp3"></audio>
 </div>
 
 <div id="slide4" class="slide game-slide">
   <div class="instruction">Tap on the triangle:</div>
   <div class="options">
-    <img src="/LY1/numeracy/shapes/assets/triangle.png" data-correct="true">
-    <img src="/LY1/numeracy/shapes/assets/circle-2.png">
-    <img src="/LY1/numeracy/shapes/assets/square-2.png">
+    <img src="assets/triangle.png" data-correct="true">
+    <img src="assets/circle-2.png">
+    <img src="assets/square-2.png">
   </div>
   <div class="correct-feedback">Good Job!</div>
-  <audio class="voice" src="/LY1/numeracy/shapes/assets/voice_triangle.mp3"></audio>
+  <audio class="voice" src="assets/voice_triangle.mp3"></audio>
 </div>
 
 <div id="slide5" class="slide">
@@ -70,9 +70,9 @@
   <button id="playAgainBtn">Play Again</button>
 </div>
 
-<audio id="correctSound" src="/LY1/numeracy/shapes/assets/correct.mp3"></audio>
-<audio id="wrongSound" src="/LY1/numeracy/shapes/assets/wrong.mp3"></audio>
-<audio id="clapSound" src="/LY1/numeracy/shapes/assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <canvas id="confetti"></canvas>
 
@@ -89,14 +89,17 @@ function showSlide(index) {
   allSlides.forEach(s => s.style.display = 'none');
   allSlides[index].style.display = 'flex';
   attempts = 0;
+  // Play voice instruction if exists
   const voice = allSlides[index].querySelector('.voice');
   if (voice) { voice.currentTime = 0; voice.play(); }
 }
 
+// Show logo first, then first game slide
 showSlide(0);
 setTimeout(() => { showSlide(1); }, 2000);
 
-allSlides.slice(1,4).forEach(slide => {
+// Game logic
+allSlides.slice(1, 4).forEach(slide => {
   const options = slide.querySelectorAll('.options img');
   const feedback = slide.querySelector('.correct-feedback');
   options.forEach(option => {
