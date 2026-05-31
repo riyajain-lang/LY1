@@ -35,18 +35,19 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background: url('/LY1/numeracy/shapes/assets/a_colorful_cartoon_children_s_learning_game_ui_scr.png') no-repeat center center;
-    background-size: cover;
+    /* Pastel ombre background */
+    background: linear-gradient(135deg, #ffd1dc, #ffe5b4, #c1f0f6);
     padding-top: 50px;
   }
   .instruction {
-    font-size: 32px;
+    font-size: 36px;
     color: #333;
     margin-bottom: 30px;
     text-shadow: 1px 1px 2px #fff;
-    background-color: rgba(255, 235, 205, 0.7);
-    padding: 10px 20px;
-    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.6);
+    padding: 12px 25px;
+    border-radius: 15px;
+    border: 2px solid #fff;
   }
   .options {
     display: flex;
@@ -55,48 +56,49 @@
     justify-content: center;
   }
   .options img {
-    width: 120px;
-    height: 120px;
+    width: 130px;
+    height: 130px;
     cursor: pointer;
-    transition: transform 0.2s;
-    border: 4px solid #ffcccb;
-    border-radius: 15px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: 4px solid #fff;
+    border-radius: 20px;
     padding: 5px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
   }
   .options img.wrong {
     animation: giggle 0.2s;
   }
   @keyframes giggle {
     0% { transform: rotate(0deg);}
-    25% { transform: rotate(10deg);}
-    50% { transform: rotate(-10deg);}
-    75% { transform: rotate(10deg);}
+    25% { transform: rotate(12deg);}
+    50% { transform: rotate(-12deg);}
+    75% { transform: rotate(12deg);}
     100% { transform: rotate(0deg);}
   }
   .correct-feedback {
     color: green;
-    font-size: 32px;
+    font-size: 36px;
     margin-top: 20px;
     display: none;
+    text-shadow: 1px 1px 2px #fff;
   }
   #slide5 {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: url('/LY1/numeracy/shapes/assets/a_colorful_cartoon_children_s_learning_game_ui_scr.png') no-repeat center center;
-    background-size: cover;
+    background: linear-gradient(135deg, #ffd1dc, #ffe5b4, #c1f0f6);
   }
   #playAgainBtn {
     margin-top: 20px;
-    font-size: 24px;
-    padding: 10px 20px;
+    font-size: 28px;
+    padding: 12px 25px;
     cursor: pointer;
-    background-color: orange;
+    background-color: #ffb347;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     color: white;
+    box-shadow: 2px 2px 6px #333;
   }
   canvas {
     position: absolute;
@@ -107,7 +109,7 @@
 <body>
 
 <div id="slide1" class="slide">
-  <img src="/LY1/numeracy/shapes/assets/innovine-logo.png" alt="Innovine Logo">
+  <img src="9133240a-689b-4389-bc07-233a2fd76d73.png" alt="Innovine Logo">
 </div>
 
 <div id="slide2" class="slide game-slide">
@@ -191,7 +193,7 @@ slides.slice(1,4).forEach((slide, i) => {
         if(attempts >= 2) {
           options.forEach(o => {
             if(o.dataset.correct) {
-              o.style.boxShadow = '0 0 15px 5px yellow';
+              o.style.boxShadow = '0 0 20px 6px yellow';
               setTimeout(() => o.style.boxShadow = '', 800);
             }
           });
