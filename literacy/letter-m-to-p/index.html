@@ -11,7 +11,7 @@ body,html{width:100%;height:100%;font-family:'Comic Sans MS',sans-serif;display:
 .screen.active{display:flex;}
 .logo-screen{background:white;}
 .logo-screen img{width:200px;height:auto;}
-.question{font-size:2em;margin-bottom:20px;color:#ffb347;text-shadow:1px 1px #555;text-align:center;}
+.question{font-size:2em;margin-bottom:10px;color:#ffb347;text-shadow:1px 1px #555;text-align:center;}
 .letter-center{width:120px;height:120px;margin-bottom:20px;}
 .images{position:relative;width:100%;max-width:400px;height:400px;}
 .images img{width:80px;height:80px;position:absolute;cursor:pointer;border:3px solid #ffb347;border-radius:20px;transition:all 0.3s ease;}
@@ -28,7 +28,7 @@ canvas{position:absolute;top:0;left:0;pointer-events:none;}
 
 <!-- Slide 1: Logo -->
 <div class="screen logo-screen active">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo">
+  <img src="assets/innovine-logo.png" alt="Logo">
 </div>
 
 <!-- Question Slide -->
@@ -63,68 +63,55 @@ const letterCenter = document.getElementById('letterCenter');
 const imageContainer = document.getElementById('imageContainer');
 const tickMark = document.getElementById('tickMark');
 const playAgainBtn = document.getElementById('playAgainBtn');
-
 const correctAudio = document.getElementById('correctAudio');
 const wrongAudio = document.getElementById('wrongAudio');
 const clapAudio = document.getElementById('clapAudio');
 const letterAudio = document.getElementById('letterAudio');
 
-// Define questions
+// Questions with exact placement
 const questions = [
-  { // M
-    letter:"M",
-    prompt:"M For?",
-    audio:"assets/m-for.mp3",
-    letterImg:"assets/m.png",
+  {
+    letter:"M", prompt:"M For?", audio:"assets/m-for.mp3", letterImg:"assets/m.png",
     images:[
-      {src:"assets/mango.png", correct:true, x:50, y:20},
-      {src:"assets/monkey.png", correct:true, x:20, y:50},
-      {src:"assets/moon.png", correct:true, x:80, y:50},
-      {src:"assets/nest.png", correct:false, x:20, y:80},
-      {src:"assets/octopus.png", correct:false, x:50, y:80},
-      {src:"assets/panda.png", correct:false, x:80, y:80}
+      {src:"assets/mango.png", correct:true, x:10, y:10},     // top-left
+      {src:"assets/monkey.png", correct:true, x:70, y:10},    // top-right
+      {src:"assets/moon.png", correct:true, x:40, y:70},      // bottom-center
+      {src:"assets/nest.png", correct:false, x:10, y:50},     // middle-left
+      {src:"assets/octopus.png", correct:false, x:70, y:50},  // middle-right
+      {src:"assets/panda.png", correct:false, x:40, y:30}     // top-center
     ]
   },
-  { // O
-    letter:"O",
-    prompt:"O For?",
-    audio:"assets/o-for.mp3",
-    letterImg:"assets/o.png",
+  {
+    letter:"O", prompt:"O For?", audio:"assets/o-for.mp3", letterImg:"assets/o.png",
     images:[
-      {src:"assets/orange.png", correct:true, x:50, y:20},
-      {src:"assets/octopus.png", correct:true, x:20, y:50},
-      {src:"assets/owl.png", correct:true, x:80, y:50},
-      {src:"assets/pumpkin.png", correct:false, x:20, y:80},
-      {src:"assets/moon.png", correct:false, x:50, y:80},
-      {src:"assets/parrot.png", correct:false, x:80, y:80}
+      {src:"assets/orange.png", correct:true, x:10, y:10},
+      {src:"assets/octopus.png", correct:true, x:70, y:10},
+      {src:"assets/owl.png", correct:true, x:40, y:70},
+      {src:"assets/pumpkin.png", correct:false, x:10, y:50},
+      {src:"assets/moon.png", correct:false, x:70, y:50},
+      {src:"assets/parrot.png", correct:false, x:40, y:30}
     ]
   },
-  { // N
-    letter:"N",
-    prompt:"N For?",
-    audio:"assets/n-for.mp3",
-    letterImg:"assets/n.png",
+  {
+    letter:"N", prompt:"N For?", audio:"assets/n-for.mp3", letterImg:"assets/n.png",
     images:[
-      {src:"assets/net.png", correct:true, x:50, y:20},
-      {src:"assets/nest.png", correct:true, x:20, y:50},
-      {src:"assets/mango.png", correct:false, x:80, y:50},
-      {src:"assets/monkey.png", correct:false, x:20, y:80},
-      {src:"assets/orange.png", correct:false, x:50, y:80},
-      {src:"assets/parrot.png", correct:false, x:80, y:80}
+      {src:"assets/net.png", correct:true, x:40, y:70},
+      {src:"assets/nest.png", correct:true, x:10, y:10},
+      {src:"assets/mango.png", correct:false, x:70, y:10},
+      {src:"assets/monkey.png", correct:false, x:10, y:50},
+      {src:"assets/orange.png", correct:false, x:70, y:50},
+      {src:"assets/parrot.png", correct:false, x:40, y:30}
     ]
   },
-  { // P
-    letter:"P",
-    prompt:"P For?",
-    audio:"assets/p-for.mp3",
-    letterImg:"assets/p.png",
+  {
+    letter:"P", prompt:"P For?", audio:"assets/p-for.mp3", letterImg:"assets/p.png",
     images:[
-      {src:"assets/pumpkin.png", correct:true, x:50, y:20},
-      {src:"assets/panda.png", correct:true, x:20, y:50},
-      {src:"assets/parrot.png", correct:true, x:80, y:50},
-      {src:"assets/orange.png", correct:false, x:20, y:80},
-      {src:"assets/net.png", correct:false, x:50, y:80},
-      {src:"assets/nest.png", correct:false, x:80, y:80}
+      {src:"assets/pumpkin.png", correct:true, x:10, y:10},
+      {src:"assets/panda.png", correct:true, x:70, y:10},
+      {src:"assets/parrot.png", correct:true, x:40, y:70},
+      {src:"assets/orange.png", correct:false, x:10, y:50},
+      {src:"assets/net.png", correct:false, x:70, y:50},
+      {src:"assets/nest.png", correct:false, x:40, y:30}
     ]
   }
 ];
@@ -142,9 +129,7 @@ function showQuestion(){
   letterCenter.src = q.letterImg;
   imageContainer.innerHTML = "";
   selectedCount=0; wrongAttempts=0; tickMark.style.display="none";
-
-  letterAudio.src = q.audio;
-  letterAudio.play();
+  letterAudio.src = q.audio; letterAudio.play();
 
   const shuffled = shuffle([...q.images]);
   shuffled.forEach(i=>{
@@ -153,7 +138,7 @@ function showQuestion(){
     img.dataset.correct=i.correct;
     img.style.left = i.x+'%';
     img.style.top = i.y+'%';
-    img.addEventListener('click',handleClick);
+    img.addEventListener('click', handleClick);
     imageContainer.appendChild(img);
   });
 
