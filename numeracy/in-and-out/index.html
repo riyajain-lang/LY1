@@ -8,7 +8,7 @@
   body {
     margin: 0;
     font-family: 'Comic Sans MS', sans-serif;
-    background-color: #b0e0f5;
+    background: linear-gradient(135deg, #b0e0f5, #f0f5b0);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -109,7 +109,7 @@
   <!-- Game Slide -->
   <div id="game-slide" style="display:none;">
     <div class="score-box" id="score">★ 0/5 ✓ 0</div>
-    <div class="question-box" id="question">Where is the Fruit?</div>
+    <div class="question-box" id="question">Where is the Fruit placed?</div>
     <div class="options">
       <button class="option-btn" id="in-btn">In</button>
       <button class="option-btn" id="out-btn">Out</button>
@@ -132,12 +132,21 @@
 
 <script>
 const questions = [
-  {img: "assets/fruit-in.png", answer: "In", text: "Where is the Fruit?"},
-  {img: "assets/lion-in.png", answer: "In", text: "Where is the Lion?"},
-  {img: "assets/parrot-out.png", answer: "Out", text: "Where is the Parrot?"},
-  {img: "assets/cat-out.png", answer: "Out", text: "Where is the Cat?"},
-  {img: "assets/dog-in.png", answer: "In", text: "Where is the Dog?"}
+  {img: "assets/fruit-in.png", answer: "In", text: "Where is the Fruit placed?"},
+  {img: "assets/lion-in.png", answer: "In", text: "Where is the Lion placed?"},
+  {img: "008525da-4dc3-4083-a455-43755528b293.png", answer: "Out", text: "Where is the Parrot placed?"},
+  {img: "assets/cat-out.png", answer: "Out", text: "Where is the Cat placed?"},
+  {img: "assets/dog-in.png", answer: "In", text: "Where is the Dog placed?"}
 ];
+
+// Randomize order for replay
+function shuffle(array) {
+  for (let i=array.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+shuffle(questions);
 
 let current = 0;
 let score = 0;
@@ -162,7 +171,7 @@ function showSlide(slide) {
   slide.style.display = "block";
 }
 
-// Initial logo slide for 2 seconds
+// Initial logo slide
 showSlide(logoSlide);
 setTimeout(() => { loadQuestion(); showSlide(gameSlide); }, 2000);
 
@@ -204,7 +213,6 @@ function handleAnswer(ans){
     attempts++;
     wrongSound.currentTime = 0;
     wrongSound.play();
-    // Shake wrong button
     const btn = ans === "In" ? inBtn : outBtn;
     btn.style.transform = "translateX(-10px)";
     setTimeout(()=>{btn.style.transform="translateX(0px)"}, 100);
@@ -218,7 +226,7 @@ function showEndSlide(){
 
 inBtn.onclick = () => handleAnswer("In");
 outBtn.onclick = () => handleAnswer("Out");
-playAgainBtn.onclick = () => {current=0; score=0; loadQuestion(); showSlide(gameSlide);}
+playAgainBtn.onclick = () => { current=0; score=0; shuffle(questions); loadQuestion(); showSlide(gameSlide); }
 </script>
 </body>
 </html>
