@@ -30,7 +30,7 @@ body, html { width:100%; height:100%; font-family:'Comic Sans MS', sans-serif; d
 @keyframes giggle { 0%{transform:rotate(0deg);}25%{transform:rotate(15deg);}50%{transform:rotate(-15deg);}75%{transform:rotate(15deg);}100%{transform:rotate(0deg);} }
 .images img.glow { box-shadow:0 0 20px 6px #32cd32; }
 
-/* Fixed positions for six images */
+/* Positions */
 .top-left { top:10%; left:10%; }
 .top-center { top:10%; left:40%; }
 .top-right { top:10%; left:70%; }
@@ -69,7 +69,7 @@ canvas { position:absolute; top:0; left:0; pointer-events:none; }
 </div>
 
 <!-- End Screen -->
-<div class="screen end-screen" style="background-image:url('assets/background.png');">
+<div class="screen end-screen">
   <h1>Good Job!</h1>
   <canvas id="confettiCanvas"></canvas>
   <button id="playAgainBtn">Play Again</button>
@@ -132,34 +132,55 @@ function handleClick(e){
   const img = e.target;
   const isCorrect = img.dataset.correct==='true';
   if(isCorrect){
-    img.style.opacity=0.6; selectedCount++;
+    img.style.opacity=0.6;
+    selectedCount++;
     correctAudio.currentTime=0; correctAudio.play();
     tickMark.style.display='block'; setTimeout(()=>{tickMark.style.display='none';},500);
     if(selectedCount === questions[currentQ].images.filter(i=>i.correct).length){
+      clapAudio.currentTime=0; clapAudio.play(); // PLAY CLAP SOUND
       currentQ++;
-      if(currentQ>=questions.length){ screens.question.classList.remove('active'); screens.end.classList.add('active'); startConfetti(); clapAudio.play(); }
-      else setTimeout(showQuestion,700);
+      if(currentQ>=questions.length){
+        screens.question.classList.remove('active');
+        screens.end.classList.add('active');
+        startConfetti();
+      } else setTimeout(showQuestion,700);
     }
   } else {
-    wrongAttempts++; wrongAudio.currentTime=0; wrongAudio.play();
-    img.classList.add('giggle'); setTimeout(()=>{img.classList.remove('giggle');},500);
-    if(wrongAttempts>=2){ Array.from(imageContainer.children).forEach(i=>{ if(i.dataset.correct==='true') i.classList.add('glow'); }); }
+    wrongAttempts++;
+    wrongAudio.currentTime=0; wrongAudio.play();
+    img.classList.add('giggle');
+    setTimeout(()=>{img.classList.remove('giggle');},500);
+    if(wrongAttempts>=2){
+      Array.from(imageContainer.children).forEach(i=>{
+        if(i.dataset.correct==='true') i.classList.add('glow');
+      });
+    }
   }
 }
 
 playAgainBtn.addEventListener('click',()=>{
-  currentQ=0; screens.end.classList.remove('active'); showQuestion();
+  currentQ=0;
+  screens.end.classList.remove('active');
+  showQuestion();
 });
 
 function startConfetti(){
   const canvas = document.getElementById('confettiCanvas');
-  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
-  const ctx = canvas.getContext('2d'); const confetti=[]; const confettiCount=150;
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const confetti=[]; const confettiCount=150;
   for(let i=0;i<confettiCount;i++){
     confetti.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,r:Math.random()*6+4,d:Math.random()*confettiCount,color:`hsl(${Math.random()*360},100%,50%)`,tilt:Math.random()*10-10,tiltAngleIncrement:Math.random()*0.07+0.05,tiltAngle:0});
   }
-  function draw(){ ctx.clearRect(0,0,canvas.width,canvas.height); confetti.forEach(c=>{ctx.beginPath();ctx.lineWidth=c.r;ctx.strokeStyle=c.color;ctx.moveTo(c.x+c.tilt+c.r/2,c.y);ctx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/2);ctx.stroke();}); update(); requestAnimationFrame(draw);}
-  function update(){ confetti.forEach(c=>{c.tiltAngle+=c.tiltAngleIncrement;c.y += (Math.cos(c.d)+1+c.r/2)/2;c.x += Math.sin(c.d);c.tilt=Math.sin(c.tiltAngle)*15;if(c.y>canvas.height){c.y=-10;c.x=Math.random()*canvas.width;}});}
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    confetti.forEach(c=>{ctx.beginPath();ctx.lineWidth=c.r;ctx.strokeStyle=c.color;ctx.moveTo(c.x+c.tilt+c.r/2,c.y);ctx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/2);ctx.stroke();});
+    update(); requestAnimationFrame(draw);
+  }
+  function update(){
+    confetti.forEach(c=>{c.tiltAngle+=c.tiltAngleIncrement;c.y += (Math.cos(c.d)+1+c.r/2)/2;c.x += Math.sin(c.d);c.tilt=Math.sin(c.tiltAngle)*15;if(c.y>canvas.height){c.y=-10;c.x=Math.random()*canvas.width;}}); 
+  }
   draw();
 }
 </script>
