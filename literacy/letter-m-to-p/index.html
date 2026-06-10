@@ -5,29 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Preschool Letter Game</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-body,html{width:100%;height:100%;font-family:'Comic Sans MS',sans-serif;display:flex;justify-content:center;align-items:center;overflow:hidden;}
-.screen{display:none;width:100%;height:100%;flex-direction:column;justify-content:center;align-items:center;position:relative;background-size:cover;background-position:center;}
-.screen.active{display:flex;}
-.logo-screen{background:white;}
-.logo-screen img{width:200px;height:auto;}
-.question{font-size:2em;margin-bottom:10px;color:#ffb347;text-shadow:1px 1px #555;text-align:center;background:rgba(255,255,255,0.6);padding:5px 10px;border-radius:8px;}
-.images{position:relative;width:500px;height:500px;margin:0 auto;}
-.images img{width:90px;height:90px;position:absolute;cursor:pointer;border:3px solid #ffb347;border-radius:20px;transition:all 0.3s ease;}
-.images img.giggle{animation:giggle 0.5s;}
+body { background:#fff; font-family:'Comic Sans MS', sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; overflow:hidden;}
+.screen { display:none; width:100%; height:100%; flex-direction:column; justify-content:center; align-items:center; position:relative; }
+.screen.active { display:flex; }
+.logo-screen img { width:200px; height:auto; }
+.container { position:relative; width:500px; height:500px; background:url('assets/background.png') center/cover no-repeat; }
+.title { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:2em; color:#ffb347; text-shadow:1px 1px #555; }
+.letter { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100px; height:100px; }
+.image { position:absolute; width:90px; height:90px; border:3px solid #ffb347; border-radius:20px; cursor:pointer; transition:all 0.3s ease; }
+.image.giggle { animation:giggle 0.5s; }
 @keyframes giggle{0%{transform:rotate(0deg);}25%{transform:rotate(15deg);}50%{transform:rotate(-15deg);}75%{transform:rotate(15deg);}100%{transform:rotate(0deg);}}
-.images img.glow{box-shadow:0 0 15px 5px #32cd32;}
-.top-left{top:80px;left:60px;}
-.top-center{top:80px;left:205px;}
-.top-right{top:80px;left:350px;}
-.middle-left{top:220px;left:60px;}
-.middle-right{top:220px;left:350px;}
-.bottom-center{top:360px;left:205px;}
-.letter-center{position:absolute;top:220px;left:205px;width:90px;height:90px;}
-.tick{position:absolute;width:80px;height:80px;top:10px;right:10px;display:none;}
-.end-screen{flex-direction:column;justify-content:center;align-items:center;background:#fff8dc;}
-.end-screen button{padding:15px 30px;font-size:1.5em;border:none;border-radius:10px;background:#32cd32;color:white;cursor:pointer;margin-top:20px;}
-canvas{position:absolute;top:0;left:0;pointer-events:none;}
+.image.glow { box-shadow:0 0 15px 5px #32cd32; }
+.top-left { top:80px; left:60px; }
+.top-center { top:80px; left:205px; }
+.top-right { top:80px; left:350px; }
+.middle-left { top:220px; left:60px; }
+.middle-right { top:220px; left:350px; }
+.bottom-center { top:360px; left:205px; }
+.tick { position:absolute; width:80px; height:80px; top:10px; right:10px; display:none; }
+.end-screen { flex-direction:column; justify-content:center; align-items:center; background:#fff8dc; }
+.end-screen button { padding:15px 30px; font-size:1.5em; border:none; border-radius:10px; background:#32cd32; color:white; cursor:pointer; margin-top:20px; }
+canvas { position:absolute; top:0; left:0; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -37,16 +35,17 @@ canvas{position:absolute;top:0;left:0;pointer-events:none;}
   <img src="assets/innovine-logo.png" alt="Logo">
 </div>
 
-<!-- Question Slide (Slides 2-5 will reuse this) -->
-<div class="screen question-screen" style="background-image:url('assets/background.png');">
-  <div class="question" id="letterPrompt">Letter?</div>
-  <img id="letterCenter" class="letter-center" src="" alt="">
-  <div class="images" id="imageContainer"></div>
-  <img src="assets/tick.png" class="tick" id="tickMark">
+<!-- Question Slide Template -->
+<div class="screen question-screen">
+  <div class="container">
+    <div class="title" id="letterPrompt">Letter?</div>
+    <img id="letterCenter" class="letter" src="" alt="">
+    <img id="tickMark" class="tick" src="assets/tick.png" alt="">
+  </div>
 </div>
 
 <!-- End Slide -->
-<div class="screen end-screen" style="background-image:url('assets/background.png');">
+<div class="screen end-screen">
   <h1>Good Job!</h1>
   <canvas id="confettiCanvas"></canvas>
   <button id="playAgainBtn">Play Again</button>
@@ -59,14 +58,9 @@ canvas{position:absolute;top:0;left:0;pointer-events:none;}
 <audio id="letterAudio"></audio>
 
 <script>
-const screens = {
-  logo: document.querySelector('.logo-screen'),
-  question: document.querySelector('.question-screen'),
-  end: document.querySelector('.end-screen')
-};
+const screens = { logo: document.querySelector('.logo-screen'), question: document.querySelector('.question-screen'), end: document.querySelector('.end-screen') };
 const letterPrompt = document.getElementById('letterPrompt');
 const letterCenter = document.getElementById('letterCenter');
-const imageContainer = document.getElementById('imageContainer');
 const tickMark = document.getElementById('tickMark');
 const playAgainBtn = document.getElementById('playAgainBtn');
 const correctAudio = document.getElementById('correctAudio');
@@ -74,69 +68,65 @@ const wrongAudio = document.getElementById('wrongAudio');
 const clapAudio = document.getElementById('clapAudio');
 const letterAudio = document.getElementById('letterAudio');
 
-const questions = [
-  { letter:"M", prompt:"M For?", audio:"assets/m-for.mp3", letterImg:"assets/m.png",
-    images:[
-      {src:"assets/monkey.png", correct:true, cls:"top-left"},
-      {src:"assets/panda.png", correct:false, cls:"top-center"},
-      {src:"assets/pumpkin.png", correct:false, cls:"top-right"},
-      {src:"assets/mango.png", correct:true, cls:"middle-left"},
-      {src:"assets/owl.png", correct:false, cls:"middle-right"},
-      {src:"assets/moon.png", correct:true, cls:"bottom-center"}
-    ]
-  },
-  { letter:"O", prompt:"O For?", audio:"assets/o-for.mp3", letterImg:"assets/o.png",
-    images:[
-      {src:"assets/orange.png", correct:true, cls:"top-left"},
-      {src:"assets/octopus.png", correct:true, cls:"top-center"},
-      {src:"assets/owl.png", correct:true, cls:"bottom-center"},
-      {src:"assets/pumpkin.png", correct:false, cls:"top-right"},
-      {src:"assets/moon.png", correct:false, cls:"middle-left"},
-      {src:"assets/parrot.png", correct:false, cls:"middle-right"}
-    ]
-  },
-  { letter:"N", prompt:"N For?", audio:"assets/n-for.mp3", letterImg:"assets/n.png",
-    images:[
-      {src:"assets/net.png", correct:true, cls:"bottom-center"},
-      {src:"assets/nest.png", correct:true, cls:"top-left"},
-      {src:"assets/mango.png", correct:false, cls:"top-center"},
-      {src:"assets/monkey.png", correct:false, cls:"middle-left"},
-      {src:"assets/orange.png", correct:false, cls:"middle-right"},
-      {src:"assets/parrot.png", correct:false, cls:"top-right"}
-    ]
-  },
-  { letter:"P", prompt:"P For?", audio:"assets/p-for.mp3", letterImg:"assets/p.png",
-    images:[
-      {src:"assets/pumpkin.png", correct:true, cls:"top-left"},
-      {src:"assets/panda.png", correct:true, cls:"top-center"},
-      {src:"assets/parrot.png", correct:true, cls:"bottom-center"},
-      {src:"assets/orange.png", correct:false, cls:"middle-left"},
-      {src:"assets/net.png", correct:false, cls:"middle-right"},
-      {src:"assets/nest.png", correct:false, cls:"top-right"}
-    ]
-  }
+const questionData = [
+  {letter:'M', audio:'assets/m-for.mp3', letterImg:'assets/m.png',
+   images:[
+     {src:'assets/monkey.png', correct:true, cls:'top-left'},
+     {src:'assets/panda.png', correct:false, cls:'top-center'},
+     {src:'assets/pumpkin.png', correct:false, cls:'top-right'},
+     {src:'assets/mango.png', correct:true, cls:'middle-left'},
+     {src:'assets/owl.png', correct:false, cls:'middle-right'},
+     {src:'assets/moon.png', correct:true, cls:'bottom-center'}]},
+  {letter:'O', audio:'assets/o-for.mp3', letterImg:'assets/o.png',
+   images:[
+     {src:'assets/orange.png', correct:true, cls:'top-left'},
+     {src:'assets/octopus.png', correct:true, cls:'top-center'},
+     {src:'assets/owl.png', correct:true, cls:'bottom-center'},
+     {src:'assets/pumpkin.png', correct:false, cls:'top-right'},
+     {src:'assets/moon.png', correct:false, cls:'middle-left'},
+     {src:'assets/parrot.png', correct:false, cls:'middle-right'}]},
+  {letter:'N', audio:'assets/n-for.mp3', letterImg:'assets/n.png',
+   images:[
+     {src:'assets/net.png', correct:true, cls:'bottom-center'},
+     {src:'assets/nest.png', correct:true, cls:'top-left'},
+     {src:'assets/mango.png', correct:false, cls:'top-center'},
+     {src:'assets/monkey.png', correct:false, cls:'middle-left'},
+     {src:'assets/orange.png', correct:false, cls:'middle-right'},
+     {src:'assets/parrot.png', correct:false, cls:'top-right'}]},
+  {letter:'P', audio:'assets/p-for.mp3', letterImg:'assets/p.png',
+   images:[
+     {src:'assets/pumpkin.png', correct:true, cls:'top-left'},
+     {src:'assets/panda.png', correct:true, cls:'top-center'},
+     {src:'assets/parrot.png', correct:true, cls:'bottom-center'},
+     {src:'assets/orange.png', correct:false, cls:'middle-left'},
+     {src:'assets/net.png', correct:false, cls:'middle-right'},
+     {src:'assets/nest.png', correct:false, cls:'top-right'}]}
 ];
 
-let currentQ=0, selectedCount=0, wrongAttempts=0;
+let currentIndex = 0, selectedCount = 0, wrongAttempts = 0;
 
-// Show logo for 2 seconds
-setTimeout(()=>{ screens.logo.classList.remove('active'); showQuestion(); },2000);
+// Show logo for 2s
+setTimeout(()=>{ screens.logo.classList.remove('active'); loadQuestion(); },2000);
 
-function showQuestion(){
-  const q = questions[currentQ];
-  letterPrompt.textContent = q.prompt;
+function loadQuestion(){
+  const q = questionData[currentIndex];
+  const container = screens.question.querySelector('.container');
+  letterPrompt.textContent = q.letter+' For?';
   letterCenter.src = q.letterImg;
-  imageContainer.innerHTML = "";
-  selectedCount=0; wrongAttempts=0; tickMark.style.display="none";
   letterAudio.src = q.audio; letterAudio.play();
+  
+  // Remove previous images
+  container.querySelectorAll('.image').forEach(e=>e.remove());
+  selectedCount = 0; wrongAttempts=0; tickMark.style.display='none';
 
-  q.images.forEach(imgData=>{
-    const img = document.createElement('img');
-    img.src = imgData.src;
-    img.dataset.correct = imgData.correct;
-    img.classList.add("image", imgData.cls);
-    img.addEventListener('click', handleClick);
-    imageContainer.appendChild(img);
+  // Add images in fixed placement
+  q.images.forEach(img=>{
+    const el = document.createElement('img');
+    el.src = img.src;
+    el.dataset.correct = img.correct;
+    el.classList.add('image', img.cls);
+    el.addEventListener('click', handleClick);
+    container.appendChild(el);
   });
 
   screens.question.classList.add('active');
@@ -144,59 +134,35 @@ function showQuestion(){
 
 function handleClick(e){
   const img = e.target;
-  const isCorrect = img.dataset.correct==='true';
-  if(isCorrect){
-    img.style.opacity=0.5;
-    selectedCount++;
+  if(img.dataset.correct==='true'){
+    img.style.opacity=0.5; selectedCount++;
     correctAudio.currentTime=0; correctAudio.play();
-    tickMark.style.display='block';
-    setTimeout(()=>{tickMark.style.display='none';},500);
-    if(selectedCount === questions[currentQ].images.filter(i=>i.correct).length){
-      currentQ++;
-      if(currentQ>=questions.length){
-        screens.question.classList.remove('active');
-        screens.end.classList.add('active');
-        startConfetti();
-        clapAudio.play();
-      } else setTimeout(showQuestion,700);
+    tickMark.style.display='block'; setTimeout(()=>tickMark.style.display='none',500);
+    if(selectedCount===questionData[currentIndex].images.filter(i=>i.correct).length){
+      currentIndex++;
+      if(currentIndex>=questionData.length){screens.question.classList.remove('active'); screens.end.classList.add('active'); startConfetti(); clapAudio.play();}
+      else setTimeout(loadQuestion,700);
     }
   } else {
-    wrongAttempts++;
-    wrongAudio.currentTime=0; wrongAudio.play();
-    img.classList.add('giggle');
-    setTimeout(()=>{img.classList.remove('giggle');},500);
+    wrongAttempts++; wrongAudio.currentTime=0; wrongAudio.play();
+    img.classList.add('giggle'); setTimeout(()=>img.classList.remove('giggle'),500);
     if(wrongAttempts>=2){
-      Array.from(imageContainer.children).forEach(i=>{
-        if(i.dataset.correct==='true') i.classList.add('glow');
-      });
+      document.querySelectorAll('.image').forEach(i=>{if(i.dataset.correct==='true')i.classList.add('glow');});
     }
   }
 }
 
-playAgainBtn.addEventListener('click',()=>{
-  currentQ=0;
-  screens.end.classList.remove('active');
-  showQuestion();
+playAgainBtn.addEventListener('click', ()=>{
+  currentIndex=0; screens.end.classList.remove('active'); loadQuestion();
 });
 
-// Confetti animation
+// Confetti
 function startConfetti(){
-  const canvas = document.getElementById('confettiCanvas');
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
-  const ctx = canvas.getContext('2d');
-  const confetti=[]; const confettiCount=150;
-  for(let i=0;i<confettiCount;i++){
-    confetti.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,r:Math.random()*6+4,d:Math.random()*confettiCount,color:`hsl(${Math.random()*360},100%,50%)`,tilt:Math.random()*10-10,tiltAngleIncrement:Math.random()*0.07+0.05,tiltAngle:0});
-  }
-  function draw(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    confetti.forEach(c=>{ctx.beginPath();ctx.lineWidth=c.r;ctx.strokeStyle=c.color;ctx.moveTo(c.x+c.tilt+c.r/2,c.y);ctx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/2);ctx.stroke();});
-    update(); requestAnimationFrame(draw);
-  }
-  function update(){
-    confetti.forEach(c=>{c.tiltAngle+=c.tiltAngleIncrement;c.y += (Math.cos(c.d)+1+c.r/2)/2;c.x += Math.sin(c.d);c.tilt=Math.sin(c.tiltAngle)*15;if(c.y>canvas.height){c.y=-10;c.x=Math.random()*canvas.width;}});  
-  }
+  const canvas = document.getElementById('confettiCanvas'); canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  const ctx = canvas.getContext('2d'); const confetti=[]; const confettiCount=150;
+  for(let i=0;i<confettiCount;i++){confetti.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,r:Math.random()*6+4,d:Math.random()*confettiCount,color:`hsl(${Math.random()*360},100%,50%)`,tilt:Math.random()*10-10,tiltAngleIncrement:Math.random()*0.07+0.05,tiltAngle:0});}
+  function draw(){ctx.clearRect(0,0,canvas.width,canvas.height); confetti.forEach(c=>{ctx.beginPath(); ctx.lineWidth=c.r; ctx.strokeStyle=c.color; ctx.moveTo(c.x+c.tilt+c.r/2,c.y); ctx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/2); ctx.stroke();}); update(); requestAnimationFrame(draw);}
+  function update(){confetti.forEach(c=>{c.tiltAngle+=c.tiltAngleIncrement; c.y+=(Math.cos(c.d)+1+c.r/2)/2; c.x+=Math.sin(c.d); c.tilt=Math.sin(c.tiltAngle)*15; if(c.y>canvas.height){c.y=-10; c.x=Math.random()*canvas.width;}});}
   draw();
 }
 </script>
