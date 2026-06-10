@@ -9,12 +9,10 @@
 body, html {
   width:100%; height:100%;
   font-family:'Comic Sans MS', sans-serif;
+  overflow:hidden;
   display:flex; justify-content:center; align-items:center;
-  overflow:hidden; background:#fff;
 }
-
-/* Screens */
-.screen { display:none; width:100%; height:100%; flex-direction:column; justify-content:center; align-items:center; position:relative; }
+.screen { display:none; width:100%; height:100%; flex-direction:column; justify-content:center; align-items:center; position:relative; background-size:cover; background-position:center; }
 .screen.active { display:flex; }
 
 /* Logo screen */
@@ -22,65 +20,53 @@ body, html {
 .logo-screen img { width:200px; height:auto; }
 
 /* Question screen */
-.question-screen .container {
-  position: relative;
-  width: 95vw;
-  height: 95vh;
-  max-width: 800px;
-  max-height: 800px;
-  background: url('assets/background.png') center/cover no-repeat;
+.question-screen { background-size:cover; }
+.question {
+  font-size:2em; margin-bottom:10px; color:#ffb347;
+  text-shadow:1px 1px #555; text-align:center;
+  background:rgba(255,255,255,0.6); padding:5px 10px; border-radius:8px;
 }
-.title {
-  position:absolute;
-  top:2%;
-  left:50%;
-  transform:translateX(-50%);
-  font-size:2em;
-  color:#ffb347;
-  text-shadow:1px 1px #555;
-  background:rgba(255,255,255,0.6);
-  padding:5px 10px; border-radius:8px;
-  text-align:center;
+.images {
+  position:relative; width:90%; max-width:700px; height:70%; margin:0 auto;
 }
-.letter {
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  width:18vw; height:18vw;
-  max-width:150px; max-height:150px;
+.images img {
+  width:120px; height:120px; position:absolute;
+  cursor:pointer; border:3px solid #ffb347; border-radius:20px;
+  transition:all 0.3s ease;
 }
-.image {
-  position:absolute;
-  width:15vw; height:15vw;
-  max-width:120px; max-height:120px;
-  border:3px solid #ffb347; border-radius:20px;
-  cursor:pointer;
-  transition: all 0.3s ease;
-}
-.image.giggle { animation:giggle 0.5s; }
+.images img.giggle { animation:giggle 0.5s; }
 @keyframes giggle {
   0%{transform:rotate(0deg);}25%{transform:rotate(15deg);}
   50%{transform:rotate(-15deg);}75%{transform:rotate(15deg);}
   100%{transform:rotate(0deg);}
 }
-.image.glow { box-shadow:0 0 15px 5px #32cd32; }
+.images img.glow { box-shadow:0 0 15px 5px #32cd32; }
 
-/* Fixed positions for six images */
-.top-left { top:10%; left:5%; }
-.top-center { top:10%; left:42.5%; }
-.top-right { top:10%; left:80%; }
-.middle-left { top:45%; left:5%; }
-.middle-right { top:45%; left:80%; }
-.bottom-center { top:80%; left:42.5%; }
+/* Positions */
+.top-left { top:10%; left:10%; }
+.top-center { top:10%; left:40%; }
+.top-right { top:10%; left:70%; }
+.middle-left { top:45%; left:10%; }
+.middle-right { top:45%; left:70%; }
+.bottom-center { top:80%; left:40%; }
 
-/* Tick */
+/* Center letter */
+.letter-center {
+  position:absolute; top:45%; left:40%;
+  width:140px; height:140px;
+}
 .tick { position:absolute; width:80px; height:80px; top:10px; right:10px; display:none; }
 
 /* End screen */
-.end-screen { flex-direction:column; justify-content:center; align-items:center; background:#fff8dc; width:100%; height:100%; position:relative; }
-.end-screen button { padding:15px 30px; font-size:1.5em; border:none; border-radius:10px; background:#32cd32; color:white; cursor:pointer; margin-top:20px; }
-canvas { position:absolute; top:0; left:0; pointer-events:none; width:100%; height:100%; }
+.end-screen {
+  flex-direction:column; justify-content:center; align-items:center;
+  background:#fff8dc;
+}
+.end-screen button {
+  padding:15px 30px; font-size:1.5em; border:none; border-radius:10px;
+  background:#32cd32; color:white; cursor:pointer; margin-top:20px;
+}
+canvas { position:absolute; top:0; left:0; pointer-events:none; }
 </style>
 </head>
 <body>
@@ -91,16 +77,15 @@ canvas { position:absolute; top:0; left:0; pointer-events:none; width:100%; heig
 </div>
 
 <!-- Question Screen -->
-<div class="screen question-screen">
-  <div class="container">
-    <div class="title" id="letterPrompt">Letter?</div>
-    <img id="letterCenter" class="letter" src="" alt="Letter">
-    <img src="assets/tick.png" class="tick" id="tickMark">
-  </div>
+<div class="screen question-screen" style="background-image:url('assets/background.png');">
+  <div class="question" id="letterPrompt">Letter?</div>
+  <img id="letterCenter" class="letter-center" src="" alt="Letter">
+  <div class="images" id="imageContainer"></div>
+  <img src="assets/tick.png" class="tick" id="tickMark">
 </div>
 
 <!-- End Screen -->
-<div class="screen end-screen">
+<div class="screen end-screen" style="background-image:url('assets/background.png');">
   <h1>Good Job!</h1>
   <canvas id="confettiCanvas"></canvas>
   <button id="playAgainBtn">Play Again</button>
@@ -120,6 +105,7 @@ const screens = {
 };
 const letterPrompt = document.getElementById('letterPrompt');
 const letterCenter = document.getElementById('letterCenter');
+const imageContainer = document.getElementById('imageContainer');
 const tickMark = document.getElementById('tickMark');
 const playAgainBtn = document.getElementById('playAgainBtn');
 const correctAudio = document.getElementById('correctAudio');
@@ -131,45 +117,45 @@ const questions = [
   {
     letter:"M", prompt:"M For?", audio:"assets/m-for.mp3", letterImg:"assets/m.png",
     images:[
-      {src:"assets/monkey.png", correct:true, pos:"top-left"},
-      {src:"assets/panda.png", correct:false, pos:"top-center"},
-      {src:"assets/pumpkin.png", correct:false, pos:"top-right"},
-      {src:"assets/mango.png", correct:true, pos:"middle-left"},
-      {src:"assets/owl.png", correct:false, pos:"middle-right"},
-      {src:"assets/moon.png", correct:true, pos:"bottom-center"}
+      {src:"assets/monkey.png", correct:true},
+      {src:"assets/panda.png", correct:false},
+      {src:"assets/pumpkin.png", correct:false},
+      {src:"assets/mango.png", correct:true},
+      {src:"assets/owl.png", correct:false},
+      {src:"assets/moon.png", correct:true}
     ]
   },
   {
     letter:"O", prompt:"O For?", audio:"assets/o-for.mp3", letterImg:"assets/o.png",
     images:[
-      {src:"assets/orange.png", correct:true, pos:"top-left"},
-      {src:"assets/octopus.png", correct:true, pos:"top-center"},
-      {src:"assets/owl.png", correct:true, pos:"top-right"},
-      {src:"assets/pumpkin.png", correct:false, pos:"middle-left"},
-      {src:"assets/moon.png", correct:false, pos:"middle-right"},
-      {src:"assets/parrot.png", correct:false, pos:"bottom-center"}
+      {src:"assets/orange.png", correct:true},
+      {src:"assets/octopus.png", correct:true},
+      {src:"assets/owl.png", correct:true},
+      {src:"assets/pumpkin.png", correct:false},
+      {src:"assets/moon.png", correct:false},
+      {src:"assets/parrot.png", correct:false}
     ]
   },
   {
     letter:"N", prompt:"N For?", audio:"assets/n-for.mp3", letterImg:"assets/n.png",
     images:[
-      {src:"assets/net.png", correct:true, pos:"top-left"},
-      {src:"assets/nest.png", correct:true, pos:"top-center"},
-      {src:"assets/mango.png", correct:false, pos:"top-right"},
-      {src:"assets/monkey.png", correct:false, pos:"middle-left"},
-      {src:"assets/orange.png", correct:false, pos:"middle-right"},
-      {src:"assets/parrot.png", correct:false, pos:"bottom-center"}
+      {src:"assets/net.png", correct:true},
+      {src:"assets/nest.png", correct:true},
+      {src:"assets/mango.png", correct:false},
+      {src:"assets/monkey.png", correct:false},
+      {src:"assets/orange.png", correct:false},
+      {src:"assets/parrot.png", correct:false}
     ]
   },
   {
     letter:"P", prompt:"P For?", audio:"assets/p-for.mp3", letterImg:"assets/p.png",
     images:[
-      {src:"assets/pumpkin.png", correct:true, pos:"top-left"},
-      {src:"assets/panda.png", correct:true, pos:"top-center"},
-      {src:"assets/parrot.png", correct:true, pos:"top-right"},
-      {src:"assets/orange.png", correct:false, pos:"middle-left"},
-      {src:"assets/net.png", correct:false, pos:"middle-right"},
-      {src:"assets/nest.png", correct:false, pos:"bottom-center"}
+      {src:"assets/pumpkin.png", correct:true},
+      {src:"assets/panda.png", correct:true},
+      {src:"assets/parrot.png", correct:true},
+      {src:"assets/orange.png", correct:false},
+      {src:"assets/net.png", correct:false},
+      {src:"assets/nest.png", correct:false}
     ]
   }
 ];
@@ -178,23 +164,26 @@ let currentQ=0, selectedCount=0, wrongAttempts=0;
 
 setTimeout(()=>{ screens.logo.classList.remove('active'); showQuestion(); },2000);
 
+function shuffle(array){ return array.sort(()=>Math.random()-0.5); }
+
 function showQuestion(){
   const q = questions[currentQ];
   letterPrompt.textContent = q.prompt;
   letterCenter.src = q.letterImg;
+  imageContainer.innerHTML = "";
   selectedCount=0; wrongAttempts=0; tickMark.style.display="none";
-
   letterAudio.src = q.audio; letterAudio.play();
 
-  // remove previous images
-  document.querySelectorAll('.container img.image').forEach(i=>i.remove());
-
-  q.images.forEach(i=>{
+  const positions = ["top-left","top-center","top-right","middle-left","middle-right","bottom-center"];
+  const shuffled = shuffle([...q.images]);
+  shuffled.forEach((i,index)=>{
     const img = document.createElement('img');
-    img.src = i.src; img.dataset.correct=i.correct;
-    img.classList.add('image', i.pos);
+    img.src = i.src;
+    img.dataset.correct = i.correct;
+    img.classList.add(positions[index]);
+    img.classList.add('image');
     img.addEventListener('click', handleClick);
-    document.querySelector('.container').appendChild(img);
+    imageContainer.appendChild(img);
   });
 
   screens.question.classList.add('active');
@@ -224,7 +213,7 @@ function handleClick(e){
     img.classList.add('giggle');
     setTimeout(()=>{img.classList.remove('giggle');},500);
     if(wrongAttempts>=2){
-      document.querySelectorAll('.container img.image').forEach(i=>{
+      Array.from(imageContainer.children).forEach(i=>{
         if(i.dataset.correct==='true') i.classList.add('glow');
       });
     }
@@ -239,7 +228,8 @@ playAgainBtn.addEventListener('click',()=>{
 
 function startConfetti(){
   const canvas = document.getElementById('confettiCanvas');
-  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  canvas.width=window.innerWidth;
+  canvas.height=window.innerHeight;
   const ctx = canvas.getContext('2d');
   const confetti=[]; const confettiCount=150;
   for(let i=0;i<confettiCount;i++){
@@ -251,7 +241,8 @@ function startConfetti(){
     update(); requestAnimationFrame(draw);
   }
   function update(){
-    confetti.forEach(c=>{c.tiltAngle+=c.tiltAngleIncrement;c.y += (Math.cos(c.d)+1+c.r/2)/2;c.x += Math.sin(c.d);c.tilt=Math.sin(c.tiltAngle)*15;if(c.y>canvas.height){c.y=-10;c.x=Math.random()*canvas.width;}});}
+    confetti.forEach(c=>{c.tiltAngle+=c.tiltAngleIncrement;c.y += (Math.cos(c.d)+1+c.r/2)/2;c.x += Math.sin(c.d);c.tilt=Math.sin(c.tiltAngle)*15;if(c.y>canvas.height){c.y=-10;c.x=Math.random()*canvas.width;}}); 
+  }
   draw();
 }
 </script>
