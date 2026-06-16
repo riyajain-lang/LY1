@@ -97,6 +97,8 @@ body{
   object-fit:contain;
 }
 
+/* Options */
+
 .options{
   width:60%;
   display:grid;
@@ -107,11 +109,17 @@ body{
 .option{
   background:white;
   border-radius:20px;
-  padding:15px;
   cursor:pointer;
   box-shadow:0 5px 15px rgba(0,0,0,.15);
   transition:.3s;
   position:relative;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  min-height:220px;
+  padding:15px;
 }
 
 .option:hover{
@@ -120,9 +128,12 @@ body{
 
 .option img{
   width:100%;
-  height:170px;
+  max-width:180px;
+  max-height:170px;
   object-fit:contain;
 }
+
+/* Correct */
 
 .correct{
   border:5px solid #39b54a;
@@ -135,6 +146,8 @@ body{
   bottom:10px;
   font-size:35px;
 }
+
+/* Progress */
 
 .progress{
   margin-top:20px;
@@ -185,6 +198,8 @@ body{
   cursor:pointer;
 }
 
+/* Animations */
+
 @keyframes wiggle{
   0%{transform:translateX(0);}
   25%{transform:translateX(-10px);}
@@ -207,6 +222,8 @@ body{
   animation:glow 1s infinite;
 }
 
+/* Mobile */
+
 @media(max-width:768px){
 
   .question{
@@ -226,12 +243,14 @@ body{
     gap:10px;
   }
 
-  .option img{
-    height:90px;
+  .option{
+    min-height:120px;
+    padding:10px;
   }
 
-  .option-name{
-    font-size:18px;
+  .option img{
+    max-width:90px;
+    max-height:90px;
   }
 
   .finish-card h1{
@@ -251,10 +270,12 @@ body{
 
 <body>
 
+<!-- Logo Screen -->
 <div id="logoScreen" class="screen active">
   <img src="assets/innovine-logo.png">
 </div>
 
+<!-- Quiz Screen -->
 <div id="quizScreen" class="screen">
 
   <div class="quiz-card">
@@ -281,6 +302,7 @@ body{
 
 </div>
 
+<!-- Finish Screen -->
 <div id="finishScreen" class="screen">
 
   <div class="finish-card">
@@ -337,10 +359,10 @@ const optionsDiv = document.getElementById('options');
 
 function showScreen(id){
   document.querySelectorAll('.screen')
-  .forEach(s=>s.classList.remove('active'));
+    .forEach(s=>s.classList.remove('active'));
 
   document.getElementById(id)
-  .classList.add('active');
+    .classList.add('active');
 }
 
 setTimeout(()=>{
@@ -365,37 +387,27 @@ function loadQuestion(){
   let q = gameQuestions[current];
 
   document.getElementById('badge').innerHTML =
-  `Question ${current+1} of ${gameQuestions.length}`;
+    `Question ${current+1} of ${gameQuestions.length}`;
 
   birdImage.src = q.bird;
 
-div.innerHTML = ` 
-<img src="${beak}"> 
-<div class="option-name">${label}</div>
-`;
+  optionsDiv.innerHTML = '';
+
+  let shuffled = shuffle(beaks);
 
   shuffled.forEach(beak=>{
 
     let div = document.createElement('div');
     div.className = 'option';
 
-    let label = beak
-      .split('/').pop()
-      .replace('.png','')
-      .replace('-',' ')
-      .replace('parrots','Parrot')
-      .replace('toucan','Toucan')
-      .replace('eagle','Eagle')
-      .replace('owl','Owl');
-
     div.innerHTML = `
       <img src="${beak}">
-      <div class="option-name">${label}</div>
     `;
 
     div.onclick = ()=>checkAnswer(div,beak);
 
     optionsDiv.appendChild(div);
+
   });
 
   drawProgress();
@@ -440,20 +452,19 @@ function checkAnswer(card,beak){
     if(wrongAttempts >= 2){
 
       document.querySelectorAll('.option')
-      .forEach(o=>{
+        .forEach(o=>{
 
-        let img = o.querySelector('img').src;
+          let img = o.querySelector('img').src;
 
-        if(img.includes(q.answer)){
-          o.classList.add('glow');
-        }
+          if(img.includes(q.answer)){
+            o.classList.add('glow');
+          }
 
-      });
+        });
 
     }
 
   }
-
 }
 
 function drawProgress(){
@@ -461,7 +472,6 @@ function drawProgress(){
   let html = '';
 
   for(let i=0;i<gameQuestions.length;i++){
-
     html += `
       <span class="dot ${i===current?'active':''}">
       </span>
