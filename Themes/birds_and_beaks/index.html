@@ -2,260 +2,491 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
 <title>Birds & Beaks Game</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Baloo 2', cursive;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Baloo 2',cursive;
 }
 
 body{
-overflow:hidden;
-height:100vh;
-width:100%;
-background:url('assets/birds-and-beaks-background.png') center/cover no-repeat;
+  width:100%;
+  height:100vh;
+  overflow:hidden;
+  background:url('assets/birds-and-beaks-background.png') center center/cover no-repeat;
 }
 
-/* SCREEN */
 .screen{
-width:100%;
-height:100vh;
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
+  width:100%;
+  height:100vh;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
 }
 
-.active{display:flex;}
+.active{
+  display:flex;
+}
 
-/* LOGO */
+/* Logo Screen */
+
 #logoScreen{
-background:white;
+  background:white;
 }
 
 #logoScreen img{
-width:280px;
-max-width:80%;
+  width:320px;
+  max-width:80%;
 }
 
-/* GAME */
-.gameBox{
-width:90%;
-max-width:900px;
-background:rgba(255,255,255,0.95);
-border-radius:25px;
-padding:20px;
-text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
+/* Quiz Card */
+
+.quiz-card{
+  width:95%;
+  max-width:1100px;
+  background:rgba(255,255,255,0.95);
+  border-radius:35px;
+  padding:20px;
+  box-shadow:0 12px 35px rgba(0,0,0,.25);
+  text-align:center;
+}
+
+.badge{
+  display:inline-block;
+  background:#2f80ed;
+  color:white;
+  padding:10px 35px;
+  border-radius:30px;
+  font-size:28px;
+  margin-bottom:15px;
 }
 
 .question{
-font-size:28px;
-margin-bottom:15px;
-color:#333;
+  font-size:40px;
+  color:#6b3e26;
+  margin-bottom:25px;
+}
+
+.quiz-area{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:25px;
+}
+
+.bird-box{
+  width:35%;
+  background:white;
+  border-radius:25px;
+  padding:20px;
+  box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+.bird-box img{
+  width:100%;
+  max-height:320px;
+  object-fit:contain;
 }
 
 .options{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:15px;
-margin-top:10px;
+  width:60%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
 }
 
 .option{
-background:white;
-border-radius:15px;
-padding:10px;
-cursor:pointer;
-transition:0.2s;
-box-shadow:0 5px 12px rgba(0,0,0,0.1);
+  background:white;
+  border-radius:20px;
+  padding:15px;
+  cursor:pointer;
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+  transition:.3s;
+  position:relative;
+}
+
+.option:hover{
+  transform:scale(1.05);
 }
 
 .option img{
-width:90px;
-height:90px;
-object-fit:contain;
+  width:100%;
+  height:120px;
+  object-fit:contain;
 }
 
-.option:active{
-transform:scale(0.95);
+.option-name{
+  font-size:22px;
 }
 
 .correct{
-border:3px solid #2ecc71;
+  border:5px solid #39b54a;
+  box-shadow:0 0 25px #39b54a;
 }
 
-.wrongShake{
-animation:shake 0.3s;
+.tick{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  font-size:35px;
 }
 
-@keyframes shake{
-0%{transform:translateX(0);}
-25%{transform:translateX(-5px);}
-50%{transform:translateX(5px);}
-75%{transform:translateX(-5px);}
-100%{transform:translateX(0);}
+.progress{
+  margin-top:20px;
 }
 
-/* END */
-.end{
-background:white;
-text-align:center;
-padding:30px;
-border-radius:20px;
+.dot{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#ccc;
+  display:inline-block;
+  margin:5px;
 }
 
-button{
-margin-top:10px;
-padding:12px 25px;
-border:none;
-background:#2ecc71;
-color:white;
-font-size:18px;
-border-radius:10px;
-cursor:pointer;
+.dot.active{
+  background:#39b54a;
+}
+
+/* Finish */
+
+.finish-card{
+  background:rgba(255,255,255,.95);
+  padding:50px;
+  border-radius:35px;
+  text-align:center;
+  box-shadow:0 12px 35px rgba(0,0,0,.25);
+  width:90%;
+  max-width:700px;
+}
+
+.finish-card h1{
+  font-size:70px;
+  color:#39b54a;
+}
+
+.finish-card h2{
+  font-size:38px;
+  margin-bottom:30px;
+}
+
+.playBtn{
+  background:#39b54a;
+  color:white;
+  border:none;
+  padding:20px 50px;
+  border-radius:50px;
+  font-size:34px;
+  cursor:pointer;
+}
+
+@keyframes wiggle{
+  0%{transform:translateX(0);}
+  25%{transform:translateX(-10px);}
+  50%{transform:translateX(10px);}
+  75%{transform:translateX(-10px);}
+  100%{transform:translateX(0);}
+}
+
+.wrong{
+  animation:wiggle .4s;
+}
+
+@keyframes glow{
+  0%{box-shadow:0 0 10px yellow;}
+  50%{box-shadow:0 0 35px yellow;}
+  100%{box-shadow:0 0 10px yellow;}
+}
+
+.glow{
+  animation:glow 1s infinite;
+}
+
+@media(max-width:768px){
+
+  .question{
+    font-size:28px;
+  }
+
+  .quiz-area{
+    flex-direction:column;
+  }
+
+  .bird-box{
+    width:100%;
+  }
+
+  .options{
+    width:100%;
+    gap:10px;
+  }
+
+  .option img{
+    height:70px;
+  }
+
+  .option-name{
+    font-size:18px;
+  }
+
+  .finish-card h1{
+    font-size:50px;
+  }
+
+  .finish-card h2{
+    font-size:30px;
+  }
+
+  .playBtn{
+    font-size:28px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGO -->
 <div id="logoScreen" class="screen active">
-<img src="assets/innovine-logo.png">
+  <img src="assets/innovine-logo.png">
 </div>
 
-<!-- GAME -->
-<div id="gameScreen" class="screen">
+<div id="quizScreen" class="screen">
 
-<div class="gameBox">
+  <div class="quiz-card">
 
-<h2 class="question" id="questionText">Find the correct beak</h2>
+    <div class="badge" id="badge"></div>
 
-<img id="birdImage" width="140">
+    <div class="question">
+      Which beak belongs to this bird?
+    </div>
 
-<div class="options" id="options"></div>
+    <div class="quiz-area">
+
+      <div class="bird-box">
+        <img id="birdImage">
+      </div>
+
+      <div class="options" id="options"></div>
+
+    </div>
+
+    <div class="progress" id="progress"></div>
+
+  </div>
 
 </div>
+
+<div id="finishScreen" class="screen">
+
+  <div class="finish-card">
+    <h1>🎉 Good Job! 🎉</h1>
+    <h2>You Did It!</h2>
+
+    <button class="playBtn" onclick="restartGame()">
+      🔄 Play Again
+    </button>
+  </div>
+
 </div>
 
-<!-- END -->
-<div id="endScreen" class="screen">
-<div class="end">
-<h1>🎉 Good Job!</h1>
-<button onclick="restart()">Play Again</button>
-</div>
-</div>
-
-<!-- AUDIO -->
 <audio id="correctSound" src="assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <script>
 
-const questions=[
+const questions = [
 {
-bird:"eagle.png",
-ans:"eagle-beak.png"
+bird:'assets/eagle.png',
+answer:'assets/eagle-beak.png'
 },
 {
-bird:"toucan.png",
-ans:"toucan-beak.png"
+bird:'assets/toucan.png',
+answer:'assets/toucan-beak.png'
 },
 {
-bird:"parrot.png",
-ans:"parrots-beak.png"
+bird:'assets/parrot.png',
+answer:'assets/parrots-beak.png'
 },
 {
-bird:"owl.png",
-ans:"owl-beak.png"
+bird:'assets/owl.png',
+answer:'assets/owl-beak.png'
 }
 ];
 
-const options=[
-"eagle-beak.png",
-"toucan-beak.png",
-"parrots-beak.png",
-"owl-beak.png"
+const beaks = [
+'assets/toucan-beak.png',
+'assets/owl-beak.png',
+'assets/parrots-beak.png',
+'assets/eagle-beak.png'
 ];
 
-let current=0;
-let attempts=0;
+let current = 0;
+let wrongAttempts = 0;
+let gameQuestions = [];
+
+const birdImage = document.getElementById('birdImage');
+const optionsDiv = document.getElementById('options');
+
+function showScreen(id){
+  document.querySelectorAll('.screen')
+  .forEach(s=>s.classList.remove('active'));
+
+  document.getElementById(id)
+  .classList.add('active');
+}
 
 setTimeout(()=>{
-document.getElementById("logoScreen").classList.remove("active");
-document.getElementById("gameScreen").classList.add("active");
-load();
+  startGame();
 },2000);
 
-function load(){
-
-attempts=0;
-
-let q=questions[current];
-
-document.getElementById("birdImage").src =
-"assets/" + q.bird;
-
-document.getElementById("options").innerHTML="";
-
-shuffle(options).forEach(opt=>{
-
-let div=document.createElement("div");
-div.className="option";
-
-div.innerHTML=`
-<img src="assets/${opt}">
-<p>${opt.replace('.png','')}</p>
-`;
-
-div.onclick=()=>check(div,opt,q.ans);
-
-document.getElementById("options").appendChild(div);
-
-});
-
-}
-
-function check(el,opt,ans){
-
-if(opt===ans){
-
-document.getElementById("correctSound").play();
-el.classList.add("correct");
-
-setTimeout(()=>{
-current++;
-if(current<questions.length){
-load();
-}else{
-document.getElementById("gameScreen").classList.remove("active");
-document.getElementById("endScreen").classList.add("active");
-}
-},800);
-
-}else{
-
-document.getElementById("wrongSound").play();
-el.classList.add("wrongShake");
-
-setTimeout(()=>el.classList.remove("wrongShake"),300);
-}
-
-}
-
 function shuffle(arr){
-return [...arr].sort(()=>Math.random()-0.5);
+  return [...arr].sort(()=>Math.random()-0.5);
 }
 
-function restart(){
-location.reload();
+function startGame(){
+  gameQuestions = shuffle(questions);
+  current = 0;
+  showScreen('quizScreen');
+  loadQuestion();
+}
+
+function loadQuestion(){
+
+  wrongAttempts = 0;
+
+  let q = gameQuestions[current];
+
+  document.getElementById('badge').innerHTML =
+  `Question ${current+1} of ${gameQuestions.length}`;
+
+  birdImage.src = q.bird;
+
+  optionsDiv.innerHTML = '';
+
+  let shuffled = shuffle(beaks);
+
+  shuffled.forEach(beak=>{
+
+    let div = document.createElement('div');
+    div.className = 'option';
+
+    let label = beak
+      .split('/').pop()
+      .replace('.png','')
+      .replace('-',' ')
+      .replace('parrots','Parrot')
+      .replace('toucan','Toucan')
+      .replace('eagle','Eagle')
+      .replace('owl','Owl');
+
+    div.innerHTML = `
+      <img src="${beak}">
+      <div class="option-name">${label}</div>
+    `;
+
+    div.onclick = ()=>checkAnswer(div,beak);
+
+    optionsDiv.appendChild(div);
+  });
+
+  drawProgress();
+}
+
+function checkAnswer(card,beak){
+
+  let q = gameQuestions[current];
+
+  if(beak===q.answer){
+
+    document.getElementById('correctSound').play();
+    document.getElementById('clapSound').play();
+
+    card.classList.add('correct');
+    card.innerHTML += `<div class="tick">✅</div>`;
+
+    setTimeout(()=>{
+
+      current++;
+
+      if(current >= gameQuestions.length){
+        finishGame();
+      }else{
+        loadQuestion();
+      }
+
+    },1200);
+
+  }else{
+
+    document.getElementById('wrongSound').play();
+
+    card.classList.add('wrong');
+
+    setTimeout(()=>{
+      card.classList.remove('wrong');
+    },400);
+
+    wrongAttempts++;
+
+    if(wrongAttempts >= 2){
+
+      document.querySelectorAll('.option')
+      .forEach(o=>{
+
+        let img = o.querySelector('img').src;
+
+        if(img.includes(q.answer)){
+          o.classList.add('glow');
+        }
+
+      });
+
+    }
+
+  }
+
+}
+
+function drawProgress(){
+
+  let html = '';
+
+  for(let i=0;i<gameQuestions.length;i++){
+
+    html += `
+      <span class="dot ${i===current?'active':''}">
+      </span>
+    `;
+  }
+
+  document.getElementById('progress').innerHTML = html;
+}
+
+function finishGame(){
+
+  showScreen('finishScreen');
+
+  confetti({
+    particleCount:250,
+    spread:180,
+    origin:{y:0.6}
+  });
+}
+
+function restartGame(){
+  startGame();
 }
 
 </script>
