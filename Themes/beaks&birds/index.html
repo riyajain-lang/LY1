@@ -2,343 +2,313 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Birds & Beaks Game</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Baloo 2',cursive;
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Baloo 2',cursive;
 }
 
 body{
-overflow:hidden;
-height:100vh;
-background:url('birds&beaks-background.png') center center/cover no-repeat;
+    overflow:hidden;
+    width:100%;
+    height:100vh;
+    background:url('Themes/beaks&birds/assets/birds&beaks-background.png') center center/cover no-repeat;
 }
 
-/* Screens */
-
 .screen{
-width:100%;
-height:100vh;
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
+    width:100%;
+    height:100vh;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
 }
 
 .active{
-display:flex;
+    display:flex;
 }
 
 /* Logo Screen */
 
 #logoScreen{
-background:white;
+    background:#fff;
 }
 
 #logoScreen img{
-width:300px;
-max-width:80%;
+    width:320px;
+    max-width:80%;
 }
 
-/* Quiz Card */
+/* Quiz */
 
 .quiz-card{
-width:95%;
-max-width:1100px;
-background:rgba(255,255,255,0.96);
-border-radius:35px;
-padding:20px;
-box-shadow:0 12px 30px rgba(0,0,0,.25);
-text-align:center;
+    width:95%;
+    max-width:1100px;
+    background:rgba(255,255,255,0.95);
+    border-radius:35px;
+    padding:20px;
+    box-shadow:0 12px 35px rgba(0,0,0,0.25);
+    text-align:center;
 }
 
 .badge{
-display:inline-block;
-background:#2f80ed;
-color:white;
-padding:10px 30px;
-border-radius:30px;
-font-size:28px;
-margin-bottom:15px;
+    display:inline-block;
+    background:#2f80ed;
+    color:white;
+    padding:10px 35px;
+    border-radius:30px;
+    font-size:28px;
+    margin-bottom:15px;
 }
 
 .question{
-font-size:40px;
-color:#6b3e26;
-margin-bottom:20px;
+    font-size:42px;
+    color:#6b3e26;
+    margin-bottom:25px;
 }
 
 .quiz-area{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:25px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
 }
 
-/* Bird Box */
-
 .bird-box{
-width:35%;
-background:white;
-border-radius:25px;
-padding:20px;
-box-shadow:0 5px 20px rgba(0,0,0,.15);
+    width:35%;
+    background:white;
+    border-radius:25px;
+    padding:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
 }
 
 .bird-box img{
-width:100%;
-max-height:320px;
-object-fit:contain;
+    width:100%;
+    max-height:320px;
+    object-fit:contain;
 }
 
-/* Options */
-
 .options{
-width:60%;
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
+    width:60%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
 }
 
 .option{
-background:white;
-border-radius:20px;
-padding:15px;
-cursor:pointer;
-box-shadow:0 5px 15px rgba(0,0,0,.15);
-transition:.3s;
-position:relative;
+    background:white;
+    border-radius:20px;
+    padding:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    cursor:pointer;
+    transition:.3s;
+    position:relative;
 }
 
 .option:hover{
-transform:scale(1.05);
+    transform:scale(1.05);
 }
 
 .option img{
-width:100%;
-height:120px;
-object-fit:contain;
+    width:100%;
+    height:120px;
+    object-fit:contain;
 }
 
 .option-name{
-font-size:22px;
+    font-size:22px;
 }
 
-/* Correct */
-
 .correct{
-border:5px solid #39b54a;
-box-shadow:0 0 25px #39b54a;
+    border:5px solid #39b54a;
+    box-shadow:0 0 25px #39b54a;
 }
 
 .tick{
-position:absolute;
-right:10px;
-bottom:10px;
-font-size:35px;
+    position:absolute;
+    right:10px;
+    bottom:10px;
+    font-size:35px;
 }
 
-/* Progress */
-
 .progress{
-margin-top:20px;
+    margin-top:20px;
 }
 
 .dot{
-width:18px;
-height:18px;
-border-radius:50%;
-background:#ccc;
-display:inline-block;
-margin:5px;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    background:#ccc;
+    display:inline-block;
+    margin:5px;
 }
 
 .dot.active{
-background:#39b54a;
+    background:#39b54a;
 }
 
 /* Finish */
 
 .finish-card{
-background:rgba(255,255,255,.96);
-padding:40px;
-border-radius:35px;
-text-align:center;
-box-shadow:0 12px 30px rgba(0,0,0,.25);
-width:90%;
-max-width:700px;
+    background:rgba(255,255,255,.95);
+    padding:50px;
+    border-radius:35px;
+    text-align:center;
+    box-shadow:0 12px 35px rgba(0,0,0,.25);
+    width:90%;
+    max-width:700px;
 }
 
 .finish-card h1{
-font-size:70px;
-color:#39b54a;
+    font-size:70px;
+    color:#39b54a;
 }
 
 .finish-card h2{
-font-size:40px;
-margin-bottom:30px;
+    font-size:38px;
+    margin-bottom:30px;
 }
 
 .playBtn{
-background:#39b54a;
-border:none;
-padding:20px 50px;
-font-size:35px;
-border-radius:50px;
-color:white;
-cursor:pointer;
-transition:.3s;
-}
-
-.playBtn:hover{
-transform:scale(1.05);
+    background:#39b54a;
+    color:white;
+    border:none;
+    padding:20px 50px;
+    border-radius:50px;
+    font-size:34px;
+    cursor:pointer;
 }
 
 /* Animations */
 
 @keyframes wiggle{
-0%{transform:translateX(0);}
-25%{transform:translateX(-10px);}
-50%{transform:translateX(10px);}
-75%{transform:translateX(-10px);}
-100%{transform:translateX(0);}
+    0%{transform:translateX(0);}
+    25%{transform:translateX(-10px);}
+    50%{transform:translateX(10px);}
+    75%{transform:translateX(-10px);}
+    100%{transform:translateX(0);}
 }
 
 .wrong{
-animation:wiggle .4s;
+    animation:wiggle .4s;
 }
 
 @keyframes glow{
-0%{
-box-shadow:0 0 10px yellow;
-}
-50%{
-box-shadow:0 0 35px yellow;
-}
-100%{
-box-shadow:0 0 10px yellow;
-}
+    0%{box-shadow:0 0 10px yellow;}
+    50%{box-shadow:0 0 35px yellow;}
+    100%{box-shadow:0 0 10px yellow;}
 }
 
 .glow{
-animation:glow 1s infinite;
+    animation:glow 1s infinite;
 }
-
-/* Mobile */
 
 @media(max-width:768px){
 
-.question{
-font-size:28px;
-}
+    .question{
+        font-size:28px;
+    }
 
-.quiz-area{
-flex-direction:column;
-}
+    .quiz-area{
+        flex-direction:column;
+    }
 
-.bird-box{
-width:100%;
-}
+    .bird-box{
+        width:100%;
+    }
 
-.options{
-width:100%;
-gap:10px;
-}
+    .options{
+        width:100%;
+        gap:10px;
+    }
 
-.option img{
-height:70px;
-}
+    .option img{
+        height:70px;
+    }
 
-.option-name{
-font-size:18px;
-}
+    .option-name{
+        font-size:18px;
+    }
 
-.finish-card h1{
-font-size:50px;
-}
+    .finish-card h1{
+        font-size:50px;
+    }
 
-.finish-card h2{
-font-size:30px;
-}
+    .finish-card h2{
+        font-size:28px;
+    }
 
-.playBtn{
-font-size:28px;
-}
-}
-
-canvas{
-position:fixed;
-top:0;
-left:0;
-pointer-events:none;
+    .playBtn{
+        font-size:28px;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<!-- Logo Screen -->
-
+<!-- Logo -->
 <div id="logoScreen" class="screen active">
-<img src="innovine-logo.png">
+    <img src="Themes/beaks&birds/assets/innovine-logo.png">
 </div>
 
-<!-- Quiz Screen -->
-
+<!-- Quiz -->
 <div id="quizScreen" class="screen">
 
-<div class="quiz-card">
+    <div class="quiz-card">
 
-<div class="badge" id="badge"></div>
+        <div class="badge" id="badge"></div>
 
-<div class="question">
-Which beak belongs to this bird?
+        <div class="question">
+            Which beak belongs to this bird?
+        </div>
+
+        <div class="quiz-area">
+
+            <div class="bird-box">
+                <img id="birdImage">
+            </div>
+
+            <div class="options" id="options"></div>
+
+        </div>
+
+        <div class="progress" id="progress"></div>
+
+    </div>
+
 </div>
 
-<div class="quiz-area">
-
-<div class="bird-box">
-<img id="birdImage">
-</div>
-
-<div class="options" id="options"></div>
-
-</div>
-
-<div class="progress" id="progress"></div>
-
-</div>
-
-</div>
-
-<!-- Finish Screen -->
-
+<!-- Finish -->
 <div id="finishScreen" class="screen">
 
-<div class="finish-card">
-<h1>🎉 Good Job! 🎉</h1>
-<h2>You Did It!</h2>
+    <div class="finish-card">
+        <h1>🎉 Good Job! 🎉</h1>
+        <h2>You Did It!</h2>
 
-<button class="playBtn" onclick="restartGame()">
-🔄 Play Again
-</button>
+        <button class="playBtn" onclick="restartGame()">
+            🔄 Play Again
+        </button>
+    </div>
 
 </div>
 
-</div>
+<audio id="correctSound"
+src="Themes/beaks&birds/assets/freesound_community-claps-44774.mp3"></audio>
 
-<audio id="correctSound" src="correct.mp3"></audio>
-<audio id="clapSound" src="freesound_community-claps-44774.mp3"></audio>
-<audio id="wrongSound" src="wrong.mp3"></audio>
+<audio id="clapSound"
+src="Themes/beaks&birds/assets/freesound_community-claps-44774.mp3"></audio>
+
+<audio id="wrongSound"
+src="Themes/beaks&birds/assets/wrong.mp3"></audio>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -346,28 +316,28 @@ Which beak belongs to this bird?
 
 const questions = [
 {
-bird:'eagle.png',
-answer:'eagle-beak.png'
+bird:'Themes/beaks&birds/assets/eagle.png',
+answer:'Themes/beaks&birds/assets/eagle-beak.png'
 },
 {
-bird:'toucan.png',
-answer:'toucan-beak.png'
+bird:'Themes/beaks&birds/assets/toucan.png',
+answer:'Themes/beaks&birds/assets/toucan-beak.png'
 },
 {
-bird:'parrot.png',
-answer:'parrots-beak.png'
+bird:'Themes/beaks&birds/assets/parrot.png',
+answer:'Themes/beaks&birds/assets/parrots-beak.png'
 },
 {
-bird:'owl.png',
-answer:'owl-beak.png'
+bird:'Themes/beaks&birds/assets/owl.png',
+answer:'Themes/beaks&birds/assets/owl-beak.png'
 }
 ];
 
 const beaks = [
-'toucan-beak.png',
-'owl-beak.png',
-'parrots-beak.png',
-'eagle-beak.png'
+'Themes/beaks&birds/assets/toucan-beak.png',
+'Themes/beaks&birds/assets/owl-beak.png',
+'Themes/beaks&birds/assets/parrots-beak.png',
+'Themes/beaks&birds/assets/eagle-beak.png'
 ];
 
 let current = 0;
@@ -378,169 +348,159 @@ const birdImage = document.getElementById('birdImage');
 const optionsDiv = document.getElementById('options');
 
 function showScreen(id){
-document.querySelectorAll('.screen')
-.forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.screen').forEach(s=>{
+        s.classList.remove('active');
+    });
 
-document.getElementById(id)
-.classList.add('active');
+    document.getElementById(id).classList.add('active');
 }
 
-/* Logo for 2 seconds */
-
 setTimeout(()=>{
-startGame();
+    startGame();
 },2000);
 
 function shuffle(arr){
-return [...arr].sort(()=>Math.random()-0.5);
+    return [...arr].sort(()=>Math.random()-0.5);
 }
 
 function startGame(){
-gameQuestions = shuffle(questions);
-current = 0;
-showScreen('quizScreen');
-loadQuestion();
+    gameQuestions = shuffle(questions);
+    current = 0;
+    showScreen('quizScreen');
+    loadQuestion();
 }
 
 function loadQuestion(){
 
-wrongAttempts = 0;
+    wrongAttempts = 0;
 
-let q = gameQuestions[current];
+    let q = gameQuestions[current];
 
-document.getElementById('badge').innerHTML =
-`Question ${current+1} of ${gameQuestions.length}`;
+    document.getElementById('badge').innerHTML =
+        `Question ${current+1} of ${gameQuestions.length}`;
 
-birdImage.src = q.bird;
+    birdImage.src = q.bird;
 
-optionsDiv.innerHTML = '';
+    optionsDiv.innerHTML = '';
 
-let shuffled = shuffle(beaks);
+    let shuffled = shuffle(beaks);
 
-shuffled.forEach(beak=>{
+    shuffled.forEach(beak=>{
 
-let div = document.createElement('div');
-div.className = 'option';
+        let div = document.createElement('div');
+        div.className = 'option';
 
-let label = beak
-.replace('.png','')
-.replace('-',' ')
-.replace('toucan','Toucan')
-.replace('owl','Owl')
-.replace('eagle','Eagle')
-.replace('parrots','Parrot');
+        let label = beak
+            .split('/').pop()
+            .replace('.png','')
+            .replace('-',' ')
+            .replace('toucan','Toucan')
+            .replace('owl','Owl')
+            .replace('eagle','Eagle')
+            .replace('parrots','Parrot');
 
-div.innerHTML = `
-<img src="${beak}">
-<div class="option-name">${label}</div>
-`;
+        div.innerHTML = `
+            <img src="${beak}">
+            <div class="option-name">${label}</div>
+        `;
 
-div.onclick = ()=>checkAnswer(div,beak);
+        div.onclick = ()=>checkAnswer(div,beak);
 
-optionsDiv.appendChild(div);
+        optionsDiv.appendChild(div);
+    });
 
-});
-
-drawProgress();
+    drawProgress();
 }
 
 function checkAnswer(card,beak){
 
-let q = gameQuestions[current];
+    let q = gameQuestions[current];
 
-if(beak === q.answer){
+    if(beak === q.answer){
 
-document.getElementById('correctSound').play();
-document.getElementById('clapSound').play();
+        document.getElementById('correctSound').play();
+        document.getElementById('clapSound').play();
 
-card.classList.add('correct');
+        card.classList.add('correct');
+        card.innerHTML += `<div class="tick">✅</div>`;
 
-card.innerHTML += `
-<div class="tick">✅</div>
-`;
+        setTimeout(()=>{
 
-setTimeout(()=>{
+            current++;
 
-current++;
+            if(current >= gameQuestions.length){
+                finishGame();
+            }
+            else{
+                loadQuestion();
+            }
 
-if(current >= gameQuestions.length){
-finishGame();
-}
-else{
-loadQuestion();
-}
+        },1200);
 
-},1200);
+    }
+    else{
 
-}
-else{
+        document.getElementById('wrongSound').play();
 
-document.getElementById('wrongSound').play();
+        card.classList.add('wrong');
 
-card.classList.add('wrong');
+        setTimeout(()=>{
+            card.classList.remove('wrong');
+        },400);
 
-setTimeout(()=>{
-card.classList.remove('wrong');
-},400);
+        wrongAttempts++;
 
-wrongAttempts++;
+        if(wrongAttempts >= 2){
 
-if(wrongAttempts >= 2){
+            document.querySelectorAll('.option')
+            .forEach(o=>{
 
-document.querySelectorAll('.option')
-.forEach(o=>{
+                let img = o.querySelector('img').src;
 
-let img = o.querySelector('img').src;
+                if(img.includes(q.answer)){
+                    o.classList.add('glow');
+                }
 
-if(img.includes(q.answer)){
-o.classList.add('glow');
-}
+            });
 
-});
-
-}
-
-}
-
+        }
+    }
 }
 
 function drawProgress(){
 
-let html = '';
+    let html = '';
 
-for(let i=0;i<gameQuestions.length;i++){
+    for(let i=0;i<gameQuestions.length;i++){
+        html += `
+            <span class="dot ${i===current?'active':''}">
+            </span>
+        `;
+    }
 
-html += `
-<span class="dot ${i===current?'active':''}">
-</span>
-`;
-
-}
-
-document.getElementById('progress').innerHTML = html;
+    document.getElementById('progress').innerHTML = html;
 }
 
 function finishGame(){
 
-showScreen('finishScreen');
+    showScreen('finishScreen');
 
-confetti({
-particleCount:250,
-spread:180,
-origin:{y:0.6}
-});
-
+    confetti({
+        particleCount:250,
+        spread:180,
+        origin:{y:0.6}
+    });
 }
 
 function restartGame(){
 
-gameQuestions = shuffle(questions);
-current = 0;
+    gameQuestions = shuffle(questions);
+    current = 0;
 
-showScreen('quizScreen');
-loadQuestion();
-
+    showScreen('quizScreen');
+    loadQuestion();
 }
+
 </script>
 
 </body>
