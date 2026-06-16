@@ -2,260 +2,348 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birds and Beaks</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+<title>Birds & Beaks Game</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Comic Sans MS',sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Baloo 2',cursive;
 }
 
 body{
-    overflow:hidden;
-    background:#fff;
+overflow:hidden;
+height:100vh;
+background:url('birds&beaks-background.png') center center/cover no-repeat;
 }
 
+/* Screens */
+
 .screen{
-    width:100vw;
-    height:100vh;
-    display:none;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
+width:100%;
+height:100vh;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 }
 
 .active{
-    display:flex;
+display:flex;
 }
 
-/* ---------------- Logo ---------------- */
+/* Logo Screen */
+
 #logoScreen{
-    background:white;
+background:white;
 }
 
 #logoScreen img{
-    width:220px;
-    max-width:70%;
+width:300px;
+max-width:80%;
 }
 
-/* ---------------- Video ---------------- */
-#videoScreen{
-    background:#c8f0ff;
+/* Quiz Card */
+
+.quiz-card{
+width:95%;
+max-width:1100px;
+background:rgba(255,255,255,0.96);
+border-radius:35px;
+padding:20px;
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+text-align:center;
 }
 
-.video-frame{
-    width:90%;
-    max-width:800px;
-    border:12px solid white;
-    border-radius:35px;
-    overflow:hidden;
-    box-shadow:0 8px 25px rgba(0,0,0,0.3);
-    background:white;
-}
-
-.video-frame video{
-    width:100%;
-    display:block;
-}
-
-/* ---------------- Game ---------------- */
-#gameScreen{
-    background:url('birds&beaks-background.png') center/cover no-repeat;
-}
-
-.game-container{
-    width:95%;
-    max-width:1100px;
-    height:95%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
+.badge{
+display:inline-block;
+background:#2f80ed;
+color:white;
+padding:10px 30px;
+border-radius:30px;
+font-size:28px;
+margin-bottom:15px;
 }
 
 .question{
-    font-size:clamp(22px,3vw,38px);
-    color:#ff5722;
-    background:white;
-    padding:12px 25px;
-    border-radius:30px;
-    margin-bottom:15px;
-    box-shadow:0 5px 15px rgba(0,0,0,.2);
+font-size:40px;
+color:#6b3e26;
+margin-bottom:20px;
 }
 
-.bird{
-    width:220px;
-    max-width:40vw;
-    max-height:30vh;
-    object-fit:contain;
-    margin-bottom:20px;
+.quiz-area{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:25px;
 }
+
+/* Bird Box */
+
+.bird-box{
+width:35%;
+background:white;
+border-radius:25px;
+padding:20px;
+box-shadow:0 5px 20px rgba(0,0,0,.15);
+}
+
+.bird-box img{
+width:100%;
+max-height:320px;
+object-fit:contain;
+}
+
+/* Options */
 
 .options{
-    width:100%;
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-    max-width:900px;
+width:60%;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
 }
 
 .option{
-    background:white;
-    border-radius:25px;
-    border:5px solid #fff;
-    padding:15px;
-    cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 5px 15px rgba(0,0,0,.25);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-}
-
-.option img{
-    width:130px;
-    max-width:100%;
-    height:90px;
-    object-fit:contain;
+background:white;
+border-radius:20px;
+padding:15px;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,.15);
+transition:.3s;
+position:relative;
 }
 
 .option:hover{
-    transform:scale(1.05);
+transform:scale(1.05);
 }
+
+.option img{
+width:100%;
+height:120px;
+object-fit:contain;
+}
+
+.option-name{
+font-size:22px;
+}
+
+/* Correct */
 
 .correct{
-    border-color:#3ddc84;
-}
-
-.glow{
-    animation:glow 1s infinite;
-}
-
-@keyframes glow{
-    0%{
-        box-shadow:0 0 5px #ff0;
-    }
-    50%{
-        box-shadow:0 0 30px #ff0;
-    }
-    100%{
-        box-shadow:0 0 5px #ff0;
-    }
-}
-
-.wiggle{
-    animation:wiggle .4s;
-}
-
-@keyframes wiggle{
-    0%{transform:translateX(0);}
-    25%{transform:translateX(-10px);}
-    50%{transform:translateX(10px);}
-    75%{transform:translateX(-10px);}
-    100%{transform:translateX(0);}
+border:5px solid #39b54a;
+box-shadow:0 0 25px #39b54a;
 }
 
 .tick{
-    position:absolute;
-    font-size:80px;
-    color:#3ddc84;
-    display:none;
+position:absolute;
+right:10px;
+bottom:10px;
+font-size:35px;
 }
 
-/* ---------------- End Screen ---------------- */
-#endScreen{
-    background:url('birds&beaks-background.png') center/cover no-repeat;
-    text-align:center;
+/* Progress */
+
+.progress{
+margin-top:20px;
 }
 
-#endScreen h1{
-    color:#ff5722;
-    font-size:clamp(40px,6vw,70px);
-    background:white;
-    padding:20px 40px;
-    border-radius:30px;
-    margin-bottom:25px;
+.dot{
+width:18px;
+height:18px;
+border-radius:50%;
+background:#ccc;
+display:inline-block;
+margin:5px;
 }
 
-button{
-    padding:18px 40px;
-    border:none;
-    border-radius:40px;
-    background:#ff9800;
-    color:white;
-    font-size:26px;
-    cursor:pointer;
+.dot.active{
+background:#39b54a;
+}
+
+/* Finish */
+
+.finish-card{
+background:rgba(255,255,255,.96);
+padding:40px;
+border-radius:35px;
+text-align:center;
+box-shadow:0 12px 30px rgba(0,0,0,.25);
+width:90%;
+max-width:700px;
+}
+
+.finish-card h1{
+font-size:70px;
+color:#39b54a;
+}
+
+.finish-card h2{
+font-size:40px;
+margin-bottom:30px;
+}
+
+.playBtn{
+background:#39b54a;
+border:none;
+padding:20px 50px;
+font-size:35px;
+border-radius:50px;
+color:white;
+cursor:pointer;
+transition:.3s;
+}
+
+.playBtn:hover{
+transform:scale(1.05);
+}
+
+/* Animations */
+
+@keyframes wiggle{
+0%{transform:translateX(0);}
+25%{transform:translateX(-10px);}
+50%{transform:translateX(10px);}
+75%{transform:translateX(-10px);}
+100%{transform:translateX(0);}
+}
+
+.wrong{
+animation:wiggle .4s;
+}
+
+@keyframes glow{
+0%{
+box-shadow:0 0 10px yellow;
+}
+50%{
+box-shadow:0 0 35px yellow;
+}
+100%{
+box-shadow:0 0 10px yellow;
+}
+}
+
+.glow{
+animation:glow 1s infinite;
+}
+
+/* Mobile */
+
+@media(max-width:768px){
+
+.question{
+font-size:28px;
+}
+
+.quiz-area{
+flex-direction:column;
+}
+
+.bird-box{
+width:100%;
+}
+
+.options{
+width:100%;
+gap:10px;
+}
+
+.option img{
+height:70px;
+}
+
+.option-name{
+font-size:18px;
+}
+
+.finish-card h1{
+font-size:50px;
+}
+
+.finish-card h2{
+font-size:30px;
+}
+
+.playBtn{
+font-size:28px;
+}
 }
 
 canvas{
-    position:absolute;
-    top:0;
-    left:0;
-    pointer-events:none;
-}
-
-@media(max-width:700px){
-    .options{
-        grid-template-columns:1fr 1fr;
-        gap:10px;
-    }
-
-    .option img{
-        width:90px;
-        height:70px;
-    }
-
-    .bird{
-        width:170px;
-    }
+position:fixed;
+top:0;
+left:0;
+pointer-events:none;
 }
 </style>
 </head>
+
 <body>
 
-<!-- LOGO -->
+<!-- Logo Screen -->
+
 <div id="logoScreen" class="screen active">
-    <img src="innovine-logo.png">
+<img src="innovine-logo.png">
 </div>
 
-<!-- VIDEO -->
-<div id="videoScreen" class="screen">
-    <div class="video-frame">
-        <video id="introVideo" autoplay controls>
-            <source src="beaks&birds-video.mp4" type="video/mp4">
-        </video>
-    </div>
+<!-- Quiz Screen -->
+
+<div id="quizScreen" class="screen">
+
+<div class="quiz-card">
+
+<div class="badge" id="badge"></div>
+
+<div class="question">
+Which beak belongs to this bird?
 </div>
 
-<!-- GAME -->
-<div id="gameScreen" class="screen">
-    <div class="game-container">
-        <div class="question">
-            Match the Bird with its Beak!
-        </div>
+<div class="quiz-area">
 
-        <img class="bird" id="birdImage">
-
-        <div class="options" id="options"></div>
-
-        <div class="tick" id="tick">✔</div>
-    </div>
+<div class="bird-box">
+<img id="birdImage">
 </div>
 
-<!-- END -->
-<div id="endScreen" class="screen">
-    <canvas id="confetti"></canvas>
-    <h1>🎉 Good Job! 🎉</h1>
-    <button onclick="restartGame()">Play Again</button>
+<div class="options" id="options"></div>
+
 </div>
 
-<audio id="correctSound" src="freesound_community-claps-44774.mp3"></audio>
+<div class="progress" id="progress"></div>
+
+</div>
+
+</div>
+
+<!-- Finish Screen -->
+
+<div id="finishScreen" class="screen">
+
+<div class="finish-card">
+<h1>🎉 Good Job! 🎉</h1>
+<h2>You Did It!</h2>
+
+<button class="playBtn" onclick="restartGame()">
+🔄 Play Again
+</button>
+
+</div>
+
+</div>
+
+<audio id="correctSound" src="correct.mp3"></audio>
+<audio id="clapSound" src="freesound_community-claps-44774.mp3"></audio>
 <audio id="wrongSound" src="wrong.mp3"></audio>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
 <script>
+
 const questions = [
 {
 bird:'eagle.png',
@@ -275,7 +363,7 @@ answer:'owl-beak.png'
 }
 ];
 
-const allBeaks = [
+const beaks = [
 'toucan-beak.png',
 'owl-beak.png',
 'parrots-beak.png',
@@ -288,175 +376,170 @@ let gameQuestions = [];
 
 const birdImage = document.getElementById('birdImage');
 const optionsDiv = document.getElementById('options');
-const tick = document.getElementById('tick');
-
-function shuffle(array){
-    return array.sort(()=>Math.random()-0.5);
-}
 
 function showScreen(id){
-    document.querySelectorAll('.screen').forEach(s=>{
-        s.classList.remove('active');
-    });
-    document.getElementById(id).classList.add('active');
+document.querySelectorAll('.screen')
+.forEach(s=>s.classList.remove('active'));
+
+document.getElementById(id)
+.classList.add('active');
 }
 
+/* Logo for 2 seconds */
+
 setTimeout(()=>{
-    showScreen('videoScreen');
+startGame();
 },2000);
 
-const video = document.getElementById('introVideo');
-
-video.onended = ()=>{
-    startGame();
-};
+function shuffle(arr){
+return [...arr].sort(()=>Math.random()-0.5);
+}
 
 function startGame(){
-    showScreen('gameScreen');
-    gameQuestions = shuffle([...questions]);
-    current = 0;
-    loadQuestion();
+gameQuestions = shuffle(questions);
+current = 0;
+showScreen('quizScreen');
+loadQuestion();
 }
 
 function loadQuestion(){
-    wrongAttempts = 0;
-    tick.style.display='none';
 
-    if(current >= gameQuestions.length){
-        finishGame();
-        return;
-    }
+wrongAttempts = 0;
 
-    const q = gameQuestions[current];
-    birdImage.src = q.bird;
+let q = gameQuestions[current];
 
-    optionsDiv.innerHTML = '';
+document.getElementById('badge').innerHTML =
+`Question ${current+1} of ${gameQuestions.length}`;
 
-    const shuffled = shuffle([...allBeaks]);
+birdImage.src = q.bird;
 
-    shuffled.forEach(beak=>{
-        const div = document.createElement('div');
-        div.className='option';
+optionsDiv.innerHTML = '';
 
-        div.innerHTML=`<img src="${beak}">`;
+let shuffled = shuffle(beaks);
 
-        div.onclick=()=>{
-            checkAnswer(div,beak);
-        };
+shuffled.forEach(beak=>{
 
-        optionsDiv.appendChild(div);
-    });
+let div = document.createElement('div');
+div.className = 'option';
+
+let label = beak
+.replace('.png','')
+.replace('-',' ')
+.replace('toucan','Toucan')
+.replace('owl','Owl')
+.replace('eagle','Eagle')
+.replace('parrots','Parrot');
+
+div.innerHTML = `
+<img src="${beak}">
+<div class="option-name">${label}</div>
+`;
+
+div.onclick = ()=>checkAnswer(div,beak);
+
+optionsDiv.appendChild(div);
+
+});
+
+drawProgress();
 }
 
-function checkAnswer(div,selected){
-    const q = gameQuestions[current];
+function checkAnswer(card,beak){
 
-    if(selected === q.answer){
+let q = gameQuestions[current];
 
-        document.getElementById('correctSound').play();
+if(beak === q.answer){
 
-        div.classList.add('correct');
+document.getElementById('correctSound').play();
+document.getElementById('clapSound').play();
 
-        tick.style.display='block';
+card.classList.add('correct');
 
-        setTimeout(()=>{
-            current++;
-            loadQuestion();
-        },1200);
-    }
-    else{
-        document.getElementById('wrongSound').play();
+card.innerHTML += `
+<div class="tick">✅</div>
+`;
 
-        div.classList.add('wiggle');
+setTimeout(()=>{
 
-        setTimeout(()=>{
-            div.classList.remove('wiggle');
-        },400);
+current++;
 
-        wrongAttempts++;
+if(current >= gameQuestions.length){
+finishGame();
+}
+else{
+loadQuestion();
+}
 
-        if(wrongAttempts >= 2){
-            [...document.querySelectorAll('.option')]
-            .forEach(o=>{
-                const img = o.querySelector('img').src;
+},1200);
 
-                if(img.includes(q.answer)){
-                    o.classList.add('glow');
-                }
-            });
-        }
-    }
+}
+else{
+
+document.getElementById('wrongSound').play();
+
+card.classList.add('wrong');
+
+setTimeout(()=>{
+card.classList.remove('wrong');
+},400);
+
+wrongAttempts++;
+
+if(wrongAttempts >= 2){
+
+document.querySelectorAll('.option')
+.forEach(o=>{
+
+let img = o.querySelector('img').src;
+
+if(img.includes(q.answer)){
+o.classList.add('glow');
+}
+
+});
+
+}
+
+}
+
+}
+
+function drawProgress(){
+
+let html = '';
+
+for(let i=0;i<gameQuestions.length;i++){
+
+html += `
+<span class="dot ${i===current?'active':''}">
+</span>
+`;
+
+}
+
+document.getElementById('progress').innerHTML = html;
 }
 
 function finishGame(){
-    showScreen('endScreen');
-    startConfetti();
+
+showScreen('finishScreen');
+
+confetti({
+particleCount:250,
+spread:180,
+origin:{y:0.6}
+});
+
 }
 
-/* Restart */
 function restartGame(){
-    stopConfetti();
-    showScreen('videoScreen');
-    video.currentTime = 0;
-    video.play();
-}
 
-/* ---------- Confetti ---------- */
+gameQuestions = shuffle(questions);
+current = 0;
 
-const canvas = document.getElementById('confetti');
-const ctx = canvas.getContext('2d');
+showScreen('quizScreen');
+loadQuestion();
 
-let pieces = [];
-
-function resizeCanvas(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resizeCanvas();
-
-window.onresize = resizeCanvas;
-
-function startConfetti(){
-    pieces = [];
-
-    for(let i=0;i<150;i++){
-        pieces.push({
-            x:Math.random()*canvas.width,
-            y:Math.random()*canvas.height,
-            r:Math.random()*8+4,
-            d:Math.random()*150
-        });
-    }
-
-    animateConfetti();
-}
-
-function animateConfetti(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-
-    for(let i=0;i<pieces.length;i++){
-        const p = pieces[i];
-
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-        ctx.fillStyle=
-            `hsl(${Math.random()*360},100%,50%)`;
-        ctx.fill();
-
-        p.y += 3;
-
-        if(p.y > canvas.height){
-            p.y = -20;
-        }
-    }
-
-    if(document.getElementById('endScreen').classList.contains('active')){
-        requestAnimationFrame(animateConfetti);
-    }
-}
-
-function stopConfetti(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 </script>
 
