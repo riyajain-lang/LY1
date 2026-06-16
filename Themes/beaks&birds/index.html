@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Birds & Beaks Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+ margin:0;
+ font-family:Arial;
+ overflow:hidden;
+}
+
+/* BACKGROUND */
+#gameScreen{
+ background:url("Themes/beaks&birds/assets/birds&beaks-background.png") no-repeat center center;
+ background-size:cover;
+}
+
+/* SCREEN HANDLING */
+.screen{
+ display:none;
+ width:100vw;
+ height:100vh;
+ justify-content:center;
+ align-items:center;
+ flex-direction:column;
+ text-align:center;
+}
+
+.active{display:flex;}
+
+/* LOGO */
+#logoScreen{
+ background:white;
+}
+
+#logoScreen img{
+ width:220px;
+}
+
+/* VIDEO */
+.videoBox{
+ width:90%;
+ max-width:420px;
+ border:8px solid #ffd966;
+ border-radius:20px;
+ box-shadow:0 5px 15px rgba(0,0,0,0.2);
+ background:white;
+}
+
+/* GAME CARD */
+.card{
+ background:rgba(255,255,255,0.92);
+ padding:15px;
+ border-radius:15px;
+ width:90%;
+ max-width:420px;
+ box-shadow:0 5px 10px rgba(0,0,0,0.2);
+}
+
+.options{
+ display:grid;
+ grid-template-columns:1fr 1fr;
+ gap:10px;
+ margin-top:10px;
+}
+
+.option{
+ background:#f0f8ff;
+ padding:10px;
+ border-radius:10px;
+ cursor:pointer;
+ transition:0.2s;
+ font-size:14px;
+}
+
+.option img{
+ width:80px;
+ height:80px;
+ object-fit:contain;
+}
+
+.option:active{
+ transform:scale(0.95);
+}
+
+.correct{
+ border:3px solid green;
+}
+
+.wrongShake{
+ animation:shake 0.3s;
+}
+
+@keyframes shake{
+0%{transform:translateX(0);}
+25%{transform:translateX(-5px);}
+50%{transform:translateX(5px);}
+75%{transform:translateX(-5px);}
+100%{transform:translateX(0);}
+}
+
+/* FINAL */
+button{
+ padding:10px 20px;
+ border:none;
+ border-radius:10px;
+ background:#4CAF50;
+ color:white;
+ font-size:16px;
+ margin-top:10px;
+}
+
+/* CONFETTI */
+canvas{
+ position:fixed;
+ top:0;
+ left:0;
+ pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUDIO -->
+<audio id="correctSound" src="correct.mp3"></audio>
+<audio id="wrongSound" src="wrong.mp3"></audio>
+<audio id="clapSound" src="freesound_community-claps-44774.mp3"></audio>
+
+<canvas id="confetti"></canvas>
+
+<!-- SCREEN 1 -->
+<div id="logoScreen" class="screen active">
+    <img src="Themes/beaks&birds/assets/innovine-logo.png">
+</div>
+
+<!-- SCREEN 2 (VIDEO - OPTIONAL) -->
+<div id="videoScreen" class="screen">
+    <video class="videoBox" autoplay muted>
+        <source src="Themes/beaks&birds/assets/beaks&birds-video.mp4">
+    </video>
+    <p>🐦 Learn Birds & Beaks</p>
+</div>
+
+<!-- SCREEN 3 GAME -->
+<div id="gameScreen" class="screen">
+    <div class="card">
+        <h3 id="questionText"></h3>
+        <div class="options" id="options"></div>
+    </div>
+</div>
+
+<!-- SCREEN 4 END -->
+<div id="endScreen" class="screen">
+    <h1>🎉 Good Job!</h1>
+    <button onclick="restartGame()">Play Again</button>
+</div>
+
+<script>
+
+/* SCREENS */
+let logoScreen = document.getElementById("logoScreen");
+let videoScreen = document.getElementById("videoScreen");
+let gameScreen = document.getElementById("gameScreen");
+let endScreen = document.getElementById("endScreen");
+
+/* SOUND */
+let correctSound = document.getElementById("correctSound");
+let wrongSound = document.getElementById("wrongSound");
+let clapSound = document.getElementById("clapSound");
+
+/* QUESTIONS (AS REQUESTED) */
+let questions = [
+{
+ q:"Find Eagle Beak",
+ ans:"eagle-beak.png",
+ img:"eagle.png",
+ options:["toucan-beak.png","owl-beak.png","parrots-beak.png","eagle-beak.png"]
+},
+{
+ q:"Find Toucan Beak",
+ ans:"toucan-beak.png",
+ img:"toucan.png",
+ options:["toucan-beak.png","owl-beak.png","parrots-beak.png","eagle-beak.png"]
+},
+{
+ q:"Find Parrot Beak",
+ ans:"parrots-beak.png",
+ img:"parrot.png",
+ options:["toucan-beak.png","owl-beak.png","parrots-beak.png","eagle-beak.png"]
+},
+{
+ q:"Find Owl Beak",
+ ans:"owl-beak.png",
+ img:"owl.png",
+ options:["toucan-beak.png","owl-beak.png","parrots-beak.png","eagle-beak.png"]
+}
+];
+
+let currentQ = 0;
+let attempts = 0;
+
+/* FLOW */
+setTimeout(()=>{
+ logoScreen.classList.remove("active");
+ videoScreen.classList.add("active");
+},2000);
+
+setTimeout(()=>{
+ videoScreen.classList.remove("active");
+ gameScreen.classList.add("active");
+ loadQuestion();
+},7000);
+
+/* LOAD QUESTION */
+function loadQuestion(){
+ attempts = 0;
+ let q = questions[currentQ];
+
+ document.getElementById("questionText").innerHTML =
+ `<img src="Themes/beaks&birds/assets/${q.img}" width="120"><br>${q.q}`;
+
+ let optDiv = document.getElementById("options");
+ optDiv.innerHTML = "";
+
+ let shuffled = q.options.sort(()=>Math.random()-0.5);
+
+ shuffled.forEach(img=>{
+   let div = document.createElement("div");
+   div.classList.add("option");
+
+   div.innerHTML = `<img src="Themes/beaks&birds/assets/${img}">`;
+
+   div.onclick = ()=>checkAnswer(div,img,q.ans);
+
+   optDiv.appendChild(div);
+ });
+}
+
+/* CHECK ANSWER */
+function checkAnswer(el,img,correct){
+
+ if(img === correct){
+   correctSound.play();
+   el.classList.add("correct");
+
+   setTimeout(()=>{
+     nextQuestion();
+   },800);
+ }
+ else{
+   wrongSound.play();
+   attempts++;
+
+   el.classList.add("wrongShake");
+
+   if(attempts >= 2){
+     document.querySelectorAll(".option").forEach(o=>{
+       if(o.innerHTML.includes(correct)){
+         o.classList.add("correct");
+       }
+     });
+
+     setTimeout(()=>{
+       nextQuestion();
+     },1000);
+   }
+ }
+}
+
+/* NEXT */
+function nextQuestion(){
+ currentQ++;
+ if(currentQ < questions.length){
+   loadQuestion();
+ } else {
+   showEnd();
+ }
+}
+
+/* END */
+function showEnd(){
+ gameScreen.classList.remove("active");
+ endScreen.classList.add("active");
+ clapSound.play();
+ launchConfetti();
+}
+
+/* RESTART */
+function restartGame(){
+ currentQ = 0;
+ endScreen.classList.remove("active");
+ gameScreen.classList.add("active");
+ loadQuestion();
+}
+
+/* CONFETTI */
+let canvas = document.getElementById("confetti");
+let ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let pieces = [];
+
+function launchConfetti(){
+ for(let i=0;i<100;i++){
+  pieces.push({
+   x:Math.random()*canvas.width,
+   y:Math.random()*canvas.height,
+   r:Math.random()*6+2
+  });
+ }
+ draw();
+}
+
+function draw(){
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ pieces.forEach(p=>{
+  ctx.fillStyle = "#ffcc00";
+  ctx.beginPath();
+  ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+  ctx.fill();
+  p.y += 2;
+ });
+
+ requestAnimationFrame(draw);
+}
+
+</script>
+
+</body>
+</html>
