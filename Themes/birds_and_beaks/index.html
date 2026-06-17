@@ -17,16 +17,22 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   font-family:'Baloo 2',cursive;
 }
 
-body{
+html, body{
   width:100%;
-  height:100vh;
-  overflow:hidden;
-  background:url('assets/birds-and-beaks-background.png') center center/cover no-repeat;
+  min-height:100%;
 }
 
+body{
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Use dynamic viewport height for mobile-safe full screen */
 .screen{
   width:100%;
-  height:100vh;
+  height:100dvh;
+  min-height:100vh; /* fallback */
   display:none;
   justify-content:center;
   align-items:center;
@@ -38,7 +44,6 @@ body{
 }
 
 /* Logo Screen */
-
 #logoScreen{
   background:white;
 }
@@ -49,7 +54,6 @@ body{
 }
 
 /* Quiz Card */
-
 .quiz-card{
   width:95%;
   max-width:1100px;
@@ -98,7 +102,6 @@ body{
 }
 
 /* Options */
-
 .options{
   width:60%;
   display:grid;
@@ -134,7 +137,6 @@ body{
 }
 
 /* Correct */
-
 .correct{
   border:5px solid #39b54a;
   box-shadow:0 0 25px #39b54a;
@@ -148,7 +150,6 @@ body{
 }
 
 /* Progress */
-
 .progress{
   margin-top:20px;
 }
@@ -167,7 +168,6 @@ body{
 }
 
 /* Finish */
-
 .finish-card{
   background:rgba(255,255,255,.95);
   padding:50px;
@@ -199,7 +199,6 @@ body{
 }
 
 /* Animations */
-
 @keyframes wiggle{
   0%{transform:translateX(0);}
   25%{transform:translateX(-10px);}
@@ -223,9 +222,7 @@ body{
 }
 
 /* Mobile */
-
 @media(max-width:768px){
-
   .question{
     font-size:28px;
   }
@@ -276,7 +273,7 @@ body{
 </div>
 
 <!-- Quiz Screen -->
-<div id="quizScreen" class="screen">
+<div id="quizScreen" class="screen" style="background:url('assets/birds-and-beaks-background.png') center/cover no-repeat;">
 
   <div class="quiz-card">
 
@@ -365,13 +362,9 @@ function showScreen(id){
     .classList.add('active');
 }
 
-setTimeout(()=>{
-  startGame();
-},2000);
+setTimeout(()=>{ startGame(); },2000);
 
-function shuffle(arr){
-  return [...arr].sort(()=>Math.random()-0.5);
-}
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
 
 function startGame(){
   gameQuestions = shuffle(questions);
@@ -381,110 +374,61 @@ function startGame(){
 }
 
 function loadQuestion(){
-
   wrongAttempts = 0;
-
   let q = gameQuestions[current];
-
-  document.getElementById('badge').innerHTML =
-    `Question ${current+1} of ${gameQuestions.length}`;
-
+  document.getElementById('badge').innerHTML = `Question ${current+1} of ${gameQuestions.length}`;
   birdImage.src = q.bird;
-
   optionsDiv.innerHTML = '';
-
   let shuffled = shuffle(beaks);
-
   shuffled.forEach(beak=>{
-
     let div = document.createElement('div');
     div.className = 'option';
-
-    div.innerHTML = `
-      <img src="${beak}">
-    `;
-
+    div.innerHTML = `<img src="${beak}">`;
     div.onclick = ()=>checkAnswer(div,beak);
-
     optionsDiv.appendChild(div);
-
   });
-
   drawProgress();
 }
 
 function checkAnswer(card,beak){
-
   let q = gameQuestions[current];
-
   if(beak===q.answer){
-
     document.getElementById('correctSound').play();
     document.getElementById('clapSound').play();
-
     card.classList.add('correct');
     card.innerHTML += `<div class="tick">✅</div>`;
-
     setTimeout(()=>{
-
       current++;
-
       if(current >= gameQuestions.length){
         finishGame();
       }else{
         loadQuestion();
       }
-
     },1200);
-
   }else{
-
     document.getElementById('wrongSound').play();
-
     card.classList.add('wrong');
-
-    setTimeout(()=>{
-      card.classList.remove('wrong');
-    },400);
-
+    setTimeout(()=>{ card.classList.remove('wrong'); },400);
     wrongAttempts++;
-
     if(wrongAttempts >= 2){
-
-      document.querySelectorAll('.option')
-        .forEach(o=>{
-
-          let img = o.querySelector('img').src;
-
-          if(img.includes(q.answer)){
-            o.classList.add('glow');
-          }
-
-        });
-
+      document.querySelectorAll('.option').forEach(o=>{
+        let img = o.querySelector('img').src;
+        if(img.includes(q.answer)){ o.classList.add('glow'); }
+      });
     }
-
   }
 }
 
 function drawProgress(){
-
   let html = '';
-
   for(let i=0;i<gameQuestions.length;i++){
-    html += `
-      <span class="dot ${i===current?'active':''}">
-      </span>
-    `;
+    html += `<span class="dot ${i===current?'active':''}"></span>`;
   }
-
   document.getElementById('progress').innerHTML = html;
 }
 
 function finishGame(){
-
   showScreen('finishScreen');
-
   confetti({
     particleCount:250,
     spread:180,
@@ -492,9 +436,7 @@ function finishGame(){
   });
 }
 
-function restartGame(){
-  startGame();
-}
+function restartGame(){ startGame(); }
 
 </script>
 
