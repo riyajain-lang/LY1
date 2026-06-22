@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>Farmers Market Sorting Game</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Farmers Market Sorting</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{overflow:hidden;background:#fff}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
+body{background:#fff;overflow:hidden;}
 
 /* SPLASH */
 #splash{
@@ -15,125 +15,130 @@ body{overflow:hidden;background:#fff}
   inset:0;
   background:#fff;
   display:flex;
-  justify-content:center;
   align-items:center;
+  justify-content:center;
   z-index:9999;
 }
-#splash img{max-width:70%}
+#splash img{width:220px;max-width:70%;}
 
-/* GAME */
+/* GAME WRAPPER */
 #game{
   display:none;
   height:100vh;
   flex-direction:column;
-  padding:8px;
-  gap:8px;
 }
 
-.title{
-  text-align:center;
-  font-weight:bold;
-  background:#ffd54f;
-  padding:8px;
-  border-radius:12px;
-}
-
-/* ZONES */
+/* TOP ZONES (VERTICAL LEFT/RIGHT) */
 .top{
   flex:1;
   display:flex;
+  padding:10px;
   gap:10px;
 }
 
+/* LEFT FRUIT */
 .zone{
   flex:1;
-  border-radius:20px;
-  border:4px solid #f4b400;
+  border-radius:18px;
+  border:4px solid #ffb347;
+  position:relative;
   display:flex;
   justify-content:center;
   align-items:center;
   font-weight:bold;
   font-size:18px;
-  position:relative;
 }
 
-.fruit{
-  background:url('assets/fruits-zone-background.png') center/cover;
+/* RIGHT VEG */
+.fruitZone{
+  background:url("assets/fruits-zone-background.png") center/cover;
 }
 
-.veg{
-  background:url('assets/vegetable-zone-background.png') center/cover;
+.vegZone{
+  background:url("assets/vegetable-zone-background.png") center/cover;
+  border-color:#7ccf7a;
 }
 
-.glow{
-  box-shadow:0 0 20px gold;
-}
-
-/* OPTIONS (BOTTOM 30%) */
-.options{
-  height:30%;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
-  padding:6px;
-  overflow:hidden;
-}
-
-.card{
-  background:#fff;
-  border:3px solid #ffd166;
-  border-radius:12px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  cursor:pointer;
-}
-
-.card img{
-  width:90%;
-  height:90%;
-  object-fit:contain;
-}
-
-.selected{
-  outline:3px solid #4caf50;
-  transform:scale(1.05);
-}
-
-.wiggle{
-  animation: wiggle 0.4s;
-}
-
-@keyframes wiggle{
-  0%,100%{transform:translateX(0)}
-  25%{transform:translateX(-5px)}
-  75%{transform:translateX(5px)}
-}
-
-/* SCORE */
-.info{
-  text-align:center;
+/* ZONE LABEL */
+.label{
+  position:absolute;
+  top:8px;
+  background:white;
+  padding:5px 14px;
+  border-radius:10px;
   font-weight:bold;
 }
 
-/* END */
+/* OPTIONS PANEL */
+.bottom{
+  height:35%;
+  background:#fff8ee;
+  border-top:3px solid #ffb347;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  padding:8px;
+}
+
+/* OPTION CARD */
+.card{
+  background:#fff;
+  border:3px solid #ffd4a3;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  transition:0.2s;
+  position:relative;
+}
+
+.card img{
+  width:80%;
+  height:80%;
+  object-fit:contain;
+}
+
+/* SELECTED */
+.selected{
+  outline:3px solid #2f80ed;
+  transform:scale(1.05);
+}
+
+/* REMOVE ANIMATION */
+.remove{
+  animation:fadeOut 0.4s forwards;
+}
+
+@keyframes fadeOut{
+  to{opacity:0;transform:scale(0);}
+}
+
+/* FEEDBACK */
+#msg{
+  text-align:center;
+  font-weight:bold;
+  padding:5px;
+  font-size:16px;
+}
+
+/* END SCREEN */
 #end{
   position:fixed;
   inset:0;
   background:#fff;
   display:none;
+  flex-direction:column;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
 }
 
-/* BUTTON */
 button{
   padding:12px 20px;
   border:none;
-  border-radius:12px;
+  border-radius:14px;
   background:#4caf50;
-  color:#fff;
+  color:white;
   font-size:18px;
 }
 </style>
@@ -148,16 +153,25 @@ button{
 
 <!-- GAME -->
 <div id="game">
-  <div class="title">🍎 Farmers Market Sorting</div>
 
+  <!-- ZONES LEFT/RIGHT VERTICAL -->
   <div class="top">
-    <div id="fruitZone" class="zone fruit">Fruits</div>
-    <div id="vegZone" class="zone veg">Vegetables</div>
+
+    <div id="fruitZone" class="zone fruitZone">
+      <div class="label">Fruits</div>
+    </div>
+
+    <div id="vegZone" class="zone vegZone">
+      <div class="label">Vegetables</div>
+    </div>
+
   </div>
 
-  <div class="info">Score: <span id="score">0</span> / 20</div>
+  <div id="msg">Tap a fruit or vegetable, then tap zone</div>
 
-  <div id="options" class="options"></div>
+  <!-- OPTIONS GRID -->
+  <div class="bottom" id="board"></div>
+
 </div>
 
 <!-- END -->
@@ -166,37 +180,30 @@ button{
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="correct" src="assets/correct.mp3"></audio>
 <audio id="wrong" src="assets/wrong.mp3"></audio>
 <audio id="clap" src="assets/claps.mp3"></audio>
 
 <script>
 
-let items = [];
-for(let i=1;i<=10;i++){
-  items.push({img:`assets/fruit-${i}.png`, type:'fruit'});
-}
-for(let i=1;i<=10;i++){
-  items.push({img:`assets/vegetable-${i}.png`, type:'veg'});
-}
+let items = [
+  ...Array.from({length:10},(_,i)=>({img:`assets/fruit-${i+1}.png`,type:"fruit"})),
+  ...Array.from({length:10},(_,i)=>({img:`assets/vegetable-${i+1}.png`,type:"veg"}))
+];
 
 let selected=null;
 let score=0;
-let wrongCount={};
-
-const splash=document.getElementById("splash");
-const game=document.getElementById("game");
+let wrong={};
 
 setTimeout(()=>{
-  splash.style.display="none";
-  game.style.display="flex";
+  document.getElementById("splash").style.display="none";
+  document.getElementById("game").style.display="flex";
   load();
 },2000);
 
 function load(){
-  const box=document.getElementById("options");
-  box.innerHTML="";
+  const board=document.getElementById("board");
+  board.innerHTML="";
 
   shuffle(items).forEach((it,i)=>{
     const div=document.createElement("div");
@@ -212,7 +219,7 @@ function load(){
       div.classList.add("selected");
     };
 
-    box.appendChild(div);
+    board.appendChild(div);
   });
 }
 
@@ -226,6 +233,7 @@ function play(id){
   s.play();
 }
 
+/* ZONE LOGIC */
 fruitZone.onclick=()=>check("fruit");
 vegZone.onclick=()=>check("veg");
 
@@ -233,19 +241,16 @@ function check(zone){
   if(!selected) return;
 
   let id=selected.dataset.id;
-  wrongCount[id]=wrongCount[id]||0;
+  wrong[id]=wrong[id]||0;
 
   if(selected.dataset.type===zone){
     play("correct");
 
-    selected.style.opacity="0.4";
-    selected.onclick=null;
-    selected.classList.remove("selected");
-
-    score++;
-    document.getElementById("score").innerText=score;
+    selected.classList.add("remove");
+    setTimeout(()=>selected.remove(),400);
 
     selected=null;
+    score++;
 
     if(score===20){
       setTimeout(()=>{
@@ -256,19 +261,10 @@ function check(zone){
 
   }else{
     play("wrong");
-    wrongCount[id]++;
+    wrong[id]++;
 
-    selected.classList.remove("wiggle");
-    void selected.offsetWidth;
-    selected.classList.add("wiggle");
-
-    if(wrongCount[id]>=2){
-      if(selected.dataset.type==="fruit"){
-        fruitZone.classList.add("glow");
-      }else{
-        vegZone.classList.add("glow");
-      }
-    }
+    selected.style.transform="translateX(-5px)";
+    setTimeout(()=>selected.style.transform="translateX(5px)",100);
   }
 }
 
