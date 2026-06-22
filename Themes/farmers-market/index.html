@@ -68,22 +68,12 @@ body{overflow:hidden;background:#fff}
   border-color:#7ccf7a;
 }
 
-/* ZONE GLOW */
+/* ZONE GLOW (TEMP ONLY) */
 .glow{
-  box-shadow:0 0 20px 6px rgba(255, 230, 0, 0.9);
+  box-shadow:0 0 18px 6px rgba(255, 230, 0, 0.9);
 }
 
-/* LABEL */
-.label{
-  position:absolute;
-  top:10px;
-  background:white;
-  padding:5px 15px;
-  border-radius:12px;
-  font-weight:bold;
-}
-
-/* OPTIONS AREA */
+/* OPTIONS */
 .bottom{
   height:38%;
   padding:10px;
@@ -92,13 +82,11 @@ body{overflow:hidden;background:#fff}
   justify-content:center;
   align-content:flex-start;
   gap:10px;
-  overflow:hidden;
 }
 
-/* OPTION CARDS */
 .card{
-  width:84px;
-  height:84px;
+  width:86px;
+  height:86px;
   border:2px solid #ffd4a3;
   border-radius:14px;
   background:#fff;
@@ -106,8 +94,6 @@ body{overflow:hidden;background:#fff}
   justify-content:center;
   align-items:center;
   cursor:pointer;
-  transition:0.2s;
-  box-shadow:0 2px 6px rgba(0,0,0,0.08);
 }
 
 .card img{
@@ -121,7 +107,7 @@ body{overflow:hidden;background:#fff}
   transform:scale(1.05);
 }
 
-/* END SCREEN */
+/* END */
 #end{
   position:fixed;
   inset:0;
@@ -141,13 +127,21 @@ button{
   font-size:18px;
 }
 
-/* CONFETTI */
+/* REAL CONFETTI */
 .confetti{
   position:fixed;
-  width:8px;
-  height:8px;
+  width:10px;
+  height:10px;
   top:-10px;
-  z-index:999;
+  z-index:9999;
+  animation:fall linear forwards;
+}
+
+@keyframes fall{
+  to{
+    transform:translateY(110vh) rotate(720deg);
+    opacity:0;
+  }
 }
 </style>
 </head>
@@ -166,13 +160,8 @@ button{
 
   <div class="middle">
 
-    <div id="fruitZone" class="zone fruitZone">
-      🍎 Fruits
-    </div>
-
-    <div id="vegZone" class="zone vegZone">
-      🥕 Vegetables
-    </div>
+    <div id="fruitZone" class="zone fruitZone">🍎 Fruits</div>
+    <div id="vegZone" class="zone vegZone">🥕 Vegetables</div>
 
   </div>
 
@@ -186,7 +175,6 @@ button{
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="correct" src="assets/correct.mp3"></audio>
 <audio id="wrong" src="assets/wrong.mp3"></audio>
 <audio id="clap" src="assets/claps.mp3"></audio>
@@ -238,14 +226,14 @@ function play(id){
   s.play();
 }
 
-/* CONFETTI FIX */
+/* CONFETTI FIXED */
 function confetti(){
   for(let i=0;i<120;i++){
     const c=document.createElement("div");
     c.className="confetti";
     c.style.left=Math.random()*100+"vw";
     c.style.background=["#ffb347","#7ccf7a","#ff6b6b","#4dabf7","#ffd93d"][i%5];
-    c.style.animation=`fall ${Math.random()*3+2}s linear`;
+    c.style.animationDuration=(Math.random()*2+2)+"s";
     document.body.appendChild(c);
 
     setTimeout(()=>c.remove(),4000);
@@ -253,6 +241,11 @@ function confetti(){
 }
 
 /* ZONES */
+function glowTemp(zoneEl){
+  zoneEl.classList.add("glow");
+  setTimeout(()=>zoneEl.classList.remove("glow"),1200); // ✅ AUTO REMOVE
+}
+
 fruitZone.onclick=()=>check("fruit");
 vegZone.onclick=()=>check("veg");
 
@@ -265,7 +258,7 @@ function check(zone){
   if(selected.dataset.type===zone){
 
     play("correct");
-    play("clap"); // FIXED CLAP
+    play("clap");
 
     selected.style.opacity="0.4";
     selected.onclick=null;
@@ -275,7 +268,7 @@ function check(zone){
 
     if(score===20){
       setTimeout(()=>{
-        confetti(); // FIXED CONFETTI
+        confetti(); // ✅ CONFETTI NOW WORKS
         document.getElementById("end").style.display="flex";
       },500);
     }
@@ -283,17 +276,17 @@ function check(zone){
   }else{
 
     play("wrong");
+
+    selected.style.transform="translateX(-6px)";
+    setTimeout(()=>selected.style.transform="translateX(6px)",100);
+
     wrong[id]++;
 
-    selected.style.transform="translateX(-5px)";
-    setTimeout(()=>selected.style.transform="translateX(5px)",100);
-
-    // 2 WRONG ATTEMPTS → ZONE GLOW
     if(wrong[id]>=2){
-      if(selected.dataset.type==="fruit"){
-        fruitZone.classList.add("glow");
+      if(zone==="fruit"){
+        glowTemp(fruitZone); // ✅ TEMP GLOW FIXED
       }else{
-        vegZone.classList.add("glow");
+        glowTemp(vegZone);
       }
     }
   }
