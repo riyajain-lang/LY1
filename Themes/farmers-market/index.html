@@ -89,23 +89,24 @@ body{overflow:hidden;background:#fff}
   overflow:hidden;
 }
 
-/* 🔥 UPDATED SIZE (ONLY CHANGE HERE) */
+/* 🔥 UPDATED OPTION SIZE (FINAL MASTERPIECE LOOK) */
 .card{
-  width:78px;   /* increased slightly */
-  height:78px;  /* increased slightly */
+  width:84px;   /* increased slightly */
+  height:84px;  /* increased slightly */
   border:2px solid #ffd4a3;
-  border-radius:12px;
+  border-radius:14px;
   background:#fff;
   display:flex;
   justify-content:center;
   align-items:center;
   cursor:pointer;
   transition:0.2s;
+  box-shadow:0 2px 6px rgba(0,0,0,0.08);
 }
 
 .card img{
-  width:90%;   /* increased slightly */
-  height:90%;
+  width:92%;   /* improved visibility */
+  height:92%;
   object-fit:contain;
 }
 
@@ -182,6 +183,7 @@ button{
   <button onclick="location.reload()">Play Again</button>
 </div>
 
+<!-- AUDIO -->
 <audio id="correct" src="assets/correct.mp3"></audio>
 <audio id="wrong" src="assets/wrong.mp3"></audio>
 <audio id="clap" src="assets/claps.mp3"></audio>
@@ -247,7 +249,9 @@ function check(zone){
   wrong[id]=wrong[id]||0;
 
   if(selected.dataset.type===zone){
-    play("correct");
+
+    play("correct");  // correct sound
+    play("clap");     // ✅ FIXED: CLAP NOW ALWAYS PLAYS ON CORRECT
 
     selected.style.opacity="0.4";
     selected.onclick=null;
@@ -257,8 +261,9 @@ function check(zone){
     score++;
 
     if(score===20){
-      play("clap");
-      document.getElementById("end").style.display="flex";
+      setTimeout(()=>{
+        document.getElementById("end").style.display="flex";
+      },500);
     }
 
   }else{
