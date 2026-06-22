@@ -68,9 +68,9 @@ body{overflow:hidden;background:#fff}
   border-color:#7ccf7a;
 }
 
-/* ZONE GLOW (TEMP ONLY) */
+/* ZONE GLOW (TEACHING HINT) */
 .glow{
-  box-shadow:0 0 18px 6px rgba(255, 230, 0, 0.9);
+  box-shadow:0 0 22px 7px rgba(255, 230, 0, 0.95);
 }
 
 /* OPTIONS */
@@ -127,21 +127,13 @@ button{
   font-size:18px;
 }
 
-/* REAL CONFETTI */
+/* CONFETTI */
 .confetti{
   position:fixed;
   width:10px;
   height:10px;
   top:-10px;
   z-index:9999;
-  animation:fall linear forwards;
-}
-
-@keyframes fall{
-  to{
-    transform:translateY(110vh) rotate(720deg);
-    opacity:0;
-  }
 }
 </style>
 </head>
@@ -226,26 +218,25 @@ function play(id){
   s.play();
 }
 
-/* CONFETTI FIXED */
+/* CONFETTI */
 function confetti(){
   for(let i=0;i<120;i++){
     const c=document.createElement("div");
     c.className="confetti";
     c.style.left=Math.random()*100+"vw";
     c.style.background=["#ffb347","#7ccf7a","#ff6b6b","#4dabf7","#ffd93d"][i%5];
-    c.style.animationDuration=(Math.random()*2+2)+"s";
     document.body.appendChild(c);
-
     setTimeout(()=>c.remove(),4000);
   }
 }
 
-/* ZONES */
-function glowTemp(zoneEl){
-  zoneEl.classList.add("glow");
-  setTimeout(()=>zoneEl.classList.remove("glow"),1200); // ✅ AUTO REMOVE
+/* GLOW HELPER */
+function glow(zone){
+  zone.classList.add("glow");
+  setTimeout(()=>zone.classList.remove("glow"),1200);
 }
 
+/* ZONES */
 fruitZone.onclick=()=>check("fruit");
 vegZone.onclick=()=>check("veg");
 
@@ -255,20 +246,21 @@ function check(zone){
   let id=selected.dataset.id;
   wrong[id]=wrong[id]||0;
 
-  if(selected.dataset.type===zone){
+  let correct = selected.dataset.type === zone;
+
+  if(correct){
 
     play("correct");
     play("clap");
 
     selected.style.opacity="0.4";
     selected.onclick=null;
-
     selected=null;
     score++;
 
     if(score===20){
       setTimeout(()=>{
-        confetti(); // ✅ CONFETTI NOW WORKS
+        confetti();
         document.getElementById("end").style.display="flex";
       },500);
     }
@@ -276,18 +268,16 @@ function check(zone){
   }else{
 
     play("wrong");
+    wrong[id]++;
 
     selected.style.transform="translateX(-6px)";
     setTimeout(()=>selected.style.transform="translateX(6px)",100);
 
-    wrong[id]++;
-
-    if(wrong[id]>=2){
-      if(zone==="fruit"){
-        glowTemp(fruitZone); // ✅ TEMP GLOW FIXED
-      }else{
-        glowTemp(vegZone);
-      }
+    // 💡 MENTAL LEARNING FEATURE (NEW)
+    if(selected.dataset.type==="fruit"){
+      glow(fruitZone);
+    }else{
+      glow(vegZone);
     }
   }
 }
