@@ -3,13 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Farmers Market Sorting Game</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;user-select:none;}
-html,body{width:100%;height:100%;overflow:hidden;}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial,sans-serif;
+  user-select:none;
+}
 
-body{background:#fff;}
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
+body{
+  background:#fff;
+}
 
 /* SPLASH */
 #logoScreen{
@@ -21,10 +35,19 @@ body{background:#fff;}
   justify-content:center;
   z-index:9999;
 }
-#logoScreen img{width:220px;max-width:70%;}
+
+#logoScreen img{
+  width:240px;
+  max-width:75%;
+  object-fit:contain;
+}
 
 /* GAME */
-#gameScreen{display:none;width:100%;height:100%;}
+#gameScreen{
+  display:none;
+  width:100%;
+  height:100%;
+}
 
 .game{
   width:100%;
@@ -33,41 +56,53 @@ body{background:#fff;}
   flex-direction:column;
 }
 
-/* ✅ FIXED VERTICAL ZONES */
+/* ZONES */
 .zones{
   flex:1;
   display:flex;
-  flex-direction:column;   /* IMPORTANT FIX */
+  flex-direction:column;
   gap:10px;
   padding:10px;
 }
 
 .zone{
   flex:1;
-  border-radius:15px;
+  border-radius:18px;
   border:3px solid #ddd;
   display:flex;
   align-items:center;
   justify-content:center;
+  font-size:22px;
   font-weight:bold;
-  font-size:18px;
+  color:#fff;
+  text-shadow:1px 1px 4px rgba(0,0,0,.6);
   position:relative;
+  overflow:hidden;
+  cursor:pointer;
 }
 
-/* BACKGROUNDS */
 .zone-fruits{
-  background:url("./LY1/Themes/farmers-market/assets/fruits-zone-background.png") center/cover;
+  background:url("assets/fruits-zone-background.png") center center/cover no-repeat;
   border-color:#ffb347;
 }
 
 .zone-veg{
-  background:url("./LY1/Themes/farmers-market/assets/vegetable-zone-background.png") center/cover;
+  background:url("assets/vegetable-zone-background.png") center center/cover no-repeat;
   border-color:#7ccf7a;
 }
 
-/* BOTTOM OPTIONS */
+/* MESSAGE */
+#msg{
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+  padding:8px;
+  color:#444;
+}
+
+/* OPTIONS */
 .options{
-  height:30%;
+  height:32%;
   background:#fff3e6;
   border-top:3px solid #ffb347;
   display:flex;
@@ -75,20 +110,22 @@ body{background:#fff;}
   justify-content:center;
   align-items:center;
   gap:8px;
-  padding:6px;
+  padding:8px;
+  overflow-y:auto;
 }
 
 .item{
-  width:60px;
-  height:60px;
-  border-radius:10px;
-  border:2px solid #ccc;
+  width:70px;
+  height:70px;
   background:white;
+  border-radius:12px;
+  border:2px solid #ccc;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
   overflow:hidden;
+  transition:.2s;
 }
 
 .item img{
@@ -97,44 +134,63 @@ body{background:#fff;}
   object-fit:contain;
 }
 
-/* SELECT */
-.selected{outline:3px solid #0077ff; transform:scale(1.05);}
-.glow{animation: glow 0.8s infinite alternate;}
+.selected{
+  outline:4px solid #2196f3;
+  transform:scale(1.08);
+}
+
+.glow{
+  animation:glow .8s infinite alternate;
+}
 
 @keyframes glow{
-  from{box-shadow:0 0 5px yellow;}
-  to{box-shadow:0 0 15px yellow;}
+  from{
+    box-shadow:0 0 5px yellow;
+  }
+  to{
+    box-shadow:0 0 20px yellow;
+  }
 }
 
-/* MESSAGE */
-#msg{
-  text-align:center;
-  font-weight:bold;
-  padding:4px;
-}
-
-/* END */
+/* END SCREEN */
 #endScreen{
   position:fixed;
   inset:0;
-  background:#fff;
+  background:white;
   display:none;
+  flex-direction:column;
   align-items:center;
   justify-content:center;
-  flex-direction:column;
+  z-index:99999;
+}
+
+#endScreen h1{
+  font-size:48px;
+  margin-bottom:20px;
+}
+
+#endScreen button{
+  padding:12px 25px;
+  font-size:18px;
+  border:none;
+  border-radius:10px;
+  background:#ffb347;
+  cursor:pointer;
 }
 
 /* CONFETTI */
 .confetti{
   position:absolute;
-  width:8px;
-  height:14px;
+  width:10px;
+  height:15px;
   top:-20px;
   animation:fall 3s linear infinite;
 }
 
 @keyframes fall{
-  to{transform:translateY(110vh) rotate(360deg);}
+  to{
+    transform:translateY(110vh) rotate(360deg);
+  }
 }
 </style>
 </head>
@@ -143,14 +199,14 @@ body{background:#fff;}
 
 <!-- SPLASH -->
 <div id="logoScreen">
-  <img src="./LY1/Themes/farmers-market/assets/innovine-logo.png">
+  <img src="assets/innovine-logo.png" alt="Logo">
 </div>
 
 <!-- GAME -->
 <div id="gameScreen">
+
   <div class="game">
 
-    <!-- VERTICAL ZONES FIXED -->
     <div class="zones">
 
       <div class="zone zone-fruits" data-type="fruit">
@@ -163,12 +219,12 @@ body{background:#fff;}
 
     </div>
 
-    <div id="msg">Tap a fruit or vegetable</div>
+    <div id="msg">Tap a fruit or vegetable, then tap the correct zone.</div>
 
-    <!-- OPTIONS -->
     <div class="options" id="options"></div>
 
   </div>
+
 </div>
 
 <!-- END -->
@@ -177,114 +233,170 @@ body{background:#fff;}
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<audio id="correct" src="./LY1/Themes/farmers-market/assets/correct.mp3"></audio>
-<audio id="wrong" src="./LY1/Themes/farmers-market/assets/wrong.mp3"></audio>
-<audio id="clap" src="./LY1/Themes/farmers-market/assets/claps.mp3"></audio>
+<!-- AUDIO -->
+<audio id="correct" src="assets/correct.mp3"></audio>
+<audio id="wrong" src="assets/wrong.mp3"></audio>
+<audio id="clap" src="assets/claps.mp3"></audio>
 
 <script>
 
 const items = [
-  "fruit-1.png","fruit-2.png","fruit-3.png","fruit-4.png","fruit-5.png",
-  "fruit-6.png","fruit-7.png","fruit-8.png","fruit-9.png","fruit-10.png",
-  "vegetable-1.png","vegetable-2.png","vegetable-3.png","vegetable-4.png","vegetable-5.png"
+  "fruit-1.png",
+  "fruit-2.png",
+  "fruit-3.png",
+  "fruit-4.png",
+  "fruit-5.png",
+  "fruit-6.png",
+  "fruit-7.png",
+  "fruit-8.png",
+  "fruit-9.png",
+  "fruit-10.png",
+  "vegetable-1.png",
+  "vegetable-2.png",
+  "vegetable-3.png",
+  "vegetable-4.png",
+  "vegetable-5.png"
 ];
 
-let selected=null;
-let wrongCount={};
-let score=0;
+let selected = null;
+let score = 0;
+let wrongCount = {};
+
+const msg = document.getElementById("msg");
 
 /* SPLASH */
 setTimeout(()=>{
   document.getElementById("logoScreen").style.display="none";
   document.getElementById("gameScreen").style.display="block";
-  load();
+  loadItems();
 },2000);
 
 /* LOAD ITEMS */
-function load(){
-  const box=document.getElementById("options");
-  box.innerHTML="";
+function loadItems(){
+
+  const options = document.getElementById("options");
+  options.innerHTML = "";
 
   items.sort(()=>Math.random()-0.5);
 
-  items.forEach((img,i)=>{
-    const div=document.createElement("div");
-    div.className="item";
+  items.forEach((img,index)=>{
 
-    const type = img.includes("fruit") ? "fruit" : "vegetable";
+    const type = img.includes("fruit")
+      ? "fruit"
+      : "vegetable";
 
-    div.dataset.type=type;
-    div.dataset.id=i;
+    const div = document.createElement("div");
+    div.className = "item";
 
-    div.innerHTML=`<img src="./LY1/Themes/farmers-market/assets/${img}">`;
+    div.dataset.type = type;
+    div.dataset.id = index;
 
-    div.onclick=()=>{
-      document.querySelectorAll(".item").forEach(x=>x.classList.remove("selected"));
-      selected=div;
+    div.innerHTML =
+      `<img src="assets/${img}" alt="">`;
+
+    div.onclick = ()=>{
+
+      document
+      .querySelectorAll(".item")
+      .forEach(x=>x.classList.remove("selected"));
+
+      selected = div;
       div.classList.add("selected");
     };
 
-    box.appendChild(div);
+    options.appendChild(div);
   });
 }
 
 /* SOUND */
 function play(id){
-  const s=document.getElementById(id);
-  s.currentTime=0;
-  s.play();
+  const audio = document.getElementById(id);
+
+  audio.pause();
+  audio.currentTime = 0;
+
+  audio.play().catch(()=>{});
 }
 
 /* ZONE CLICK */
-document.querySelectorAll(".zone").forEach(z=>{
-  z.onclick=()=>{
+document.querySelectorAll(".zone").forEach(zone=>{
+
+  zone.onclick = ()=>{
+
     if(!selected) return;
 
-    let correct = selected.dataset.type === z.dataset.type;
-    let id = selected.dataset.id;
+    const correct =
+      selected.dataset.type === zone.dataset.type;
 
-    wrongCount[id]=wrongCount[id]||0;
+    const id = selected.dataset.id;
+
+    wrongCount[id] = wrongCount[id] || 0;
 
     if(correct){
+
       play("correct");
-      selected.style.opacity="0.3";
-      selected.onclick=null;
-      selected=null;
+
+      selected.style.opacity="0.25";
+      selected.style.pointerEvents="none";
+      selected.classList.remove("selected");
+
+      selected = null;
+
       score++;
 
-      if(score===items.length){
+      msg.innerText="Great Job!";
+
+      if(score === items.length){
+
         setTimeout(()=>{
           play("clap");
           showEnd();
-        },500);
+        },700);
       }
 
     }else{
+
       play("wrong");
+
       wrongCount[id]++;
 
-      if(wrongCount[id]>=2){
+      if(wrongCount[id] >= 2){
+
         selected.classList.add("glow");
-        msg.innerText="Correct answer highlighted";
-      }else{
-        msg.innerText="Try again!";
+
+        msg.innerText =
+          "Hint: This item is highlighted!";
+      }
+      else{
+        msg.innerText = "Try Again!";
       }
     }
   };
 });
 
+/* END SCREEN */
 function showEnd(){
+
   document.getElementById("endScreen").style.display="flex";
 
-  for(let i=0;i<40;i++){
-    let c=document.createElement("div");
-    c.className="confetti";
-    c.style.left=Math.random()*100+"vw";
-    c.style.background=["#ffb347","#7ccf7a","#ff6b6b","#4dabf7"][i%4];
+  for(let i=0;i<50;i++){
+
+    const c = document.createElement("div");
+
+    c.className = "confetti";
+
+    c.style.left =
+      Math.random()*100 + "vw";
+
+    c.style.background =
+      ["#ffb347","#7ccf7a","#ff6b6b","#4dabf7"][i%4];
+
+    c.style.animationDelay =
+      (Math.random()*2)+"s";
+
     document.body.appendChild(c);
   }
 }
-
 </script>
 
 </body>
