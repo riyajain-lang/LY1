@@ -55,8 +55,8 @@ body{overflow:hidden;background:#fff}
   align-items:center;
   justify-content:center;
   overflow:hidden;
-  font-weight:bold;
   font-size:20px;
+  font-weight:bold;
 }
 
 .fruitZone{
@@ -66,11 +66,6 @@ body{overflow:hidden;background:#fff}
 .vegZone{
   background:url("assets/vegetable-zone-background.png") center/cover;
   border-color:#7ccf7a;
-}
-
-/* ZONE GLOW (TEACHING HINT) */
-.glow{
-  box-shadow:0 0 22px 7px rgba(255, 230, 0, 0.95);
 }
 
 /* OPTIONS */
@@ -84,9 +79,10 @@ body{overflow:hidden;background:#fff}
   gap:10px;
 }
 
+/* OPTION CARD */
 .card{
-  width:86px;
-  height:86px;
+  width:90px;
+  height:90px;
   border:2px solid #ffd4a3;
   border-radius:14px;
   background:#fff;
@@ -97,11 +93,12 @@ body{overflow:hidden;background:#fff}
 }
 
 .card img{
-  width:92%;
-  height:92%;
+  width:90%;
+  height:90%;
   object-fit:contain;
 }
 
+/* SELECT */
 .selected{
   outline:3px solid #2f80ed;
   transform:scale(1.05);
@@ -118,22 +115,12 @@ body{overflow:hidden;background:#fff}
   flex-direction:column;
 }
 
-button{
-  padding:12px 18px;
-  border:none;
-  border-radius:12px;
-  background:#4caf50;
-  color:white;
-  font-size:18px;
-}
-
 /* CONFETTI */
 .confetti{
   position:fixed;
-  width:10px;
-  height:10px;
+  width:8px;
+  height:8px;
   top:-10px;
-  z-index:9999;
 }
 </style>
 </head>
@@ -157,6 +144,8 @@ button{
 
   </div>
 
+  <div id="msg" style="text-align:center;font-weight:bold;"></div>
+
   <div class="bottom" id="board"></div>
 
 </div>
@@ -173,31 +162,44 @@ button{
 
 <script>
 
-let items=[];
-for(let i=1;i<=10;i++) items.push({img:`assets/fruit-${i}.png`,type:"fruit"});
-for(let i=1;i<=10;i++) items.push({img:`assets/vegetable-${i}.png`,type:"veg"});
+let allItems = [];
+
+for(let i=1;i<=10;i++) allItems.push({img:`assets/fruit-${i}.png`,type:"fruit"});
+for(let i=1;i<=10;i++) allItems.push({img:`assets/vegetable-${i}.png`,type:"veg"});
 
 let selected=null;
 let score=0;
 let wrong={};
+let slide=0;
+
+let slides=[];
+
+/* SPLIT INTO 4 SLIDES OF 5 ITEMS EACH */
+for(let i=0;i<allItems.length;i+=5){
+  slides.push(allItems.slice(i,i+5));
+}
+
+/* SHUFFLE EACH SLIDE */
+slides.forEach(s=>s.sort(()=>Math.random()-0.5));
 
 setTimeout(()=>{
   document.getElementById("splash").style.display="none";
   document.getElementById("game").style.display="flex";
-  load();
+  loadSlide();
 },2000);
 
-function load(){
+function loadSlide(){
   const board=document.getElementById("board");
   board.innerHTML="";
+  selected=null;
 
-  items.sort(()=>Math.random()-0.5);
+  let items=slides[slide];
 
   items.forEach((it,i)=>{
     const div=document.createElement("div");
     div.className="card";
     div.dataset.type=it.type;
-    div.dataset.id=i;
+    div.dataset.id=slide+"-"+i;
 
     div.innerHTML=`<img src="${it.img}">`;
 
@@ -230,12 +232,6 @@ function confetti(){
   }
 }
 
-/* GLOW HELPER */
-function glow(zone){
-  zone.classList.add("glow");
-  setTimeout(()=>zone.classList.remove("glow"),1200);
-}
-
 /* ZONES */
 fruitZone.onclick=()=>check("fruit");
 vegZone.onclick=()=>check("veg");
@@ -246,39 +242,33 @@ function check(zone){
   let id=selected.dataset.id;
   wrong[id]=wrong[id]||0;
 
-  let correct = selected.dataset.type === zone;
-
-  if(correct){
+  if(selected.dataset.type===zone){
 
     play("correct");
     play("clap");
 
     selected.style.opacity="0.4";
     selected.onclick=null;
+
     selected=null;
     score++;
 
-    if(score===20){
-      setTimeout(()=>{
-        confetti();
-        document.getElementById("end").style.display="flex";
-      },500);
+    if(score % 5 === 0){
+      slide++;
+      if(slide < slides.length){
+        setTimeout(loadSlide,500);
+      }else{
+        setTimeout(()=>{
+          confetti();
+          document.getElementById("end").style.display="flex";
+        },500);
+      }
     }
 
   }else{
-
     play("wrong");
-    wrong[id]++;
-
-    selected.style.transform="translateX(-6px)";
-    setTimeout(()=>selected.style.transform="translateX(6px)",100);
-
-    // 💡 MENTAL LEARNING FEATURE (NEW)
-    if(selected.dataset.type==="fruit"){
-      glow(fruitZone);
-    }else{
-      glow(vegZone);
-    }
+    selected.style.transform="translateX(-5px)";
+    setTimeout(()=>selected.style.transform="translateX(5px)",100);
   }
 }
 
