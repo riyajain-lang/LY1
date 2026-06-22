@@ -7,7 +7,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
-body{overflow:hidden;background:#fff}
+body{background:#fff;overflow:hidden;}
 
 /* SPLASH */
 #splash{
@@ -19,88 +19,95 @@ body{overflow:hidden;background:#fff}
   align-items:center;
   z-index:9999;
 }
-#splash img{width:200px;max-width:70%;}
+#splash img{width:220px;max-width:70%;}
 
-/* GAME WRAPPER */
+/* MAIN */
 #game{
   display:none;
   height:100vh;
   flex-direction:column;
 }
 
-/* TOP ZONES (SMALLER NOW) */
-.top{
-  flex:1;
-  display:flex;
-  gap:10px;
-  padding:8px;
+/* INSTRUCTION */
+#instruction{
+  background:#cde7c4;
+  text-align:center;
+  font-weight:bold;
+  font-size:22px;
+  padding:10px;
 }
 
+/* ZONES AREA */
+.middle{
+  flex:1;
+  display:flex;
+  justify-content:space-between;
+  padding:10px;
+  gap:10px;
+}
+
+/* BIG WORKSHEET FRAMES */
 .zone{
   flex:1;
-  border-radius:18px;
-  border:3px solid #ffb347;
+  border-radius:20px;
   position:relative;
+  border:4px solid #ffb347;
   display:flex;
-  justify-content:center;
   align-items:center;
-  font-weight:bold;
-  font-size:22px; /* INCREASED TEXT */
+  justify-content:center;
   overflow:hidden;
 }
 
-/* BACKGROUNDS */
+/* LEFT FRUIT FRAME */
 .fruitZone{
   background:url("assets/fruits-zone-background.png") center/cover;
 }
 
+/* RIGHT VEG FRAME */
 .vegZone{
   background:url("assets/vegetable-zone-background.png") center/cover;
   border-color:#7ccf7a;
 }
 
-/* INSTRUCTION (BIGGER) */
-#instruction{
-  text-align:center;
-  font-size:22px;
-  font-weight:900;
-  padding:4px;
-  color:#333;
-}
-
-/* SCORE */
-#scoreBox{
-  text-align:center;
+/* LABELS */
+.label{
+  position:absolute;
+  top:10px;
+  background:white;
+  padding:5px 15px;
+  border-radius:12px;
   font-weight:bold;
-  font-size:18px;
 }
 
-/* OPTIONS AREA (FIXED GRID 20 ITEMS FIT) */
+/* BOTTOM OPTIONS (WORKSHEET STYLE ROW WRAP) */
 .bottom{
-  height:32%;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  grid-template-rows:repeat(4,1fr);
-  gap:6px;
-  padding:6px;
+  height:38%;
+  padding:10px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-content:flex-start;
+  gap:10px;
   overflow:hidden;
 }
 
-/* SMALL OPTION CARDS */
+/* SMALL OPTION CARDS (IMPORTANT FIX) */
 .card{
+  width:60px;
+  height:60px;
   border:2px solid #ffd4a3;
-  border-radius:10px;
+  border-radius:12px;
   background:#fff;
   display:flex;
   justify-content:center;
   align-items:center;
-  overflow:hidden;
-  position:relative;
+  cursor:pointer;
+  transition:0.2s;
 }
 
 .card img{
-  width:70%;
-  height:70%;
+  width:80%;
+  height:80%;
   object-fit:contain;
 }
 
@@ -110,16 +117,14 @@ body{overflow:hidden;background:#fff}
   transform:scale(1.05);
 }
 
-/* MOVE ANIMATION TO ZONE */
-.moveToZone{
-  position:fixed;
-  width:60px;
-  height:60px;
-  z-index:999;
-  transition:all 0.5s ease;
+/* FEEDBACK */
+#msg{
+  text-align:center;
+  font-weight:bold;
+  padding:5px;
 }
 
-/* END */
+/* END SCREEN */
 #end{
   position:fixed;
   inset:0;
@@ -131,11 +136,11 @@ body{overflow:hidden;background:#fff}
 }
 button{
   padding:12px 18px;
-  font-size:18px;
   border:none;
   border-radius:12px;
   background:#4caf50;
-  color:#fff;
+  color:white;
+  font-size:18px;
 }
 </style>
 </head>
@@ -150,21 +155,27 @@ button{
 <!-- GAME -->
 <div id="game">
 
-  <div class="top">
+  <!-- INSTRUCTION -->
+  <div id="instruction">
+    Tap a fruit or vegetable, then tap zone
+  </div>
+
+  <!-- ZONES -->
+  <div class="middle">
 
     <div id="fruitZone" class="zone fruitZone">
-      🍎 Fruits
+      <div class="label">Fruits</div>
     </div>
 
     <div id="vegZone" class="zone vegZone">
-      🥕 Vegetables
+      <div class="label">Vegetables</div>
     </div>
 
   </div>
 
-  <div id="instruction">Tap an item, then tap correct zone</div>
-  <div id="scoreBox">Score: <span id="score">0</span>/20</div>
+  <div id="msg">Let's sort the food!</div>
 
+  <!-- OPTIONS -->
   <div class="bottom" id="board"></div>
 
 </div>
@@ -175,7 +186,6 @@ button{
   <button onclick="location.reload()">Play Again</button>
 </div>
 
-<!-- AUDIO -->
 <audio id="correct" src="assets/correct.mp3"></audio>
 <audio id="wrong" src="assets/wrong.mp3"></audio>
 <audio id="clap" src="assets/claps.mp3"></audio>
@@ -225,14 +235,12 @@ function load(){
   });
 }
 
-/* SOUND */
 function play(id){
   const s=document.getElementById(id);
   s.currentTime=0;
   s.play();
 }
 
-/* ZONES */
 fruitZone.onclick=()=>check("fruit");
 vegZone.onclick=()=>check("veg");
 
@@ -243,40 +251,18 @@ function check(zone){
   wrong[id]=wrong[id]||0;
 
   if(selected.dataset.type===zone){
-
     play("correct");
-    play("clap");
 
-    // MOVE IMAGE INTO ZONE
-    let clone = selected.cloneNode(true);
-    clone.classList.add("moveToZone");
-    document.body.appendChild(clone);
-
-    let zoneEl = zone==="fruit"?fruitZone:vegZone;
-    let rect = zoneEl.getBoundingClientRect();
-
-    clone.style.left = selected.getBoundingClientRect().left + "px";
-    clone.style.top = selected.getBoundingClientRect().top + "px";
-
-    setTimeout(()=>{
-      clone.style.left = rect.left + rect.width/2 + "px";
-      clone.style.top = rect.top + rect.height/2 + "px";
-      clone.style.opacity = "0";
-    },50);
-
-    setTimeout(()=>clone.remove(),600);
-
-    selected.style.visibility="hidden";
+    selected.style.opacity="0.4";
     selected.onclick=null;
-    selected=null;
+    selected.classList.remove("selected");
 
+    selected=null;
     score++;
-    document.getElementById("score").innerText=score;
 
     if(score===20){
-      setTimeout(()=>{
-        document.getElementById("end").style.display="flex";
-      },600);
+      play("clap");
+      document.getElementById("end").style.display="flex";
     }
 
   }else{
