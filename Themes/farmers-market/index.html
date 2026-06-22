@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Farmers Market Sorting</title>
+<title>Farmers Market Sorting Game</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif;}
@@ -68,6 +68,12 @@ body{overflow:hidden;background:#fff}
   border-color:#7ccf7a;
 }
 
+/* ZONE GLOW */
+.glow{
+  box-shadow:0 0 20px 6px rgba(255, 230, 0, 0.9);
+}
+
+/* LABEL */
 .label{
   position:absolute;
   top:10px;
@@ -89,10 +95,10 @@ body{overflow:hidden;background:#fff}
   overflow:hidden;
 }
 
-/* 🔥 UPDATED OPTION SIZE (FINAL MASTERPIECE LOOK) */
+/* OPTION CARDS */
 .card{
-  width:84px;   /* increased slightly */
-  height:84px;  /* increased slightly */
+  width:84px;
+  height:84px;
   border:2px solid #ffd4a3;
   border-radius:14px;
   background:#fff;
@@ -105,22 +111,14 @@ body{overflow:hidden;background:#fff}
 }
 
 .card img{
-  width:92%;   /* improved visibility */
+  width:92%;
   height:92%;
   object-fit:contain;
 }
 
-/* SELECT */
 .selected{
   outline:3px solid #2f80ed;
   transform:scale(1.05);
-}
-
-/* FEEDBACK */
-#msg{
-  text-align:center;
-  font-weight:bold;
-  padding:5px;
 }
 
 /* END SCREEN */
@@ -142,6 +140,15 @@ button{
   color:white;
   font-size:18px;
 }
+
+/* CONFETTI */
+.confetti{
+  position:fixed;
+  width:8px;
+  height:8px;
+  top:-10px;
+  z-index:999;
+}
 </style>
 </head>
 
@@ -155,23 +162,19 @@ button{
 <!-- GAME -->
 <div id="game">
 
-  <div id="instruction">
-    Tap a fruit or vegetable, then tap zone
-  </div>
+  <div id="instruction">Tap a fruit or vegetable, then tap zone</div>
 
   <div class="middle">
 
     <div id="fruitZone" class="zone fruitZone">
-      <div class="label">Fruits</div>
+      🍎 Fruits
     </div>
 
     <div id="vegZone" class="zone vegZone">
-      <div class="label">Vegetables</div>
+      🥕 Vegetables
     </div>
 
   </div>
-
-  <div id="msg">Let's sort the food!</div>
 
   <div class="bottom" id="board"></div>
 
@@ -190,14 +193,9 @@ button{
 
 <script>
 
-let items = [];
-
-for(let i=1;i<=10;i++){
-  items.push({img:`assets/fruit-${i}.png`, type:"fruit"});
-}
-for(let i=1;i<=10;i++){
-  items.push({img:`assets/vegetable-${i}.png`, type:"veg"});
-}
+let items=[];
+for(let i=1;i<=10;i++) items.push({img:`assets/fruit-${i}.png`,type:"fruit"});
+for(let i=1;i<=10;i++) items.push({img:`assets/vegetable-${i}.png`,type:"veg"});
 
 let selected=null;
 let score=0;
@@ -233,12 +231,28 @@ function load(){
   });
 }
 
+/* SOUND */
 function play(id){
   const s=document.getElementById(id);
   s.currentTime=0;
   s.play();
 }
 
+/* CONFETTI FIX */
+function confetti(){
+  for(let i=0;i<120;i++){
+    const c=document.createElement("div");
+    c.className="confetti";
+    c.style.left=Math.random()*100+"vw";
+    c.style.background=["#ffb347","#7ccf7a","#ff6b6b","#4dabf7","#ffd93d"][i%5];
+    c.style.animation=`fall ${Math.random()*3+2}s linear`;
+    document.body.appendChild(c);
+
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+/* ZONES */
 fruitZone.onclick=()=>check("fruit");
 vegZone.onclick=()=>check("veg");
 
@@ -250,27 +264,38 @@ function check(zone){
 
   if(selected.dataset.type===zone){
 
-    play("correct");  // correct sound
-    play("clap");     // ✅ FIXED: CLAP NOW ALWAYS PLAYS ON CORRECT
+    play("correct");
+    play("clap"); // FIXED CLAP
 
     selected.style.opacity="0.4";
     selected.onclick=null;
-    selected.classList.remove("selected");
 
     selected=null;
     score++;
 
     if(score===20){
       setTimeout(()=>{
+        confetti(); // FIXED CONFETTI
         document.getElementById("end").style.display="flex";
       },500);
     }
 
   }else{
+
     play("wrong");
+    wrong[id]++;
 
     selected.style.transform="translateX(-5px)";
     setTimeout(()=>selected.style.transform="translateX(5px)",100);
+
+    // 2 WRONG ATTEMPTS → ZONE GLOW
+    if(wrong[id]>=2){
+      if(selected.dataset.type==="fruit"){
+        fruitZone.classList.add("glow");
+      }else{
+        vegZone.classList.add("glow");
+      }
+    }
   }
 }
 
